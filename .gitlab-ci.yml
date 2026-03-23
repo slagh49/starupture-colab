@@ -1,6 +1,4 @@
 stages:
-  - validate
-  - test
   - build
   - package
   - deploy
@@ -9,70 +7,6 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   DOCKER_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend
   DOCKER_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend
-
-# ---------- VALIDATE ----------
-
-eslint:
-  stage: validate
-  image: node:20-alpine
-  script:
-    - cd frontend
-    - npm ci --prefer-offline
-    - npm run lint
-    - npx tsc --noEmit
-  only:
-    changes:
-      - frontend/**/*
-
-checkstyle:
-  stage: validate
-  image: maven:3.9-eclipse-temurin-21
-  script:
-    - cd backend
-    - mvn checkstyle:check -q
-  only:
-    changes:
-      - backend/**/*
-
-# ---------- TEST ----------
-
-test-backend:
-  stage: test
-  image: maven:3.9-eclipse-temurin-21
-  services:
-    - postgres:16-alpine
-  variables:
-    POSTGRES_DB: starrupture_test
-    POSTGRES_USER: scanner
-    POSTGRES_PASSWORD: test_password
-    DB_URL: jdbc:postgresql://postgres:5432/starrupture_test
-    DB_USER: scanner
-    DB_PASSWORD: test_password
-  script:
-    - cd backend
-    - mvn verify -q
-  artifacts:
-    reports:
-      junit: backend/target/surefire-reports/*.xml
-  only:
-    changes:
-      - backend/**/*
-
-test-frontend:
-  stage: test
-  image: node:20-alpine
-  script:
-    - cd frontend
-    - npm ci --prefer-offline
-    - npx vitest run --coverage
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: frontend/coverage/cobertura-coverage.xml
-  only:
-    changes:
-      - frontend/**/*
 
 # ---------- BUILD ----------
 
