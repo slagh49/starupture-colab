@@ -48,6 +48,8 @@ export function useMapInteraction(
 
   const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const entitiesRef = useRef(entities);
+  entitiesRef.current = entities;
   const stateRef = useRef({ zoom, panX, panY, isDragging });
   stateRef.current = { zoom, panX, panY, isDragging };
 
@@ -56,7 +58,7 @@ export function useMapInteraction(
       const world = screen2world(sx, sy, currentZoom, currentPanX, currentPanY);
       let closest: GameEntity | null = null;
       let closestDist = HIT_RADIUS_WORLD;
-      for (const entity of entities) {
+      for (const entity of entitiesRef.current) {
         const dx = entity.x - world.x;
         const dy = entity.y - world.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -67,121 +69,123 @@ export function useMapInteraction(
       }
       return closest;
     },
-    [entities]
-  );
-
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      e.preventDefault();
-      const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-
-      setZoom(prevZoom => {
-        const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
-        const newZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, prevZoom * factor));
-        const ratio = newZoom / prevZoom;
-
-        setPanX(prevPanX => mx - ratio * (mx - prevPanX));
-        setPanY(prevPanY => my - ratio * (my - prevPanY));
-
-        return newZoom;
-      });
-    },
     []
   );
-
-  const handleMouseDown = useCallback(
-    (e: MouseEvent) => {
-      if (e.button !== 0) return;
-      const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      dragStartRef.current = { x: mx, y: my, panX: stateRef.current.panX, panY: stateRef.current.panY };
-      setIsDragging(false);
-    },
-    []
-  );
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      setMouseScreenX(mx);
-      setMouseScreenY(my);
-
-      if (dragStartRef.current) {
-        const dx = mx - dragStartRef.current.x;
-        const dy = my - dragStartRef.current.y;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-          setIsDragging(true);
-        }
-        setPanX(dragStartRef.current.panX + dx);
-        setPanY(dragStartRef.current.panY + dy);
-      } else {
-        setZoom(currentZoom => {
-          setPanX(currentPanX => {
-            setPanY(currentPanY => {
-              const hit = findEntityAtScreen(mx, my, currentZoom, currentPanX, currentPanY);
-              setHoveredEntity(hit);
-              return currentPanY;
-            });
-            return currentPanX;
-          });
-          return currentZoom;
-        });
-      }
-    },
-    [findEntityAtScreen]
-  );
-
-  const handleMouseUp = useCallback(
-    (e: MouseEvent) => {
-      const wasDragging = stateRef.current.isDragging;
-      dragStartRef.current = null;
-      setIsDragging(false);
-
-      if (!wasDragging && e.button === 0) {
-        const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        const { zoom: z, panX: px, panY: py } = stateRef.current;
-        const hit = findEntityAtScreen(mx, my, z, px, py);
-        setSelectedEntity(hit);
-      }
-    },
-    [findEntityAtScreen]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    dragStartRef.current = null;
-    setIsDragging(false);
-    setHoveredEntity(null);
-  }, []);
 
   const bindCanvas = useCallback(
     (canvas: HTMLCanvasElement) => {
       canvasRef.current = canvas;
-      canvas.addEventListener('wheel', handleWheel, { passive: false });
-      canvas.addEventListener('mousedown', handleMouseDown);
-      canvas.addEventListener('mousemove', handleMouseMove);
-      canvas.addEventListener('mouseup', handleMouseUp);
-      canvas.addEventListener('mouseleave', handleMouseLeave);
+
+      const onWheel = (e: WheelEvent): void => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        setZoom(prevZoom => {
+          const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+          const newZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, prevZoom * factor));
+          const ratio = newZoom / prevZoom;
+          setPanX(prevPanX => mx - ratio * (mx - prevPanX));
+          setPanY(prevPanY => my - ratio * (my - prevPanY));
+          return newZoom;
+        });
+      };
+
+      const onMouseDown = (e: MouseEvent): void => {
+        if (e.button !== 0) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        dragStartRef.current = {
+          x: mx,
+          y: my,
+          panX: stateRef.current.panX,
+          panY: stateRef.current.panY,
+        };
+        setIsDragging(false);
+      };
+
+      const onMouseMove = (e: MouseEvent): void => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        setMouseScreenX(mx);
+        setMouseScreenY(my);
+
+        if (dragStartRef.current) {
+          const dx = mx - dragStartRef.current.x;
+          const dy = my - dragStartRef.current.y;
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            setIsDragging(true);
+          }
+          setPanX(dragStartRef.current.panX + dx);
+          setPanY(dragStartRef.current.panY + dy);
+        } else {
+          const { zoom: z, panX: px, panY: py } = stateRef.current;
+          const hit = findEntityAtScreen(mx, my, z, px, py);
+          setHoveredEntity(hit);
+        }
+      };
+
+      const onMouseUp = (e: MouseEvent): void => {
+        const wasDragging = stateRef.current.isDragging;
+        dragStartRef.current = null;
+        setIsDragging(false);
+
+        if (!wasDragging && e.button === 0) {
+          const rect = canvas.getBoundingClientRect();
+          const mx = e.clientX - rect.left;
+          const my = e.clientY - rect.top;
+          const { zoom: z, panX: px, panY: py } = stateRef.current;
+          const hit = findEntityAtScreen(mx, my, z, px, py);
+          setSelectedEntity(hit);
+        }
+      };
+
+      const onMouseLeave = (): void => {
+        dragStartRef.current = null;
+        setIsDragging(false);
+        setHoveredEntity(null);
+      };
+
+      canvas.addEventListener('wheel', onWheel, { passive: false });
+      canvas.addEventListener('mousedown', onMouseDown);
+      canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('mouseup', onMouseUp);
+      canvas.addEventListener('mouseleave', onMouseLeave);
+
+      // Store for cleanup
+      (canvas as unknown as Record<string, unknown>).__listeners = {
+        onWheel,
+        onMouseDown,
+        onMouseMove,
+        onMouseUp,
+        onMouseLeave,
+      };
     },
-    [handleWheel, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]
+    [findEntityAtScreen]
   );
 
   const unbindCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    canvas.removeEventListener('wheel', handleWheel);
-    canvas.removeEventListener('mousedown', handleMouseDown);
-    canvas.removeEventListener('mousemove', handleMouseMove);
-    canvas.removeEventListener('mouseup', handleMouseUp);
-    canvas.removeEventListener('mouseleave', handleMouseLeave);
+    const listeners = (canvas as unknown as Record<string, unknown>).__listeners as {
+      onWheel: (e: WheelEvent) => void;
+      onMouseDown: (e: MouseEvent) => void;
+      onMouseMove: (e: MouseEvent) => void;
+      onMouseUp: (e: MouseEvent) => void;
+      onMouseLeave: () => void;
+    } | undefined;
+    if (listeners) {
+      canvas.removeEventListener('wheel', listeners.onWheel);
+      canvas.removeEventListener('mousedown', listeners.onMouseDown);
+      canvas.removeEventListener('mousemove', listeners.onMouseMove);
+      canvas.removeEventListener('mouseup', listeners.onMouseUp);
+      canvas.removeEventListener('mouseleave', listeners.onMouseLeave);
+    }
     canvasRef.current = null;
-  }, [handleWheel, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]);
+  }, []);
 
   const zoomIn = useCallback(() => {
     const canvas = canvasRef.current;
@@ -229,7 +233,7 @@ export function useMapInteraction(
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    if (isDragging) {
+    if (stateRef.current.isDragging) {
       canvas.style.cursor = 'grabbing';
     } else if (hoveredEntity) {
       canvas.style.cursor = 'pointer';
