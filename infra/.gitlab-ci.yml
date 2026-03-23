@@ -1,0 +1,203 @@
+stages:
+  - validate
+  - test
+  - build
+  - package
+  - scan
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  DOCKER_REGISTRY: $CI_REGISTRY
+  DOCKER_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend
+  DOCKER_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend
+
+# ---------- VALIDATE ----------
+
+eslint:
+  stage: validate
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm ci --prefer-offline
+    - npm run lint
+    - npx tsc --noEmit
+  only:
+    changes:
+      - frontend/**/*
+
+checkstyle:
+  stage: validate
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - cd backend
+    - mvn checkstyle:check -q
+  only:
+    changes:
+      - backend/**/*
+
+# ---------- TEST ----------
+
+test-backend:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  services:
+    - postgres:16-alpine
+  variables:
+    POSTGRES_DB: starrupture_test
+    POSTGRES_USER: scanner
+    POSTGRES_PASSWORD: test_password
+    DB_URL: jdbc:postgresql://postgres:5432/starrupture_test
+    DB_USER: scanner
+    DB_PASSWORD: test_password
+  script:
+    - cd backend
+    - mvn verify -q
+  artifacts:
+    reports:
+      junit: backend/target/surefire-reports/*.xml
+  only:
+    changes:
+      - backend/**/*
+
+test-frontend:
+  stage: test
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm ci --prefer-offline
+    - npx vitest run --coverage
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: frontend/coverage/cobertura-coverage.xml
+  only:
+    changes:
+      - frontend/**/*
+
+# ---------- BUILD ----------
+
+build-backend:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - cd backend
+    - mvn package -DskipTests -q
+  artifacts:
+    paths:
+      - backend/target/*.jar
+  only:
+    changes:
+      - backend/**/*
+
+build-frontend:
+  stage: build
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm ci --prefer-offline
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+  only:
+    changes:
+      - frontend/**/*
+
+# ---------- PACKAGE ----------
+
+package-backend:
+  stage: package
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_BACKEND:latest backend/
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_IMAGE_BACKEND:latest
+  only:
+    refs:
+      - main
+      - develop
+
+package-frontend:
+  stage: package
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_FRONTEND:latest frontend/
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_IMAGE_FRONTEND:latest
+  only:
+    refs:
+      - main
+      - develop
+
+# ---------- SCAN ----------
+
+trivy-backend:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA
+  allow_failure: true
+  only:
+    refs:
+      - main
+      - develop
+
+trivy-frontend:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
+  allow_failure: true
+  only:
+    refs:
+      - main
+      - develop
+
+# ---------- DEPLOY ----------
+
+deploy-staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  script:
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.yml -f docker-compose.staging.yml pull && docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d"
+  environment:
+    name: staging
+    url: http://192.168.1.50:8081
+  only:
+    - develop
+
+deploy-prod:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  script:
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_PATH && docker compose pull && docker compose up -d"
+  environment:
+    name: production
+    url: http://192.168.1.50
+  only:
+    - main
+  when: manual
