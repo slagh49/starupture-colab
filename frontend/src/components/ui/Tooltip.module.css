@@ -1,0 +1,29 @@
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(13, 17, 23, 0.95);
+  border: 1px solid #1e2733;
+  border-radius: 4px;
+  padding: 8px 12px;
+  z-index: 20;
+  white-space: nowrap;
+  max-width: 250px;
+}
+
+.name {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.category {
+  font-size: 10px;
+  color: #6b7a8d;
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
+}
+
+.recipe {
+  font-size: 11px;
+  color: #aab0bc;
+}

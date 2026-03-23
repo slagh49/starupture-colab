@@ -1,0 +1,11 @@
+.container {
+  padding: 8px;
+  background: #0d1117;
+  border: 1px solid #1e2733;
+  border-radius: 4px;
+}
+
+.placeholder {
+  color: #4a5568;
+  font-size: 11px;
+}

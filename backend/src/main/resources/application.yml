@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/starrupture}
+    username: ${DB_USER:scanner}
+    password: ${DB_PASSWORD:scanner}
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+  data.redis:
+    host: ${REDIS_HOST:redis}
+    port: 6379
+  servlet.multipart:
+    max-file-size: 50MB
+    max-request-size: 50MB
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.starrupture: DEBUG

@@ -1,0 +1,14 @@
+.filterBar {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(13, 17, 23, 0.7);
+  border-bottom: 1px solid #1e2733;
+  height: 32px;
+}
+
+.placeholder {
+  font-size: 11px;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+}

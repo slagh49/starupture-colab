@@ -1,0 +1,57 @@
+export type EntityCategory =
+  | 'basecore' | 'machine' | 'energy' | 'infra'
+  | 'antenna'  | 'danger'  | 'loot';
+
+export interface SaveSession {
+  id: string;
+  filename: string;
+  sessionName: string | null;
+  playtime: number;
+  timestamp: string;
+  uploadAt: string;
+}
+
+export interface GameEntity {
+  id: string;
+  gameId: string;
+  name: string;
+  category: EntityCategory;
+  x: number;
+  y: number;
+  z: number;
+  recipe: string | null;
+  infection: number;
+  foundable: boolean;
+  status: 'on' | 'off';
+}
+
+export interface DroneLink {
+  id: string;
+  fromEntityId: string;
+  toEntityId: string;
+  item: string;
+  droneCount: number;
+  state: string;
+}
+
+export interface RailSpline {
+  id: string;
+  splineType: 'DroneRail' | 'Walkway';
+  points: Array<{ x: number; y: number }>;
+}
+
+export interface BaseZone {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
+export interface SessionSummary {
+  totalEntities: number;
+  activeMachines: number;
+  inactiveMachines: number;
+  activeDrones: number;
+  infectedEntities: number;
+  productions: Array<{ recipe: string; machineCount: number }>;
+}

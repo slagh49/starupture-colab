@@ -1,0 +1,21 @@
+.select {
+  background: #0d1117;
+  border: 1px solid #1e2733;
+  color: #c8d0dc;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #00d4ff;
+}
+
+.empty {
+  font-size: 11px;
+  color: #4a5568;
+}
