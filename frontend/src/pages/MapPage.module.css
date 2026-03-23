@@ -5,26 +5,29 @@
   overflow: hidden;
 }
 
-.toolbar {
+.body {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  background: #0a0e14;
-  border-bottom: 1px solid #1e2733;
-  flex-shrink: 0;
-  height: 44px;
+  flex: 1;
+  overflow: hidden;
 }
 
-.error {
-  font-size: 11px;
-  color: #ff3030;
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  min-width: 240px;
+  background: #0d1117;
+  border-right: 1px solid #1e2733;
+  overflow: hidden;
 }
 
-.info {
-  font-size: 11px;
-  color: #6b7a8d;
-  margin-left: auto;
+/* Map area (center) */
+.mapArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
 .mapContainer {
@@ -32,3 +35,4 @@
   flex: 1;
   overflow: hidden;
 }
+

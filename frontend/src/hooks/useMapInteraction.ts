@@ -24,8 +24,12 @@ export interface MapInteractionState {
 interface MapInteractionActions {
   bindCanvas: (canvas: HTMLCanvasElement) => void;
   unbindCanvas: () => void;
-  resetView: (canvasWidth: number, canvasHeight: number) => void;
+  resetView: (canvasWidth?: number, canvasHeight?: number) => void;
   setSelectedEntity: (entity: GameEntity | null) => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  mouseWorldX: number;
+  mouseWorldY: number;
 }
 
 export type UseMapInteractionReturn = MapInteractionState & MapInteractionActions;
@@ -176,16 +180,47 @@ export function useMapInteraction(
     canvasRef.current = null;
   }, [handleWheel, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]);
 
-  const resetView = useCallback((canvasWidth: number, canvasHeight: number) => {
+  const zoomIn = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    setZoom(prev => {
+      const next = Math.min(ZOOM_MAX, prev * ZOOM_FACTOR);
+      const ratio = next / prev;
+      setPanX(px => cx - ratio * (cx - px));
+      setPanY(py => cy - ratio * (cy - py));
+      return next;
+    });
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    setZoom(prev => {
+      const next = Math.max(ZOOM_MIN, prev / ZOOM_FACTOR);
+      const ratio = next / prev;
+      setPanX(px => cx - ratio * (cx - px));
+      setPanY(py => cy - ratio * (cy - py));
+      return next;
+    });
+  }, []);
+
+  const resetView = useCallback((canvasWidth?: number, canvasHeight?: number) => {
+    const canvas = canvasRef.current;
+    const cw = canvasWidth ?? canvas?.width ?? 800;
+    const ch = canvasHeight ?? canvas?.height ?? 600;
     const worldW = WORLD_BOUNDS.maxX - WORLD_BOUNDS.minX;
     const worldH = WORLD_BOUNDS.maxY - WORLD_BOUNDS.minY;
-    const fitZoom = Math.min(canvasWidth / worldW, canvasHeight / worldH) * 0.9;
+    const fitZoom = Math.min(cw / worldW, ch / worldH) * 0.9;
     const clampedZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, fitZoom));
     setZoom(clampedZoom);
     const centerWorldX = (WORLD_BOUNDS.minX + WORLD_BOUNDS.maxX) / 2;
     const centerWorldY = (WORLD_BOUNDS.minY + WORLD_BOUNDS.maxY) / 2;
-    setPanX(canvasWidth / 2 - centerWorldX * clampedZoom);
-    setPanY(canvasHeight / 2 - centerWorldY * clampedZoom);
+    setPanX(cw / 2 - centerWorldX * clampedZoom);
+    setPanY(ch / 2 - centerWorldY * clampedZoom);
   }, []);
 
   useEffect(() => {
@@ -200,6 +235,8 @@ export function useMapInteraction(
     }
   }, [isDragging, hoveredEntity]);
 
+  const worldPos = screen2world(mouseScreenX, mouseScreenY, zoom, panX, panY);
+
   return {
     zoom,
     panX,
@@ -213,5 +250,9 @@ export function useMapInteraction(
     unbindCanvas,
     resetView,
     setSelectedEntity,
+    zoomIn,
+    zoomOut,
+    mouseWorldX: worldPos.x,
+    mouseWorldY: worldPos.y,
   };
 }

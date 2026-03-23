@@ -1,14 +1,52 @@
 .filterBar {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  background: rgba(13, 17, 23, 0.7);
+  padding: 12px;
   border-bottom: 1px solid #1e2733;
-  height: 32px;
 }
 
-.placeholder {
-  font-size: 11px;
-  color: #4a5568;
-  letter-spacing: 0.5px;
+.title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #6b7a8d;
+  margin-bottom: 8px;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid #1e2733;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+  white-space: nowrap;
+}
+
+.filterBtn:hover {
+  border-color: #6b7a8d;
+}
+
+.filterBtn.active:hover {
+  opacity: 0.85;
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }

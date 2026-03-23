@@ -1,0 +1,22 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 16px;
+  height: 24px;
+  background: #0a0e14;
+  border-top: 1px solid #1e2733;
+  flex-shrink: 0;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.coord {
+  font-size: 10px;
+  color: #6b7a8d;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  color: #00d4ff;
+  font-weight: 700;
+}

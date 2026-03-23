@@ -26,30 +26,23 @@ export function EntityDetail({ entity, onClose }: Props): JSX.Element {
         </button>
       </div>
       <div className={styles.body}>
-        <DetailRow label="Game ID" value={entity.gameId} />
+        <DetailRow label="TYPE" value={CAT_LABELS[entity.category]} valueColor={color} />
         <DetailRow
-          label="Category"
-          value={CAT_LABELS[entity.category]}
-          valueColor={color}
+          label="X / Y / Z"
+          value={`${Math.round(entity.x)} / ${Math.round(entity.y)} / ${Math.round(entity.z)}`}
         />
         <DetailRow
-          label="Position"
-          value={`X: ${Math.round(entity.x)} Y: ${Math.round(entity.y)} Z: ${Math.round(entity.z)}`}
-        />
-        <DetailRow label="Recipe" value={entity.recipe ?? 'None'} />
-        <DetailRow
-          label="Infection"
+          label="INFECT."
           value={`${entity.infection}%`}
-          valueColor={entity.infection > 0 ? '#ff3030' : undefined}
+          valueColor={entity.infection > 0 ? CAT_COLORS.danger : undefined}
         />
+        {entity.recipe && (
+          <DetailRow label="RECETTE" value={entity.recipe} />
+        )}
         <DetailRow
-          label="Status"
+          label="STATUT"
           value={entity.status.toUpperCase()}
-          valueColor={entity.status === 'on' ? '#39ff14' : '#ff3030'}
-        />
-        <DetailRow
-          label="Foundable"
-          value={entity.foundable ? 'Yes' : 'No'}
+          valueColor={entity.status === 'on' ? CAT_COLORS.machine : CAT_COLORS.danger}
         />
       </div>
     </div>

@@ -1,0 +1,47 @@
+.container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 10;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid #1e2733;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+  color: #6b7a8d;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+}
+
+.toggle:hover {
+  border-color: #00d4ff55;
+  color: #c8d0dc;
+}
+
+.toggle.active {
+  color: #00d4ff;
+  border-color: #00d4ff55;
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.icon {
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.label {
+  font-weight: 600;
+}

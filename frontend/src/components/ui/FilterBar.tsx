@@ -1,10 +1,42 @@
+import type { EntityCategory } from '../../types/save.types';
+import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
 import styles from './FilterBar.module.css';
 
-// Sprint 3: Filter bar with category toggles, search, and status filters
-export function FilterBar(): JSX.Element {
+const CATEGORIES: EntityCategory[] = [
+  'basecore', 'machine', 'energy', 'infra', 'antenna', 'danger', 'loot',
+];
+
+interface Props {
+  activeFilters: Record<EntityCategory, boolean>;
+  onToggle: (cat: EntityCategory) => void;
+}
+
+export function FilterBar({ activeFilters, onToggle }: Props): JSX.Element {
   return (
     <div className={styles.filterBar}>
-      <span className={styles.placeholder}>Filters (Sprint 3)</span>
+      <div className={styles.title}>FILTRES</div>
+      <div className={styles.buttons}>
+        {CATEGORIES.map(cat => {
+          const active = activeFilters[cat];
+          const color = CAT_COLORS[cat];
+          return (
+            <button
+              key={cat}
+              type="button"
+              className={`${styles.filterBtn} ${active ? styles.active : ''}`}
+              style={{
+                borderColor: active ? color : '#1e2733',
+                color: active ? color : '#6b7a8d',
+                backgroundColor: active ? `${color}15` : 'transparent',
+              }}
+              onClick={() => onToggle(cat)}
+            >
+              <span className={styles.dot} style={{ backgroundColor: active ? color : '#6b7a8d' }} />
+              {CAT_LABELS[cat]}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

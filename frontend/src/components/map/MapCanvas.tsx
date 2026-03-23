@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
 import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/save.types';
+import type { LayerState } from '../ui/LayerToggles';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
 import { drawEntities, drawLabels } from './EntityLayer';
@@ -24,6 +25,7 @@ interface Props {
   panY: number;
   hoveredEntity: GameEntity | null;
   selectedEntity: GameEntity | null;
+  layers: LayerState;
   onCanvasBind: (canvas: HTMLCanvasElement) => void;
   onCanvasUnbind: () => void;
   onResetView: (width: number, height: number) => void;
@@ -39,6 +41,7 @@ export function MapCanvas({
   panY,
   hoveredEntity,
   selectedEntity,
+  layers,
   onCanvasBind,
   onCanvasUnbind,
   onResetView,
@@ -189,11 +192,16 @@ export function MapCanvas({
       const h = canvas.height;
 
       // 1. Terrain (map image if available, fbm fallback)
-      const mapImage = mapImageRef.current;
-      if (mapImage && MAP_IMAGE) {
-        drawTerrainImage(ctx, mapImage, zoom, panX, panY, MAP_IMAGE.bounds, w, h);
+      if (layers.terrain) {
+        const mapImage = mapImageRef.current;
+        if (mapImage && MAP_IMAGE) {
+          drawTerrainImage(ctx, mapImage, zoom, panX, panY, MAP_IMAGE.bounds, w, h);
+        } else {
+          drawTerrain(ctx, terrain, zoom, panX, panY, w, h);
+        }
       } else {
-        drawTerrain(ctx, terrain, zoom, panX, panY, w, h);
+        ctx.fillStyle = '#06090e';
+        ctx.fillRect(0, 0, w, h);
       }
 
       // 2. Overlay
@@ -203,19 +211,27 @@ export function MapCanvas({
       drawGrid(ctx, zoom, panX, panY, w, h);
 
       // 4. Base zones
-      drawBaseZones(ctx, zones, zoom, panX, panY);
+      if (layers.baseZone) {
+        drawBaseZones(ctx, zones, zoom, panX, panY);
+      }
 
       // 6. Rails (SR-006)
-      drawRails(ctx, splines, zoom, panX, panY, w, h);
+      if (layers.rails) {
+        drawRails(ctx, splines, zoom, panX, panY, w, h);
+      }
 
       // 7. Drone links (SR-005)
-      drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp);
+      if (layers.drones) {
+        drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp);
+      }
 
       // 8. Entities (SR-009: timestamp for infection ring pulse)
       drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity, timestamp);
 
       // 9. Labels
-      drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
+      if (layers.labels) {
+        drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
+      }
     },
     [
       zoom,
@@ -227,6 +243,7 @@ export function MapCanvas({
       zones,
       hoveredEntity,
       selectedEntity,
+      layers,
       drawGrid,
       drawBaseZones,
     ]

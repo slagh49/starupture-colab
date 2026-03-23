@@ -5,7 +5,7 @@
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
-  font-family: inherit;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
   cursor: pointer;
   min-width: 180px;
 }

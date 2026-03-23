@@ -9,7 +9,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s;
-  font-family: inherit;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
 
 .button:hover:not(:disabled) {

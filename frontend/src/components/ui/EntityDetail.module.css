@@ -1,25 +1,26 @@
 .panel {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 280px;
-  background: rgba(13, 17, 23, 0.95);
-  border: 1px solid #1e2733;
-  border-radius: 6px;
+  bottom: 16px;
+  left: 16px;
+  width: 260px;
+  background: rgba(10, 14, 20, 0.92);
+  border: 1px solid #1a2332;
+  border-radius: 4px;
   z-index: 15;
   overflow: hidden;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid #1e2733;
 }
 
 .title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -28,11 +29,11 @@
   background: none;
   border: none;
   color: #6b7a8d;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   padding: 0 4px;
   line-height: 1;
-  font-family: monospace;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
 
 .closeBtn:hover {
@@ -40,14 +41,14 @@
 }
 
 .body {
-  padding: 10px 14px;
+  padding: 8px 12px;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .row:last-child {
@@ -55,18 +56,18 @@
 }
 
 .label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   color: #6b7a8d;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .value {
-  font-size: 12px;
+  font-size: 11px;
   color: #c8d0dc;
   text-align: right;
-  max-width: 160px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
