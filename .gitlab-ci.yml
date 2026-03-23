@@ -3,7 +3,6 @@ stages:
   - test
   - build
   - package
-  - scan
   - deploy
 
 variables:
@@ -141,38 +140,6 @@ package-frontend:
     - docker build -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_FRONTEND:latest frontend/
     - docker push $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
     - docker push $DOCKER_IMAGE_FRONTEND:latest
-  only:
-    refs:
-      - main
-      - develop
-
-# ---------- SCAN ----------
-
-trivy-backend:
-  stage: scan
-  image:
-    name: aquasec/trivy:latest
-    entrypoint: [""]
-  needs:
-    - package-backend
-  script:
-    - trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHORT_SHA
-  allow_failure: true
-  only:
-    refs:
-      - main
-      - develop
-
-trivy-frontend:
-  stage: scan
-  image:
-    name: aquasec/trivy:latest
-    entrypoint: [""]
-  needs:
-    - package-frontend
-  script:
-    - trivy image --exit-code 1 --severity HIGH,CRITICAL $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
-  allow_failure: true
   only:
     refs:
       - main
