@@ -286,7 +286,7 @@ class SaveParserServiceTest {
 
         @Test
         void shouldThrowOnInvalidZlibData() {
-            byte[] invalid = new byte[]{0x00, 0x00, 0x00, 0x00, 0xFF, 0xFE, 0xFD};
+            byte[] invalid = new byte[]{0x00, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFE, (byte) 0xFD};
             assertThatThrownBy(() -> service.decompressSav(invalid))
                     .isInstanceOf(IOException.class);
         }
