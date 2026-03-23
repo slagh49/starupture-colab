@@ -100,8 +100,9 @@ deploy-staging:
   script:
     - |
       ssh $DEPLOY_USER@$DEPLOY_HOST "
+        ssh-keyscan -H localhost >> ~/.ssh/known_hosts 2>/dev/null &&
         rm -rf $DEPLOY_PATH &&
-        git clone -b develop git@192.168.1.50:samy/starrupture-web.git $DEPLOY_PATH &&
+        git clone -b develop git@localhost:samy/starrupture-web.git $DEPLOY_PATH &&
         cd $DEPLOY_PATH/infra &&
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
         DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND \
@@ -127,8 +128,9 @@ deploy-prod:
   script:
     - |
       ssh $DEPLOY_USER@$DEPLOY_HOST "
+        ssh-keyscan -H localhost >> ~/.ssh/known_hosts 2>/dev/null &&
         rm -rf $DEPLOY_PATH &&
-        git clone -b main git@192.168.1.50:samy/starrupture-web.git $DEPLOY_PATH &&
+        git clone -b main git@localhost:samy/starrupture-web.git $DEPLOY_PATH &&
         cd $DEPLOY_PATH/infra &&
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
         DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND \
