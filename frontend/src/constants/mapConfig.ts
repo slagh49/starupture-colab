@@ -20,15 +20,7 @@ export interface MapImageConfig {
   };
 }
 
-export const MAP_IMAGE: MapImageConfig | null = {
-  path: '/map.png',
-  bounds: {
-    minX: -400000,
-    maxX: 50000,
-    minY: -300000,
-    maxY: 450000,
-  },
-};
+export const MAP_IMAGE: MapImageConfig | null = null;
 
 export const ZOOM_MIN = 0.00005;
 export const ZOOM_MAX = 0.02;
