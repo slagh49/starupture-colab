@@ -131,6 +131,37 @@ export function drawTerrain(
   ctx.restore();
 }
 
+/**
+ * Draws a map background image at the correct scale/position in world coordinates.
+ * Used as a replacement for the procedural fbm terrain when a map image is available.
+ */
+export function drawTerrainImage(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  zoom: number,
+  panX: number,
+  panY: number,
+  worldBounds: { minX: number; maxX: number; minY: number; maxY: number },
+  canvasWidth: number,
+  canvasHeight: number
+): void {
+  const worldW = worldBounds.maxX - worldBounds.minX;
+  const worldH = worldBounds.maxY - worldBounds.minY;
+
+  const screenX = worldBounds.minX * zoom + panX;
+  const screenY = worldBounds.minY * zoom + panY;
+  const screenW = worldW * zoom;
+  const screenH = worldH * zoom;
+
+  ctx.save();
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  ctx.fillStyle = '#06090e';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(img, screenX, screenY, screenW, screenH);
+  ctx.restore();
+}
+
 export function drawOverlay(
   ctx: CanvasRenderingContext2D,
   canvasWidth: number,

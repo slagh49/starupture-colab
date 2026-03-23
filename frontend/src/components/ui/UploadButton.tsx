@@ -29,12 +29,12 @@ export function UploadButton({ onUpload, loading }: Props): JSX.Element {
         disabled={loading}
         type="button"
       >
-        {loading ? 'UPLOADING...' : 'UPLOAD .SAV'}
+        {loading ? 'UPLOADING...' : 'UPLOAD .SAV / .JSON'}
       </button>
       <input
         ref={inputRef}
         type="file"
-        accept=".sav"
+        accept=".sav,.json"
         onChange={handleChange}
         className={styles.hidden}
       />

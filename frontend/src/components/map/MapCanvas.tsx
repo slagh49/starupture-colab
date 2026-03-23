@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/save.types';
 import { useAnimation } from '../../hooks/useAnimation';
-import { createTerrainCanvas, drawTerrain, drawOverlay } from './TerrainLayer';
+import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
 import { drawEntities, drawLabels } from './EntityLayer';
 import { drawDroneLinks } from './DroneLayer';
 import { drawRails } from './RailLayer';
@@ -10,6 +10,7 @@ import {
   GRID_SPACING,
   GRID_ZOOM_THRESHOLD,
   WORLD_BOUNDS,
+  MAP_IMAGE,
 } from '../../constants/mapConfig';
 import styles from './MapCanvas.module.css';
 
@@ -44,10 +45,20 @@ export function MapCanvas({
 }: Props): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const terrainRef = useRef<HTMLCanvasElement | null>(null);
+  const mapImageRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     terrainRef.current = createTerrainCanvas();
+  }, []);
+
+  useEffect(() => {
+    if (!MAP_IMAGE) return;
+    const img = new Image();
+    img.src = MAP_IMAGE.path;
+    img.onload = () => {
+      mapImageRef.current = img;
+    };
   }, []);
 
   useEffect(() => {
@@ -177,8 +188,13 @@ export function MapCanvas({
       const w = canvas.width;
       const h = canvas.height;
 
-      // 1. Terrain
-      drawTerrain(ctx, terrain, zoom, panX, panY, w, h);
+      // 1. Terrain (map image if available, fbm fallback)
+      const mapImage = mapImageRef.current;
+      if (mapImage && MAP_IMAGE) {
+        drawTerrainImage(ctx, mapImage, zoom, panX, panY, MAP_IMAGE.bounds, w, h);
+      } else {
+        drawTerrain(ctx, terrain, zoom, panX, panY, w, h);
+      }
 
       // 2. Overlay
       drawOverlay(ctx, w, h);

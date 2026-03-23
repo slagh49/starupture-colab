@@ -27,7 +27,8 @@ public class SaveController {
     @PostMapping
     public ResponseEntity<SaveSessionDto> uploadSave(@RequestParam("file") MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
-        if (filename == null || !filename.toLowerCase().endsWith(".sav")) {
+        if (filename == null ||
+                (!filename.toLowerCase().endsWith(".sav") && !filename.toLowerCase().endsWith(".json"))) {
             return ResponseEntity.badRequest().build();
         }
         if (file.isEmpty()) {

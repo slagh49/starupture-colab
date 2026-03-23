@@ -1,8 +1,33 @@
 export const WORLD_BOUNDS = {
-  minX: -450000,
-  maxX: 100000,
-  minY: -280000,
-  maxY: 80000,
+  minX: -400000,
+  maxX: 50000,
+  minY: -300000,
+  maxY: 450000,
+};
+
+/**
+ * Optional map background image configuration.
+ * Set `path` to the URL/path of the image to use it instead of the procedural fbm terrain.
+ * `bounds` defines the world-coordinate rectangle the image covers.
+ */
+export interface MapImageConfig {
+  path: string;
+  bounds: {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+  };
+}
+
+export const MAP_IMAGE: MapImageConfig | null = {
+  path: '/map.png',
+  bounds: {
+    minX: -400000,
+    maxX: 50000,
+    minY: -300000,
+    maxY: 450000,
+  },
 };
 
 export const ZOOM_MIN = 0.00005;

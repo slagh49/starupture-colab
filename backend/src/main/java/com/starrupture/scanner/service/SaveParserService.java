@@ -196,8 +196,18 @@ public class SaveParserService {
 
     /**
      * Parse coordinates from entity node.
+     * Supports both flat layout ({x, y, z}) and nested layout (spawnData.transform.translation.{x, y, z}).
      */
     private double[] extractCoordinates(JsonNode entityNode) {
+        // Try nested path first: spawnData.transform.translation
+        JsonNode translation = entityNode.path("spawnData").path("transform").path("translation");
+        if (!translation.isMissingNode() && translation.isObject()) {
+            double x = translation.path("x").asDouble(0.0);
+            double y = translation.path("y").asDouble(0.0);
+            double z = translation.path("z").asDouble(0.0);
+            return new double[]{x, y, z};
+        }
+        // Fallback to flat layout
         double x = entityNode.path("x").asDouble(0.0);
         double y = entityNode.path("y").asDouble(0.0);
         double z = entityNode.path("z").asDouble(0.0);
@@ -205,22 +215,70 @@ public class SaveParserService {
     }
 
     /**
-     * Main parsing method: decompresses .sav, parses JSON, extracts all entities.
+     * Read the file content as JSON string.
+     * If the content starts with '{', treat it as raw JSON (no decompression needed).
+     * Otherwise, attempt zlib decompression (legacy .sav format).
+     */
+    public String readFileContent(byte[] raw) throws IOException {
+        if (raw.length == 0) {
+            throw new IOException("Empty file");
+        }
+        // If it looks like JSON (starts with '{' or whitespace then '{'), return as-is
+        String asString = new String(raw, StandardCharsets.UTF_8);
+        String trimmed = asString.trim();
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+            return asString;
+        }
+        // Otherwise try zlib decompression (legacy .sav)
+        return decompressSav(raw);
+    }
+
+    /**
+     * Extract the entityConfigDataPath from an entity node.
+     * Supports both flat layout (entityConfigDataPath) and nested layout (spawnData.entityConfigDataPath).
+     */
+    private String extractConfigPath(JsonNode node) {
+        // Try nested path first: spawnData.entityConfigDataPath
+        JsonNode nested = node.path("spawnData").path("entityConfigDataPath");
+        if (!nested.isMissingNode() && nested.isTextual()) {
+            return nested.asText("");
+        }
+        // Fallback to flat layout
+        return node.path("entityConfigDataPath").asText("");
+    }
+
+    /**
+     * Main parsing method: accepts both .json and .sav files.
+     * For .json files, no decompression is needed.
+     * For .sav files, zlib decompression is attempted.
      */
     @Transactional
     public SaveSession parseSavFile(MultipartFile file) throws IOException {
         byte[] raw = file.getBytes();
-        String json = decompressSav(raw);
+        String json = readFileContent(raw);
 
         JsonNode root = objectMapper.readTree(json);
 
+        // Extract playtime from itemData.GameStateData if available
+        double playtime = root.path("itemData").path("GameStateData").path("playtimeDuration").asDouble(0.0);
+        // Fallback to root-level playtime
+        if (playtime == 0.0) {
+            playtime = root.path("playtime").asDouble(0.0);
+        }
+        // Also check worldTimeSeconds as fallback for worldTime
+        double worldTime = root.path("worldTimeSeconds").asDouble(0.0);
+        if (worldTime == 0.0) {
+            worldTime = root.path("worldTime").asDouble(0.0);
+        }
+
         // Create session from root metadata
+        String filename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown";
         SaveSession session = SaveSession.builder()
-                .filename(file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown.sav")
-                .sessionName(root.path("sessionName").asText(null))
-                .playtime(root.path("playtime").asDouble(0.0))
+                .filename(filename)
+                .sessionName(root.has("sessionName") ? root.path("sessionName").asText(null) : null)
+                .playtime(playtime)
                 .timestamp(root.path("timestamp").asText(null))
-                .worldTime(root.path("worldTime").asDouble(0.0))
+                .worldTime(worldTime)
                 .build();
 
         session = saveSessionRepository.save(session);
@@ -240,7 +298,7 @@ public class SaveParserService {
                 String gameId = entry.getKey();
                 JsonNode node = entry.getValue();
 
-                String configPath = node.path("entityConfigDataPath").asText("");
+                String configPath = extractConfigPath(node);
                 String category = classify(configPath);
                 String name = extractName(configPath);
                 double[] coords = extractCoordinates(node);
