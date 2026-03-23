@@ -1,93 +1,153 @@
-# starrupture-web
+# StarRupture Base Scanner
 
+Application web full-stack pour visualiser et analyser les sauvegardes du jeu **StarRupture** (Early Access, Creepy Jar).
 
+Uploadez un fichier `.sav` et explorez votre base industrielle sur Arcadia-7 : carte interactive 2D, flux de drones animés, tableau de production, alertes d'infection.
 
-## Getting started
+## Stack technique
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+| Couche | Technologie |
+|--------|-------------|
+| Backend API | Spring Boot 3.4 / Java 21 |
+| Frontend | React 18 / TypeScript 5 / Vite 5 |
+| Carte | Canvas 2D natif (terrain procédural fbm) |
+| Base de données | PostgreSQL 16 |
+| Cache | Redis 7 |
+| Reverse proxy | Nginx |
+| Conteneurisation | Docker Compose |
+| CI/CD | GitLab CE self-hosted |
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Architecture
 
 ```
-cd existing_repo
-git remote add origin http://192.168.1.50/samy/starrupture-web.git
-git branch -M main
-git push -uf origin main
+                    ┌─────────────┐
+                    │   Nginx     │ :8888
+                    │  (frontend) │
+                    └──────┬──────┘
+                           │ /api/*
+                    ┌──────▼──────┐
+                    │  Spring Boot│ :8080
+                    │  (backend)  │
+                    └──┬──────┬───┘
+                       │      │
+              ┌────────▼┐  ┌──▼─────┐
+              │PostgreSQL│  │ Redis  │
+              │  :5432   │  │ :6379  │
+              └──────────┘  └────────┘
 ```
 
-## Integrate with your tools
+## Structure du monorepo
 
-* [Set up project integrations](http://192.168.1.50/samy/starrupture-web/-/settings/integrations)
+```
+starrupture-web/
+├── .gitlab-ci.yml          # Pipeline CI/CD (build → package → deploy)
+├── backend/                # API REST Spring Boot
+│   ├── src/main/java/com/starrupture/scanner/
+│   │   ├── controller/     # Endpoints REST (saves, entities, links, summary)
+│   │   ├── service/        # Parser .sav (zlib + JSON + regex), EntityService
+│   │   ├── entity/         # Entités JPA (UUID PK)
+│   │   ├── dto/            # Data Transfer Objects
+│   │   ├── repository/     # Spring Data JPA
+│   │   ├── config/         # CORS, Redis cache
+│   │   └── exception/      # Error handling global
+│   └── src/main/resources/
+│       └── db/migration/   # Flyway V1 (schema) + V2 (indexes)
+├── frontend/               # SPA React + TypeScript
+│   └── src/
+│       ├── components/
+│       │   ├── map/        # MapCanvas, TerrainLayer, EntityLayer, DroneLayer, RailLayer
+│       │   ├── table/      # ProductionTable, MiniMap, EntityDetail
+│       │   └── ui/         # TabBar, Legend, Tooltip, Badge, UploadButton
+│       ├── hooks/          # useSaveData, useMapInteraction, useAnimation
+│       ├── pages/          # MapPage, ProductionPage
+│       ├── services/       # API Axios typé
+│       ├── constants/      # Couleurs, config carte
+│       └── types/          # Types DTO TypeScript
+├── infra/
+│   ├── docker-compose.yml  # Services: nginx, backend, postgres, redis
+│   ├── docker-compose.staging.yml
+│   └── nginx/nginx.conf
+└── docs/
+    ├── stories/            # User Stories (SR-001 à SR-012)
+    └── PROGRESS.md         # Suivi d'avancement
+```
 
-## Collaborate with your team
+## Fonctionnalites
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Carte interactive (MapPage)
+- Terrain procédural 2D (fbm, biomes alien)
+- Entites positionnees avec couleurs par categorie (machine, energie, infra, antenne, danger, loot)
+- Zoom molette centre sur curseur, pan clic-drag
+- Hover highlight + tooltip, selection avec panneau detail
+- Flux de drones animes (fleches vertes avec direction)
+- Rails DroneRail (orange) et Walkway (cyan pointille)
+- Alertes visuelles : ring rouge pulsant infection, badge OFF
 
-## Test and Deploy
+### Tableau de production (ProductionPage)
+- Liste triable et filtrable de toutes les machines
+- Recherche textuelle, filtre statut (on/off) et categorie
+- Badges colores categorie et infection
+- Minimap contextuelle centree sur l'entite selectionnee (rayon 60 000 unites)
+- Panneau detail avec infos completes et liens drones
 
-Use the built-in continuous integration in GitLab.
+### API REST
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+| Methode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/saves` | Upload et parse un fichier `.sav` |
+| GET | `/api/saves` | Liste des sessions |
+| DELETE | `/api/saves/{id}` | Supprime une session |
+| GET | `/api/saves/{id}/entities` | Entites (filtrable `?cat=`) |
+| GET | `/api/saves/{id}/links` | Flux drones |
+| GET | `/api/saves/{id}/splines` | Rails et splines |
+| GET | `/api/saves/{id}/zones` | Bounding boxes |
+| GET | `/api/saves/{id}/summary` | Statistiques agregees |
 
-***
+## Demarrage rapide
 
-# Editing this README
+### Prerequis
+- Docker et Docker Compose
+- Java 21 + Maven 3.9 (dev backend)
+- Node.js 20 (dev frontend)
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Dev local
 
-## Suggestions for a good README
+```bash
+# Frontend
+cd frontend && npm install && npm run dev
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+# Backend (necessite PostgreSQL + Redis)
+cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
 
-## Name
-Choose a self-explaining name for your project.
+### Production (Docker Compose)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```bash
+cd infra
+DB_PASSWORD=changeme \
+DOCKER_IMAGE_BACKEND=registry.example.com/backend:latest \
+DOCKER_IMAGE_FRONTEND=registry.example.com/frontend:latest \
+docker compose up -d
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+L'application est accessible sur le port **8888**.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Pipeline CI/CD
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```
+build (backend JAR + frontend dist)
+  → package (Docker images → GitLab Container Registry)
+    → deploy (git clone/pull + docker compose up sur le serveur)
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- **main** → deploy prod automatique
+- **develop** → deploy staging automatique
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## Avancement
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+| Sprint | Points | Statut |
+|--------|--------|--------|
+| S1 — Fondations (upload, parser, carte, zoom) | 26 | Termine |
+| S2 — Visualisation avancee (drones, rails, tableau, minimap, alertes) | 24 | Termine |
+| S3 — Filtres et CI/CD | 11 | En cours |
+| **Total** | **61** | |
