@@ -64,14 +64,22 @@ export function MapCanvas({
     };
   }, []);
 
+  const onCanvasBindRef = useRef(onCanvasBind);
+  const onCanvasUnbindRef = useRef(onCanvasUnbind);
+  const onResetViewRef = useRef(onResetView);
+  onCanvasBindRef.current = onCanvasBind;
+  onCanvasUnbindRef.current = onCanvasUnbind;
+  onResetViewRef.current = onResetView;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    onCanvasBind(canvas);
+    onCanvasBindRef.current(canvas);
     return () => {
-      onCanvasUnbind();
+      onCanvasUnbindRef.current();
     };
-  }, [onCanvasBind, onCanvasUnbind]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleResize = (): void => {
@@ -88,13 +96,14 @@ export function MapCanvas({
 
     const canvas = canvasRef.current;
     if (canvas) {
-      onResetView(canvas.width, canvas.height);
+      onResetViewRef.current(canvas.width, canvas.height);
     }
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [onResetView]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const drawGrid = useCallback(
     (

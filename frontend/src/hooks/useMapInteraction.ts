@@ -48,6 +48,8 @@ export function useMapInteraction(
 
   const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const stateRef = useRef({ zoom, panX, panY, isDragging });
+  stateRef.current = { zoom, panX, panY, isDragging };
 
   const findEntityAtScreen = useCallback(
     (sx: number, sy: number, currentZoom: number, currentPanX: number, currentPanY: number): GameEntity | null => {
@@ -95,10 +97,10 @@ export function useMapInteraction(
       const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
-      dragStartRef.current = { x: mx, y: my, panX, panY };
+      dragStartRef.current = { x: mx, y: my, panX: stateRef.current.panX, panY: stateRef.current.panY };
       setIsDragging(false);
     },
-    [panX, panY]
+    []
   );
 
   const handleMouseMove = useCallback(
@@ -136,7 +138,7 @@ export function useMapInteraction(
 
   const handleMouseUp = useCallback(
     (e: MouseEvent) => {
-      const wasDragging = isDragging;
+      const wasDragging = stateRef.current.isDragging;
       dragStartRef.current = null;
       setIsDragging(false);
 
@@ -144,11 +146,12 @@ export function useMapInteraction(
         const rect = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect();
         const mx = e.clientX - rect.left;
         const my = e.clientY - rect.top;
-        const hit = findEntityAtScreen(mx, my, zoom, panX, panY);
+        const { zoom: z, panX: px, panY: py } = stateRef.current;
+        const hit = findEntityAtScreen(mx, my, z, px, py);
         setSelectedEntity(hit);
       }
     },
-    [isDragging, findEntityAtScreen, zoom, panX, panY]
+    [findEntityAtScreen]
   );
 
   const handleMouseLeave = useCallback(() => {
