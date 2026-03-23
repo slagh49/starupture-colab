@@ -23,14 +23,14 @@ export interface MapImageConfig {
 export const MAP_IMAGE: MapImageConfig | null = null;
 
 export const ZOOM_MIN = 0.00005;
-export const ZOOM_MAX = 0.02;
+export const ZOOM_MAX = 0.5;
 export const ZOOM_DEFAULT = 0.0008;
 export const ZOOM_FACTOR = 1.15;
 
 export const GRID_SPACING = 50000;
 export const GRID_ZOOM_THRESHOLD = 0.0002;
 
-export const HIT_RADIUS_WORLD = 3000;
+export const HIT_RADIUS_WORLD = 1500;
 
 export const world2screen = (
   wx: number,
