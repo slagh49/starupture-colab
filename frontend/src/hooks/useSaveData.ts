@@ -4,6 +4,7 @@ import type {
   SaveSession,
   GameEntity,
   DroneLink,
+  RailSpline,
   BaseZone,
 } from '../types/save.types';
 
@@ -12,6 +13,7 @@ interface SaveDataState {
   activeSession: SaveSession | null;
   entities: GameEntity[];
   links: DroneLink[];
+  splines: RailSpline[];
   zones: BaseZone[];
   loading: boolean;
   error: string | null;
@@ -31,6 +33,7 @@ export function useSaveData(): UseSaveDataReturn {
   const [activeSession, setActiveSession] = useState<SaveSession | null>(null);
   const [entities, setEntities] = useState<GameEntity[]>([]);
   const [links, setLinks] = useState<DroneLink[]>([]);
+  const [splines, setSplines] = useState<RailSpline[]>([]);
   const [zones, setZones] = useState<BaseZone[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,13 +56,15 @@ export function useSaveData(): UseSaveDataReturn {
     setError(null);
     setActiveSession(session);
     try {
-      const [entitiesRes, linksRes, zonesRes] = await Promise.all([
+      const [entitiesRes, linksRes, splinesRes, zonesRes] = await Promise.all([
         savesApi.entities(session.id),
         savesApi.links(session.id),
+        savesApi.splines(session.id),
         savesApi.zones(session.id),
       ]);
       setEntities(entitiesRes.data);
       setLinks(linksRes.data);
+      setSplines(splinesRes.data);
       setZones(zonesRes.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load session data');
@@ -92,6 +97,7 @@ export function useSaveData(): UseSaveDataReturn {
         setActiveSession(null);
         setEntities([]);
         setLinks([]);
+        setSplines([]);
         setZones([]);
       }
     } catch (err) {
@@ -110,6 +116,7 @@ export function useSaveData(): UseSaveDataReturn {
     activeSession,
     entities,
     links,
+    splines,
     zones,
     loading,
     error,

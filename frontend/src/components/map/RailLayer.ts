@@ -1,17 +1,68 @@
 import type { RailSpline } from '../../types/save.types';
 import { world2screen } from '../../constants/mapConfig';
 
+/** Colors from constants/colors.ts: infra=#ff6b35 (orange), basecore=#00d4ff (cyan) */
+const DRONE_RAIL_COLOR = '#ff6b35';
+const WALKWAY_COLOR = '#00d4ff';
+
 export function drawRails(
   ctx: CanvasRenderingContext2D,
-  _splines: RailSpline[],
-  _zoom: number,
-  _panX: number,
-  _panY: number,
+  splines: RailSpline[],
+  zoom: number,
+  panX: number,
+  panY: number,
   _canvasWidth: number,
   _canvasHeight: number
 ): void {
-  // Sprint 2 implementation: draw DroneRail (orange solid) and Walkway (cyan dashed) splines
-  // Will iterate over splines and draw using world2screen conversion
-  void world2screen;
-  void ctx;
+  for (const spline of splines) {
+    if (spline.points.length < 2) continue;
+
+    const isDroneRail = spline.splineType === 'DroneRail';
+    ctx.strokeStyle = isDroneRail ? DRONE_RAIL_COLOR : WALKWAY_COLOR;
+    ctx.lineWidth = Math.max(1, (isDroneRail ? 2 : 1.5) * zoom * 1000);
+    ctx.globalAlpha = isDroneRail ? 0.8 : 0.6;
+
+    if (!isDroneRail) {
+      const dashLen = Math.max(4, 10 * zoom * 1000);
+      ctx.setLineDash([dashLen, dashLen * 0.5]);
+    }
+
+    ctx.beginPath();
+
+    const screenPoints = spline.points.map(p =>
+      world2screen(p.x, p.y, zoom, panX, panY)
+    );
+
+    const first = screenPoints[0];
+    if (!first) continue;
+    ctx.moveTo(first.x, first.y);
+
+    if (screenPoints.length === 2) {
+      const second = screenPoints[1];
+      if (second) {
+        ctx.lineTo(second.x, second.y);
+      }
+    } else {
+      // Catmull-Rom to Bezier conversion for smooth splines
+      for (let i = 0; i < screenPoints.length - 1; i++) {
+        const p0 = screenPoints[Math.max(0, i - 1)];
+        const p1 = screenPoints[i];
+        const p2 = screenPoints[Math.min(screenPoints.length - 1, i + 1)];
+        const p3 = screenPoints[Math.min(screenPoints.length - 1, i + 2)];
+
+        if (!p0 || !p1 || !p2 || !p3) continue;
+
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+    }
+
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
 }

@@ -20,7 +20,10 @@ export function App(): JSX.Element {
         {activeTab === 'map' ? (
           <MapPage saveData={saveData} mapInteraction={mapInteraction} />
         ) : (
-          <ProductionPage />
+          <ProductionPage
+            entities={saveData.entities}
+            links={saveData.links}
+          />
         )}
       </div>
     </div>

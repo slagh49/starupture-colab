@@ -1,11 +1,22 @@
 .container {
-  padding: 8px;
   background: #0d1117;
   border: 1px solid #1e2733;
   border-radius: 4px;
+  overflow: hidden;
 }
 
-.placeholder {
+.header {
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
   color: #4a5568;
-  font-size: 11px;
+  border-bottom: 1px solid #1e2733;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
 }

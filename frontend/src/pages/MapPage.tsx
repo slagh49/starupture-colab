@@ -19,6 +19,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     activeSession,
     entities,
     links,
+    splines,
     zones,
     loading,
     error,
@@ -60,6 +61,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
         <MapCanvas
           entities={entities}
           links={links}
+          splines={splines}
           zones={zones}
           zoom={zoom}
           panX={panX}

@@ -1,31 +1,22 @@
 .page {
   display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   background: #06090e;
+  overflow: hidden;
 }
 
-.placeholder {
-  text-align: center;
+.tablePanel {
+  flex: 1;
+  overflow: hidden;
+  border-right: 1px solid #1e2733;
 }
 
-.icon {
-  font-size: 48px;
-  color: #1e2733;
-  margin-bottom: 16px;
-  font-family: monospace;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #4a5568;
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  font-size: 12px;
-  color: #3a4556;
+.sidePanel {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  overflow-y: auto;
 }

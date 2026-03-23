@@ -21,13 +21,13 @@
 
 | ID | Story | Agent | Points | Statut |
 |---|---|---|---|---|
-| SR-005 | Flux drones animés | RILEY | 5 | IN_PROGRESS |
-| SR-006 | Rails et splines sur carte | RILEY | 3 | IN_PROGRESS |
-| SR-007 | Tableau de production | RILEY | 8 | IN_PROGRESS |
-| SR-008 | Minimap contextuelle | RILEY | 5 | IN_PROGRESS |
-| SR-009 | Alertes visuelles infection/OFF | RILEY | 3 | IN_PROGRESS |
+| SR-005 | Flux drones animés | RILEY | 5 | DONE |
+| SR-006 | Rails et splines sur carte | RILEY | 3 | DONE |
+| SR-007 | Tableau de production | RILEY | 8 | DONE |
+| SR-008 | Minimap contextuelle | RILEY | 5 | DONE |
+| SR-009 | Alertes visuelles infection/OFF | RILEY | 3 | DONE |
 
-**Total S2 : 24 pts · Complétés : 0 · En cours : 24**
+**Total S2 : 24 pts · Complétés : 24 · Restants : 0**
 
 ---
 
@@ -54,6 +54,6 @@ _Aucun blocage pour l'instant._
 | Sprint | Points | Statut |
 |---|---|---|
 | S1 | 26 | ✅ Terminé |
-| S2 | 24 | 🔵 En cours |
+| S2 | 24 | ✅ Terminé |
 | S3 | 11 | ⚪ À venir |
 | **Total** | **61** | |

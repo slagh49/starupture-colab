@@ -1,9 +1,10 @@
 import { useRef, useEffect, useCallback } from 'react';
-import type { GameEntity, DroneLink, BaseZone } from '../../types/save.types';
+import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/save.types';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawOverlay } from './TerrainLayer';
 import { drawEntities, drawLabels } from './EntityLayer';
 import { drawDroneLinks } from './DroneLayer';
+import { drawRails } from './RailLayer';
 import {
   world2screen,
   GRID_SPACING,
@@ -15,6 +16,7 @@ import styles from './MapCanvas.module.css';
 interface Props {
   entities: GameEntity[];
   links: DroneLink[];
+  splines: RailSpline[];
   zones: BaseZone[];
   zoom: number;
   panX: number;
@@ -29,6 +31,7 @@ interface Props {
 export function MapCanvas({
   entities,
   links,
+  splines,
   zones,
   zoom,
   panX,
@@ -186,17 +189,14 @@ export function MapCanvas({
       // 4. Base zones
       drawBaseZones(ctx, zones, zoom, panX, panY);
 
-      // 5. Platforms (Sprint 2)
-      // drawPlatforms(ctx, zoom, panX, panY, w, h);
+      // 6. Rails (SR-006)
+      drawRails(ctx, splines, zoom, panX, panY, w, h);
 
-      // 6. Rails (Sprint 2)
-      // drawRails(ctx, [], zoom, panX, panY, w, h);
-
-      // 7. Drone links
+      // 7. Drone links (SR-005)
       drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp);
 
-      // 8. Entities
-      drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity);
+      // 8. Entities (SR-009: timestamp for infection ring pulse)
+      drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity, timestamp);
 
       // 9. Labels
       drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
@@ -207,6 +207,7 @@ export function MapCanvas({
       panY,
       entities,
       links,
+      splines,
       zones,
       hoveredEntity,
       selectedEntity,

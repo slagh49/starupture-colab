@@ -27,6 +27,14 @@ export function Tooltip({ entity, screenX, screenY }: Props): JSX.Element {
       {entity.recipe && (
         <div className={styles.recipe}>{entity.recipe}</div>
       )}
+      {entity.infection > 0 && (
+        <div className={styles.infection} style={{ color: CAT_COLORS.danger }}>
+          Infection: {entity.infection}%
+        </div>
+      )}
+      {entity.status === 'off' && (
+        <div className={styles.statusOff}>OFF</div>
+      )}
     </div>
   );
 }

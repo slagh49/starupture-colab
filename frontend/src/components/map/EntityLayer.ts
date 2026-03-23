@@ -4,6 +4,8 @@ import { world2screen } from '../../constants/mapConfig';
 
 const BASE_RADIUS = 5;
 const LABEL_FONT_SIZE = 10;
+/** Infection ring color from CAT_COLORS.danger */
+const INFECTION_COLOR = '#ff3030';
 
 export function drawEntities(
   ctx: CanvasRenderingContext2D,
@@ -14,7 +16,8 @@ export function drawEntities(
   canvasWidth: number,
   canvasHeight: number,
   hoveredEntity: GameEntity | null,
-  selectedEntity: GameEntity | null
+  selectedEntity: GameEntity | null,
+  timestamp: number
 ): void {
   const radius = Math.max(2, BASE_RADIUS * Math.min(zoom * 2000, 3));
 
@@ -33,7 +36,27 @@ export function drawEntities(
     const color = CAT_COLORS[entity.category];
     const isHovered = hoveredEntity?.id === entity.id;
     const isSelected = selectedEntity?.id === entity.id;
+    const isOff = entity.status === 'off';
 
+    // Infection ring pulsating (SR-009)
+    if (entity.infection > 0) {
+      const pulseSpeed = 1500;
+      const pulseAlpha =
+        0.3 + 0.5 * Math.abs(Math.sin(timestamp / pulseSpeed * Math.PI));
+      const infectionIntensity = Math.min(entity.infection / 100, 1);
+      const ringRadius = radius * 1.8 + radius * 0.3 * Math.sin(timestamp / pulseSpeed * Math.PI);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(screen.x, screen.y, ringRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = INFECTION_COLOR;
+      ctx.lineWidth = Math.max(1.5, 2.5 * infectionIntensity);
+      ctx.globalAlpha = pulseAlpha * infectionIntensity;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Glow on hover/select
     if (isHovered || isSelected) {
       ctx.save();
       ctx.shadowColor = color;
@@ -45,10 +68,11 @@ export function drawEntities(
       ctx.restore();
     }
 
+    // Entity circle - reduced opacity for OFF entities (SR-009)
     ctx.beginPath();
     ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
-    ctx.globalAlpha = entity.status === 'off' ? 0.4 : 1;
+    ctx.globalAlpha = isOff ? 0.4 : 1;
     ctx.fill();
     ctx.globalAlpha = 1;
 
@@ -56,6 +80,23 @@ export function drawEntities(
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
       ctx.stroke();
+    }
+
+    // OFF badge (SR-009)
+    if (isOff) {
+      const badgeFontSize = Math.max(6, Math.min(8, 8 * zoom * 1500));
+      ctx.font = `bold ${badgeFontSize}px 'Segoe UI', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(6, 9, 14, 0.7)';
+      const offWidth = ctx.measureText('OFF').width;
+      ctx.fillRect(
+        screen.x - offWidth / 2 - 2,
+        screen.y + radius + 2,
+        offWidth + 4,
+        badgeFontSize + 2
+      );
+      ctx.fillStyle = '#777777';
+      ctx.fillText('OFF', screen.x, screen.y + radius + badgeFontSize + 1);
     }
   }
 }

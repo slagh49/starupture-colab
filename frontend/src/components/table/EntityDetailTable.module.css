@@ -1,11 +1,85 @@
 .container {
-  padding: 8px;
   background: #0d1117;
   border: 1px solid #1e2733;
   border-radius: 4px;
+  overflow: hidden;
 }
 
-.placeholder {
+.header {
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #4a5568;
+  border-bottom: 1px solid #1e2733;
+}
+
+.empty {
+  padding: 16px 10px;
+  text-align: center;
   color: #4a5568;
   font-size: 11px;
+}
+
+.body {
+  padding: 10px;
+}
+
+.entityName {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 11px;
+}
+
+.label {
+  color: #6b7a8d;
+}
+
+.value {
+  color: #c8d0dc;
+}
+
+.valueMono {
+  color: #c8d0dc;
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.linksSection {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #1e2733;
+}
+
+.linksTitle {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.linkRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 11px;
+}
+
+.linkItem {
+  color: #39ff14;
+}
+
+.linkCount {
+  color: #6b7a8d;
+  font-family: monospace;
 }

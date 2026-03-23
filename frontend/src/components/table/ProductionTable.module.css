@@ -1,8 +1,142 @@
 .container {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
-.placeholder {
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #1e2733;
+  flex-shrink: 0;
+}
+
+.search {
+  flex: 1;
+  min-width: 120px;
+  max-width: 280px;
+  padding: 6px 10px;
+  background: #0d1117;
+  border: 1px solid #1e2733;
+  border-radius: 4px;
+  color: #c8d0dc;
+  font-size: 12px;
+  outline: none;
+}
+
+.search:focus {
+  border-color: #30363d;
+}
+
+.search::placeholder {
+  color: #4a5568;
+}
+
+.filter {
+  padding: 6px 8px;
+  background: #0d1117;
+  border: 1px solid #1e2733;
+  border-radius: 4px;
+  color: #c8d0dc;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.count {
+  font-size: 11px;
+  color: #4a5568;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.th {
+  position: sticky;
+  top: 0;
+  background: #0d1117;
+  padding: 8px 10px;
+  text-align: left;
+  color: #6b7a8d;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1e2733;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.th:hover {
+  color: #c8d0dc;
+}
+
+.tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.tr:hover {
+  background: rgba(30, 39, 51, 0.5);
+}
+
+.trSelected {
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.trSelected:hover {
+  background: rgba(0, 212, 255, 0.12);
+}
+
+.td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #111820;
+  color: #c8d0dc;
+  white-space: nowrap;
+}
+
+.tdPosition {
+  padding: 6px 10px;
+  border-bottom: 1px solid #111820;
+  color: #6b7a8d;
+  font-family: monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.tdEmpty {
+  padding: 24px 10px;
+  text-align: center;
   color: #4a5568;
   font-size: 12px;
+}
+
+.statusOn {
+  color: #39ff14;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.statusOff {
+  color: #777777;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.noInfection {
+  color: #3a4556;
 }
