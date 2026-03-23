@@ -8,12 +8,12 @@
 
 | ID | Story | Agent | Points | Statut |
 |---|---|---|---|---|
-| SR-001 | Upload `.sav` + liste sessions | MORGAN | 5 | TODO |
-| SR-002 | Parser `.sav` → base de données | MORGAN | 8 | TODO |
-| SR-003 | Carte interactive + terrain procédural | RILEY | 8 | TODO |
-| SR-004 | Zoom/pan + clic entité + détail | RILEY | 5 | TODO |
+| SR-001 | Upload `.sav` + liste sessions | MORGAN | 5 | IN_PROGRESS |
+| SR-002 | Parser `.sav` → base de données | MORGAN | 8 | IN_PROGRESS |
+| SR-003 | Carte interactive + terrain procédural | RILEY | 8 | IN_PROGRESS |
+| SR-004 | Zoom/pan + clic entité + détail | RILEY | 5 | IN_PROGRESS |
 
-**Total S1 : 26 pts · Complétés : 0 · Restants : 26**
+**Total S1 : 26 pts · Complétés : 0 · En cours : 26**
 
 ---
 
