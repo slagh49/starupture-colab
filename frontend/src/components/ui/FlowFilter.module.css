@@ -1,0 +1,71 @@
+.panel {
+  position: absolute;
+  top: 132px;
+  right: 12px;
+  width: 168px;
+  background: rgba(10, 14, 20, 0.88);
+  border: 1px solid #1a2332;
+  border-radius: 4px;
+  padding: 8px 8px 6px;
+  z-index: 10;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #6b7a8d;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+
+.list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 4px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.row:hover {
+  background: rgba(57, 192, 200, 0.1);
+}
+
+.active {
+  background: rgba(57, 192, 200, 0.18);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.label {
+  flex: 1;
+  font-size: 10px;
+  color: #c8d0dc;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vol {
+  font-size: 9px;
+  color: #6b7a8d;
+  flex-shrink: 0;
+}

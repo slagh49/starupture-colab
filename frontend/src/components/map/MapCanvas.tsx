@@ -31,6 +31,7 @@ interface Props {
   hoveredEntity: GameEntity | null;
   selectedEntity: GameEntity | null;
   layers: LayerState;
+  selectedFlowItem: string | null;
   setZoom: (fn: (prev: number) => number) => void;
   setPanX: (fn: (prev: number) => number) => void;
   setPanY: (fn: (prev: number) => number) => void;
@@ -53,6 +54,7 @@ export function MapCanvas({
   hoveredEntity,
   selectedEntity,
   layers,
+  selectedFlowItem,
   setZoom,
   setPanX,
   setPanY,
@@ -320,14 +322,14 @@ export function MapCanvas({
         drawRails(ctx, splines, zoom, panX, panY, w, h);
       }
       if (layers.drones) {
-        drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp);
+        drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity);
       }
       drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity, timestamp);
       if (layers.labels) {
         drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
       }
     },
-    [zoom, panX, panY, entities, links, splines, zones, hoveredEntity, selectedEntity, layers, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, links, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);

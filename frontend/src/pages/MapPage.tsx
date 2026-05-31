@@ -8,6 +8,8 @@ import { EntityList } from '../components/ui/EntityList';
 import { LayerToggles } from '../components/ui/LayerToggles';
 import { ZoomControls } from '../components/ui/ZoomControls';
 import { CoordinateBar } from '../components/ui/CoordinateBar';
+import { FlowFilter } from '../components/ui/FlowFilter';
+import { flowItems } from '../components/map/DroneLayer';
 import type { LayerState } from '../components/ui/LayerToggles';
 import type { EntityCategory } from '../types/save.types';
 import type { UseSaveDataReturn } from '../hooks/useSaveData';
@@ -63,6 +65,9 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
   } = mapInteraction;
 
   const [activeFilters, setActiveFilters] = useState<Record<EntityCategory, boolean>>(createDefaultFilters);
+  const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
+
+  const flowItemList = useMemo(() => flowItems(links), [links]);
 
   const [layers, setLayers] = useState<LayerState>({
     terrain: true,
@@ -116,6 +121,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               hoveredEntity={hoveredEntity}
               selectedEntity={selectedEntity}
               layers={layers}
+              selectedFlowItem={selectedFlowItem}
               setZoom={setZoom}
               setPanX={setPanX}
               setPanY={setPanY}
@@ -128,6 +134,13 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
             />
 
             <LayerToggles layers={layers} onToggle={toggleLayer} />
+            {layers.drones && (
+              <FlowFilter
+                items={flowItemList}
+                selected={selectedFlowItem}
+                onSelect={setSelectedFlowItem}
+              />
+            )}
             <Legend />
             <ZoomControls
               onZoomIn={zoomIn}
