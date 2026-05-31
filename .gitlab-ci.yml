@@ -145,8 +145,5 @@ deploy-prod:
   environment:
     name: production
     url: http://192.168.1.50:8888
-  # Déploiement prod déclenché manuellement (bouton dans GitLab) tant qu'on
-  # n'a pas de v1 stable : on travaille sur main sans pousser en prod à chaque commit.
-  when: manual
   only:
     - main
