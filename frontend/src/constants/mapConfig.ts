@@ -20,7 +20,11 @@ export interface MapImageConfig {
   };
 }
 
-export const MAP_IMAGE: MapImageConfig | null = null;
+export const MAP_IMAGE: MapImageConfig | null = {
+  path: '/starrupture-map.webp',
+  // Rectangle monde couvert par l'image (carré). À calibrer visuellement.
+  bounds: { minX: -647360, maxX: 152640, minY: -349218, maxY: 450782 },
+};
 
 export const ZOOM_MIN = 0.00005;
 export const ZOOM_MAX = 0.5;
