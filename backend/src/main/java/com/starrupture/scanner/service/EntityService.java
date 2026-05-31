@@ -17,6 +17,7 @@ public class EntityService {
 
     private final SaveSessionRepository saveSessionRepository;
     private final GameEntityRepository gameEntityRepository;
+    private final GameEntityItemRepository gameEntityItemRepository;
     private final DroneLinkRepository droneLinkRepository;
     private final RailSplineRepository railSplineRepository;
     private final BaseZoneRepository baseZoneRepository;
@@ -53,6 +54,12 @@ public class EntityService {
         }
         return entities.stream()
                 .map(this::toEntityDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<GameEntityItemDto> getEntityItems(UUID sessionId, UUID entityId) {
+        return gameEntityItemRepository.findByEntityId(entityId).stream()
+                .map(this::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -142,6 +149,20 @@ public class EntityService {
                 .infection(entity.getInfection())
                 .foundable(entity.getFoundable())
                 .status(entity.getStatus())
+                .electricityLevel(entity.getElectricityLevel())
+                .craftProgress(entity.getCraftProgress())
+                .craftSpeed(entity.getCraftSpeed())
+                .outputFull(entity.getOutputFull())
+                .missingItems(entity.getMissingItems())
+                .priority(entity.getPriority())
+                .build();
+    }
+
+    private GameEntityItemDto toItemDto(GameEntityItem item) {
+        return GameEntityItemDto.builder()
+                .side(item.getSide())
+                .item(item.getItem())
+                .count(item.getCount())
                 .build();
     }
 

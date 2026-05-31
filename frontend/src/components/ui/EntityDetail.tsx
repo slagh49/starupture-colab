@@ -1,14 +1,40 @@
-import type { GameEntity } from '../../types/save.types';
+import { useState, useEffect } from 'react';
+import type { GameEntity, GameEntityItem } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { savesApi } from '../../services/api';
 import styles from './EntityDetail.module.css';
 
 interface Props {
   entity: GameEntity;
+  sessionId: string | null;
   onClose: () => void;
 }
 
-export function EntityDetail({ entity, onClose }: Props): JSX.Element {
+export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element {
   const color = CAT_COLORS[entity.category];
+  const [items, setItems] = useState<GameEntityItem[]>([]);
+
+  useEffect(() => {
+    if (!sessionId) {
+      setItems([]);
+      return;
+    }
+    let cancelled = false;
+    savesApi
+      .items(sessionId, entity.id)
+      .then(res => {
+        if (!cancelled) setItems(res.data);
+      })
+      .catch(() => {
+        if (!cancelled) setItems([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, entity.id]);
+
+  const inputs = items.filter(i => i.side === 'input');
+  const outputs = items.filter(i => i.side === 'output');
 
   return (
     <div className={styles.panel}>
@@ -44,6 +70,28 @@ export function EntityDetail({ entity, onClose }: Props): JSX.Element {
           value={entity.status.toUpperCase()}
           valueColor={entity.status === 'on' ? CAT_COLORS.machine : CAT_COLORS.danger}
         />
+        {entity.electricityLevel != null && (
+          <DetailRow label="ÉNERGIE" value={`x${entity.electricityLevel}`} />
+        )}
+        {entity.craftProgress != null && (
+          <DetailRow label="PRODUCTION" value={`${Math.round(entity.craftProgress * 100)}%`} />
+        )}
+        {entity.priority && (
+          <DetailRow label="PRIORITÉ" value={entity.priority} />
+        )}
+        {entity.outputFull === true && (
+          <DetailRow label="SORTIE" value="PLEINE" valueColor={CAT_COLORS.energy} />
+        )}
+        {entity.missingItems === true && (
+          <DetailRow label="MANQUE" value="INTRANTS" valueColor={CAT_COLORS.danger} />
+        )}
+
+        {inputs.length > 0 && (
+          <ItemSection title="ENTRÉE" items={inputs} />
+        )}
+        {outputs.length > 0 && (
+          <ItemSection title="SORTIE" items={outputs} />
+        )}
       </div>
     </div>
   );
@@ -63,5 +111,24 @@ function DetailRow({ label, value, valueColor }: DetailRowProps): JSX.Element {
         {value}
       </span>
     </div>
+  );
+}
+
+interface ItemSectionProps {
+  title: string;
+  items: GameEntityItem[];
+}
+
+function ItemSection({ title, items }: ItemSectionProps): JSX.Element {
+  return (
+    <>
+      {items.map((it, idx) => (
+        <DetailRow
+          key={`${title}-${it.item}-${idx}`}
+          label={idx === 0 ? title : ''}
+          value={`${it.item} ×${it.count}`}
+        />
+      ))}
+    </>
   );
 }

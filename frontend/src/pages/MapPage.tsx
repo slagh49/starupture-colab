@@ -147,6 +147,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
             {selectedEntity && (
               <EntityDetail
                 entity={selectedEntity}
+                sessionId={saveData.activeSession?.id ?? null}
                 onClose={() => setSelectedEntity(null)}
               />
             )}

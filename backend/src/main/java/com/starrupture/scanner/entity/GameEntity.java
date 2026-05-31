@@ -49,6 +49,23 @@ public class GameEntity {
     @Builder.Default
     private String status = "on";
 
+    @Column(name = "electricity_level")
+    private Integer electricityLevel;
+
+    @Column(name = "craft_progress")
+    private Double craftProgress;
+
+    @Column(name = "craft_speed")
+    private Double craftSpeed;
+
+    @Column(name = "output_full")
+    private Boolean outputFull;
+
+    @Column(name = "missing_items")
+    private Boolean missingItems;
+
+    private String priority;
+
     @Column(name = "raw_path")
     private String rawPath;
 }

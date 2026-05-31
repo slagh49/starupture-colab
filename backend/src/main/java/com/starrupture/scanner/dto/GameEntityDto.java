@@ -20,4 +20,10 @@ public class GameEntityDto {
     private Double infection;
     private Boolean foundable;
     private String status;
+    private Integer electricityLevel;
+    private Double craftProgress;
+    private Double craftSpeed;
+    private Boolean outputFull;
+    private Boolean missingItems;
+    private String priority;
 }

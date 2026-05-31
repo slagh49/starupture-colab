@@ -23,6 +23,18 @@ export interface GameEntity {
   infection: number;
   foundable: boolean;
   status: 'on' | 'off';
+  electricityLevel: number | null;
+  craftProgress: number | null;
+  craftSpeed: number | null;
+  outputFull: boolean | null;
+  missingItems: boolean | null;
+  priority: string | null;
+}
+
+export interface GameEntityItem {
+  side: 'input' | 'output';
+  item: string;
+  count: number;
 }
 
 export interface DroneLink {

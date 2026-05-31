@@ -26,6 +26,8 @@ class SaveParserServiceTest {
     @Mock
     private GameEntityRepository gameEntityRepository;
     @Mock
+    private GameEntityItemRepository gameEntityItemRepository;
+    @Mock
     private DroneLinkRepository droneLinkRepository;
     @Mock
     private RailSplineRepository railSplineRepository;
@@ -40,6 +42,7 @@ class SaveParserServiceTest {
                 new ObjectMapper(),
                 saveSessionRepository,
                 gameEntityRepository,
+                gameEntityItemRepository,
                 droneLinkRepository,
                 railSplineRepository,
                 baseZoneRepository

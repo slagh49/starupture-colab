@@ -27,6 +27,7 @@ public class SaveParserService {
     private final ObjectMapper objectMapper;
     private final SaveSessionRepository saveSessionRepository;
     private final GameEntityRepository gameEntityRepository;
+    private final GameEntityItemRepository gameEntityItemRepository;
     private final DroneLinkRepository droneLinkRepository;
     private final RailSplineRepository railSplineRepository;
     private final BaseZoneRepository baseZoneRepository;
@@ -35,6 +36,13 @@ public class SaveParserService {
     static final Pattern RECIPE = Pattern.compile("SelectedRecipe=\"[^']*'([^']+)'\"");
     static final Pattern INFECTION = Pattern.compile("CurrentInfectionLevel=([\\d.]+)");
     static final Pattern BUILDING_STATE = Pattern.compile("CrBuildingStateFragment\\(bDisabled=(True|False)");
+    static final Pattern ELECTRICITY = Pattern.compile("ElectricityMultiplierLevel=(\\d+)");
+    static final Pattern CRAFT_PROGRESS = Pattern.compile("CraftingProgress=([\\d.]+)");
+    static final Pattern CRAFT_SPEED = Pattern.compile("CraftingSpeed=([\\d.]+)");
+    static final Pattern OUTPUT_FULL = Pattern.compile("bOutputFull=(True|False)");
+    static final Pattern MISSING_ITEMS = Pattern.compile("bIsMissingItems=(True|False)");
+    static final Pattern PRIORITY = Pattern.compile("CrLogisticsRequestOptionsFragment\\(Priority=(\\w+)");
+    static final Pattern INV_ITEM = Pattern.compile("ItemDataBase=\"([^\"]+)\",Count=(\\d+)");
     static final Pattern DRONE_SRC = Pattern.compile("CurrentMovementStart=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_DST = Pattern.compile("CurrentMovementTarget=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_ITEM = Pattern.compile("ItemDataBase=\"([^\"]+)\"");
@@ -153,6 +161,115 @@ public class SaveParserService {
             }
         }
         return "on";
+    }
+
+    /** First integer captured by {@code pattern} across the fragments, or null. */
+    private Integer firstInt(List<String> fragments, Pattern pattern) {
+        for (String frag : fragments) {
+            Matcher m = pattern.matcher(frag);
+            if (m.find()) {
+                try {
+                    return Integer.parseInt(m.group(1));
+                } catch (NumberFormatException e) {
+                    log.warn("Failed to parse int from {}: {}", pattern.pattern(), m.group(1));
+                }
+            }
+        }
+        return null;
+    }
+
+    /** First double captured by {@code pattern} across the fragments, or null. */
+    private Double firstDouble(List<String> fragments, Pattern pattern) {
+        for (String frag : fragments) {
+            Matcher m = pattern.matcher(frag);
+            if (m.find()) {
+                try {
+                    return Double.parseDouble(m.group(1));
+                } catch (NumberFormatException e) {
+                    log.warn("Failed to parse double from {}: {}", pattern.pattern(), m.group(1));
+                }
+            }
+        }
+        return null;
+    }
+
+    /** First boolean captured by {@code pattern} (True/False) across the fragments, or null. */
+    private Boolean firstBool(List<String> fragments, Pattern pattern) {
+        for (String frag : fragments) {
+            Matcher m = pattern.matcher(frag);
+            if (m.find()) {
+                return "True".equals(m.group(1));
+            }
+        }
+        return null;
+    }
+
+    /** First string captured by {@code pattern} across the fragments, or null. */
+    private String firstString(List<String> fragments, Pattern pattern) {
+        for (String frag : fragments) {
+            Matcher m = pattern.matcher(frag);
+            if (m.find()) {
+                return m.group(1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extract input/output inventory items from the CrInventoryFragment.
+     * The fragment splits into InputInventoryContainer (before MainInventoryContainer=)
+     * and MainInventoryContainer (the output buffer).
+     */
+    public List<GameEntityItem> extractInventoryItems(List<String> fragments, GameEntity owner) {
+        List<GameEntityItem> items = new ArrayList<>();
+        for (String frag : fragments) {
+            if (!frag.contains("CrInventoryFragment")) {
+                continue;
+            }
+            int split = frag.indexOf("MainInventoryContainer=");
+            if (split >= 0) {
+                collectItems(items, owner, "input", frag.substring(0, split));
+                collectItems(items, owner, "output", frag.substring(split));
+            } else {
+                collectItems(items, owner, "input", frag);
+            }
+        }
+        return items;
+    }
+
+    private void collectItems(List<GameEntityItem> items, GameEntity owner, String side, String part) {
+        Matcher m = INV_ITEM.matcher(part);
+        while (m.find()) {
+            int count;
+            try {
+                count = Integer.parseInt(m.group(2));
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            items.add(GameEntityItem.builder()
+                    .entity(owner)
+                    .side(side)
+                    .item(cleanItemName(m.group(1)))
+                    .count(count)
+                    .build());
+        }
+    }
+
+    /** Reduce an ItemDataBase asset path to a readable item name (e.g. WolframOre). */
+    private String cleanItemName(String path) {
+        String s = path;
+        int dot = s.indexOf('.');
+        if (dot > 0) {
+            s = s.substring(0, dot);
+        }
+        int slash = s.lastIndexOf('/');
+        if (slash >= 0 && slash < s.length() - 1) {
+            s = s.substring(slash + 1);
+        }
+        if (s.startsWith("I_")) {
+            s = s.substring(2);
+        }
+        return s.isEmpty() ? "Unknown" : s;
     }
 
     /**
@@ -338,11 +455,23 @@ public class SaveParserService {
                         .infection(infection)
                         .foundable(foundable)
                         .status(status)
+                        .electricityLevel(firstInt(fragments, ELECTRICITY))
+                        .craftProgress(firstDouble(fragments, CRAFT_PROGRESS))
+                        .craftSpeed(firstDouble(fragments, CRAFT_SPEED))
+                        .outputFull(firstBool(fragments, OUTPUT_FULL))
+                        .missingItems(firstBool(fragments, MISSING_ITEMS))
+                        .priority(firstString(fragments, PRIORITY))
                         .rawPath(configPath)
                         .build();
 
                 entity = gameEntityRepository.save(entity);
                 entityMap.put(gameId, entity);
+
+                // Extract inventory items (input/output buffers)
+                List<GameEntityItem> inventoryItems = extractInventoryItems(fragments, entity);
+                if (!inventoryItems.isEmpty()) {
+                    gameEntityItemRepository.saveAll(inventoryItems);
+                }
 
                 // Extract drone link data
                 for (String frag : fragments) {

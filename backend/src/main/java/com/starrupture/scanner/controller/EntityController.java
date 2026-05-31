@@ -1,6 +1,7 @@
 package com.starrupture.scanner.controller;
 
 import com.starrupture.scanner.dto.GameEntityDto;
+import com.starrupture.scanner.dto.GameEntityItemDto;
 import com.starrupture.scanner.service.EntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,13 @@ public class EntityController {
             @RequestParam(name = "cat", required = false) String category) {
         List<GameEntityDto> entities = entityService.getEntities(sessionId, category);
         return ResponseEntity.ok(entities);
+    }
+
+    @GetMapping("/{entityId}/items")
+    public ResponseEntity<List<GameEntityItemDto>> getEntityItems(
+            @PathVariable UUID sessionId,
+            @PathVariable UUID entityId) {
+        List<GameEntityItemDto> items = entityService.getEntityItems(sessionId, entityId);
+        return ResponseEntity.ok(items);
     }
 }
