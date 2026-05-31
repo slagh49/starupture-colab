@@ -22,8 +22,9 @@ export interface MapImageConfig {
 
 export const MAP_IMAGE: MapImageConfig | null = {
   path: '/starrupture-map.webp',
-  // Rectangle monde couvert par l'image (carré). À calibrer visuellement.
-  bounds: { minX: -647360, maxX: 152640, minY: -349218, maxY: 450782 },
+  // Rectangle monde couvert par l'image, dérivé de la projection metaforge
+  // (worldExtent <-> tileExtent). Aligne les coordonnées de la save au pixel près.
+  bounds: { minX: -480142, maxX: 120114, minY: -378909, maxY: 219403 },
 };
 
 export const ZOOM_MIN = 0.00005;
