@@ -78,6 +78,7 @@ starrupture-web/
 - Terrain procédural 2D (fbm, biomes alien)
 - Entités positionnées avec couleurs par catégorie (machine, énergie, infra, antenne, danger, loot)
 - Zoom molette centré sur le curseur, déplacement par clic-glisser
+- Retour visuel du curseur (main ouverte au survol de la carte, fermée pendant le déplacement, pointeur sur une entité)
 - Survol avec surbrillance + infobulle, sélection avec panneau détail
 - Flux de drones animés (flèches vertes avec direction)
 - Rails DroneRail (orange) et Walkway (cyan pointillé)

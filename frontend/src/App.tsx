@@ -12,7 +12,7 @@ type TabId = 'map' | 'production';
 export function App(): JSX.Element {
   const [activeTab, setActiveTab] = useState<TabId>('map');
   const saveData = useSaveData();
-  const mapInteraction = useMapInteraction(saveData.entities);
+  const mapInteraction = useMapInteraction();
 
   return (
     <div className={styles.app}>

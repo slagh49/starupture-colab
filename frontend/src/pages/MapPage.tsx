@@ -49,8 +49,13 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     mouseScreenY,
     mouseWorldX,
     mouseWorldY,
-    bindCanvas,
-    unbindCanvas,
+    setZoom,
+    setPanX,
+    setPanY,
+    setHoveredEntity,
+    setMouseScreenX,
+    setMouseScreenY,
+    setIsDragging,
     resetView,
     setSelectedEntity,
     zoomIn,
@@ -111,8 +116,14 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               hoveredEntity={hoveredEntity}
               selectedEntity={selectedEntity}
               layers={layers}
-              onCanvasBind={bindCanvas}
-              onCanvasUnbind={unbindCanvas}
+              setZoom={setZoom}
+              setPanX={setPanX}
+              setPanY={setPanY}
+              setHoveredEntity={setHoveredEntity}
+              setSelectedEntity={setSelectedEntity}
+              setMouseScreenX={setMouseScreenX}
+              setMouseScreenY={setMouseScreenY}
+              setIsDragging={setIsDragging}
               onResetView={resetView}
             />
 
