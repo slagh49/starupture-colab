@@ -34,6 +34,7 @@ public class SaveParserService {
     // Regex patterns for fragment extraction
     static final Pattern RECIPE = Pattern.compile("SelectedRecipe=\"[^']*'([^']+)'\"");
     static final Pattern INFECTION = Pattern.compile("CurrentInfectionLevel=([\\d.]+)");
+    static final Pattern BUILDING_STATE = Pattern.compile("CrBuildingStateFragment\\(bDisabled=(True|False)");
     static final Pattern DRONE_SRC = Pattern.compile("CurrentMovementStart=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_DST = Pattern.compile("CurrentMovementTarget=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_ITEM = Pattern.compile("ItemDataBase=\"([^\"]+)\"");
@@ -136,6 +137,22 @@ public class SaveParserService {
             }
         }
         return 0.0;
+    }
+
+    /**
+     * Extract the on/off status from fragment values.
+     * Reads {@code CrBuildingStateFragment(bDisabled=...)} : bDisabled=True means the
+     * machine is turned off in-game. Defaults to "on" when the fragment is absent
+     * (entities without a building state are considered active).
+     */
+    public String extractStatus(List<String> fragments) {
+        for (String frag : fragments) {
+            Matcher m = BUILDING_STATE.matcher(frag);
+            if (m.find()) {
+                return "True".equals(m.group(1)) ? "off" : "on";
+            }
+        }
+        return "on";
     }
 
     /**
@@ -306,6 +323,7 @@ public class SaveParserService {
 
                 String recipe = extractRecipe(fragments);
                 double infection = extractInfection(fragments);
+                String status = extractStatus(fragments);
                 boolean foundable = "loot".equals(category);
 
                 GameEntity entity = GameEntity.builder()
@@ -319,7 +337,7 @@ public class SaveParserService {
                         .recipe(recipe)
                         .infection(infection)
                         .foundable(foundable)
-                        .status("on")
+                        .status(status)
                         .rawPath(configPath)
                         .build();
 
