@@ -47,6 +47,6 @@ export interface AppConfigInput {
 export const adminApi = {
   getConfig: ()                    => api.get<AppConfig>('/admin/config'),
   saveConfig: (cfg: AppConfigInput) => api.put<AppConfig>('/admin/config', cfg),
-  test:      ()                    => api.post<{ ok: boolean }>('/admin/test'),
+  test:      ()                    => api.post<{ ok: boolean; message: string }>('/admin/test'),
   importNow: ()                    => api.post<SaveSession>('/admin/import'),
 };

@@ -58,10 +58,11 @@ public class AdminService {
         return configRepository.save(c);
     }
 
-    public boolean testConnection() {
+    /** Returns null on success, otherwise the error message. */
+    public String testConnection() {
         AppConfig c = getOrCreateConfig();
         if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
-            return false;
+            return "Hôte FTP manquant";
         }
         return ftpService.test(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
                 c.getFtpUser(), c.getFtpPassword());

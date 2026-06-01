@@ -65,7 +65,7 @@ export function AdminPage({ onImported }: Props): JSX.Element {
       const res = await adminApi.test();
       setStatus(res.data.ok
         ? { kind: 'ok', text: 'Connexion FTP réussie.' }
-        : { kind: 'err', text: 'Connexion FTP échouée (vérifie hôte/identifiants).' });
+        : { kind: 'err', text: 'Connexion FTP échouée : ' + (res.data.message ?? 'cause inconnue') });
     } catch {
       setStatus({ kind: 'err', text: 'Connexion FTP échouée.' });
     } finally {

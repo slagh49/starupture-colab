@@ -32,7 +32,8 @@ public class AdminController {
 
     @PostMapping("/test")
     public ResponseEntity<Map<String, Object>> test() {
-        return ResponseEntity.ok(Map.of("ok", adminService.testConnection()));
+        String err = adminService.testConnection();
+        return ResponseEntity.ok(Map.of("ok", err == null, "message", err != null ? err : "Connexion OK"));
     }
 
     @PostMapping("/import")
