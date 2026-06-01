@@ -28,10 +28,13 @@ const ALL_CATEGORIES: EntityCategory[] = [
   'basecore', 'machine', 'energy', 'infra', 'antenna', 'danger', 'loot',
 ];
 
+// Shown by default; the others are toggled on from the filter bar when needed.
+const DEFAULT_ON: EntityCategory[] = ['basecore', 'machine'];
+
 function createDefaultFilters(): Record<EntityCategory, boolean> {
   const filters = {} as Record<EntityCategory, boolean>;
   for (const cat of ALL_CATEGORIES) {
-    filters[cat] = true;
+    filters[cat] = DEFAULT_ON.includes(cat);
   }
   return filters;
 }
