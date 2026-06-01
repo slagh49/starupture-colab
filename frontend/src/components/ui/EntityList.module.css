@@ -67,6 +67,52 @@
   background: rgba(0, 212, 255, 0.12);
 }
 
+.more {
+  font-size: 10px;
+  color: #6b7a8d;
+  text-align: center;
+  padding: 8px 4px;
+  font-style: italic;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.group:hover {
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.chevron {
+  font-size: 9px;
+  color: #6b7a8d;
+  width: 9px;
+  flex-shrink: 0;
+}
+
+.groupName {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #c8d0dc;
+}
+
+.groupItems {
+  padding-left: 10px;
+  border-left: 1px solid #1a2332;
+  margin-left: 11px;
+}
+
 .dot {
   display: inline-block;
   width: 7px;

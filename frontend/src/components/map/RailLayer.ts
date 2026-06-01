@@ -17,6 +17,20 @@ export function drawRails(
   for (const spline of splines) {
     if (spline.points.length < 2) continue;
 
+    const screenPoints = spline.points.map(p =>
+      world2screen(p.x, p.y, zoom, panX, panY)
+    );
+
+    // Viewport culling: skip splines whose bounding box is fully off-screen.
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const p of screenPoints) {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.y > maxY) maxY = p.y;
+    }
+    if (maxX < 0 || minX > _canvasWidth || maxY < 0 || minY > _canvasHeight) continue;
+
     const isDroneRail = spline.splineType === 'DroneRail';
     ctx.strokeStyle = isDroneRail ? DRONE_RAIL_COLOR : WALKWAY_COLOR;
     ctx.lineWidth = Math.max(1, (isDroneRail ? 2 : 1.5) * zoom * 1000);
@@ -28,10 +42,6 @@ export function drawRails(
     }
 
     ctx.beginPath();
-
-    const screenPoints = spline.points.map(p =>
-      world2screen(p.x, p.y, zoom, panX, panY)
-    );
 
     const first = screenPoints[0];
     if (!first) continue;

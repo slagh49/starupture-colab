@@ -24,7 +24,7 @@ export function itemColor(item: string, alpha = 1): string {
   return `hsla(${itemHue(item)}, 80%, 60%, ${alpha})`;
 }
 
-interface FlowEdge {
+export interface FlowEdge {
   from: GameEntity;
   to: GameEntity;
   item: string;
@@ -104,8 +104,7 @@ function bezier(t: number, a: ScreenArc): { x: number; y: number } {
  */
 export function drawDroneLinks(
   ctx: CanvasRenderingContext2D,
-  links: DroneLink[],
-  entities: GameEntity[],
+  allEdges: FlowEdge[],
   zoom: number,
   panX: number,
   panY: number,
@@ -113,11 +112,7 @@ export function drawDroneLinks(
   selectedItem: string | null = null,
   hoveredEntity: GameEntity | null = null
 ): void {
-  const entityMap = new Map<string, GameEntity>();
-  for (const e of entities) entityMap.set(e.id, e);
-
-  let edges = aggregateFlows(links, entityMap);
-  if (selectedItem) edges = edges.filter(e => e.item === selectedItem);
+  const edges = selectedItem ? allEdges.filter(e => e.item === selectedItem) : allEdges;
   if (edges.length === 0) return;
 
   const maxVol = edges.reduce((m, e) => Math.max(m, e.vol), 1);

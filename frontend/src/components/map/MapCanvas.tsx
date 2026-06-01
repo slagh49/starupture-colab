@@ -1,10 +1,10 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useMemo } from 'react';
 import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/save.types';
 import type { LayerState } from '../ui/LayerToggles';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
 import { drawEntities, drawLabels } from './EntityLayer';
-import { drawDroneLinks } from './DroneLayer';
+import { drawDroneLinks, aggregateFlows } from './DroneLayer';
 import { drawRails } from './RailLayer';
 import {
   world2screen,
@@ -19,6 +19,21 @@ import {
   HIT_RADIUS_WORLD,
 } from '../../constants/mapConfig';
 import styles from './MapCanvas.module.css';
+
+// Spatial grid for hover hit-testing: cell size comfortably larger than the hit
+// radius so a 3x3 neighbourhood always contains any entity within range.
+const HIT_CELL = HIT_RADIUS_WORLD * 3;
+
+function buildEntityGrid(entities: GameEntity[]): Map<string, GameEntity[]> {
+  const grid = new Map<string, GameEntity[]>();
+  for (const e of entities) {
+    const key = `${Math.floor(e.x / HIT_CELL)},${Math.floor(e.y / HIT_CELL)}`;
+    const cell = grid.get(key);
+    if (cell) cell.push(e);
+    else grid.set(key, [e]);
+  }
+  return grid;
+}
 
 interface Props {
   entities: GameEntity[];
@@ -81,6 +96,18 @@ export function MapCanvas({
   panXRef.current = panX;
   panYRef.current = panY;
   entitiesRef.current = entities;
+
+  // Aggregate flows once per data change, not every animation frame.
+  const flowEdges = useMemo(() => {
+    const map = new Map<string, GameEntity>();
+    for (const e of entities) map.set(e.id, e);
+    return aggregateFlows(links, map);
+  }, [entities, links]);
+
+  // Spatial index for hover hit-testing (rebuilt only when entities change).
+  const entityGrid = useMemo(() => buildEntityGrid(entities), [entities]);
+  const entityGridRef = useRef(entityGrid);
+  entityGridRef.current = entityGrid;
 
   useEffect(() => {
     terrainRef.current = createTerrainCanvas();
@@ -156,15 +183,24 @@ export function MapCanvas({
 
     const findEntity = (sx: number, sy: number): GameEntity | null => {
       const world = screen2world(sx, sy, zoomRef.current, panXRef.current, panYRef.current);
+      const cx = Math.floor(world.x / HIT_CELL);
+      const cy = Math.floor(world.y / HIT_CELL);
+      const grid = entityGridRef.current;
       let closest: GameEntity | null = null;
-      let closestDist = HIT_RADIUS_WORLD;
-      for (const entity of entitiesRef.current) {
-        const dx = entity.x - world.x;
-        const dy = entity.y - world.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = entity;
+      let closestSq = HIT_RADIUS_WORLD * HIT_RADIUS_WORLD;
+      for (let gx = cx - 1; gx <= cx + 1; gx++) {
+        for (let gy = cy - 1; gy <= cy + 1; gy++) {
+          const cell = grid.get(`${gx},${gy}`);
+          if (!cell) continue;
+          for (const entity of cell) {
+            const dx = entity.x - world.x;
+            const dy = entity.y - world.y;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < closestSq) {
+              closestSq = distSq;
+              closest = entity;
+            }
+          }
         }
       }
       return closest;
@@ -322,14 +358,14 @@ export function MapCanvas({
         drawRails(ctx, splines, zoom, panX, panY, w, h);
       }
       if (layers.drones) {
-        drawDroneLinks(ctx, links, entities, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity);
+        drawDroneLinks(ctx, flowEdges, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity);
       }
       drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity, timestamp);
       if (layers.labels) {
         drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
       }
     },
-    [zoom, panX, panY, entities, links, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, links, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);
