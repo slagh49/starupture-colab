@@ -28,6 +28,30 @@ interface SaveDataActions {
 
 export type UseSaveDataReturn = SaveDataState & SaveDataActions;
 
+/**
+ * The backend stores spline points as a JSON string (JSONB column) holding an
+ * array of [x, y] pairs, and exposes it as-is. Normalize to an array of
+ * { x, y } objects so consumers (RailLayer, MiniMap) can use it directly.
+ */
+function normalizeSpline(spline: RailSpline): RailSpline {
+  let raw: unknown = spline.points;
+  if (typeof raw === 'string') {
+    try {
+      raw = JSON.parse(raw);
+    } catch {
+      raw = [];
+    }
+  }
+  const points = Array.isArray(raw)
+    ? raw.map(p =>
+        Array.isArray(p)
+          ? { x: Number(p[0]), y: Number(p[1]) }
+          : (p as { x: number; y: number })
+      )
+    : [];
+  return { ...spline, points };
+}
+
 export function useSaveData(): UseSaveDataReturn {
   const [sessions, setSessions] = useState<SaveSession[]>([]);
   const [activeSession, setActiveSession] = useState<SaveSession | null>(null);
@@ -64,7 +88,7 @@ export function useSaveData(): UseSaveDataReturn {
       ]);
       setEntities(entitiesRes.data);
       setLinks(linksRes.data);
-      setSplines(splinesRes.data);
+      setSplines(splinesRes.data.map(normalizeSpline));
       setZones(zonesRes.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load session data');
