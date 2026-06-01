@@ -92,6 +92,28 @@
   background: rgba(0, 212, 255, 0.06);
 }
 
+.subgroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 3px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.subgroup:hover {
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.subgroup .groupName {
+  font-weight: 400;
+  color: #9aa4b2;
+}
+
 .chevron {
   font-size: 9px;
   color: #6b7a8d;
