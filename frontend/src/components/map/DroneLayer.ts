@@ -99,6 +99,34 @@ function bezier(t: number, a: ScreenArc): { x: number; y: number } {
   };
 }
 
+/** Tangent (derivative) of the quadratic bezier at t — gives the flow direction. */
+function bezierTangent(t: number, a: ScreenArc): { x: number; y: number } {
+  const u = 1 - t;
+  return {
+    x: 2 * u * (a.cx - a.px) + 2 * t * (a.qx - a.cx),
+    y: 2 * u * (a.cy - a.py) + 2 * t * (a.qy - a.cy),
+  };
+}
+
+/** Draw a chevron arrowhead at (x, y) pointing along `angle`. */
+function drawArrowHead(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number, angle: number, size: number, color: string
+): void {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(size, 0);
+  ctx.lineTo(-size * 0.8, size * 0.72);
+  ctx.lineTo(-size * 0.35, 0);
+  ctx.lineTo(-size * 0.8, -size * 0.72);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
+
 /**
  * Draw logistics flows as weighted curved arcs coloured by resource, with
  * directional particles. `selectedItem` filters to one resource (null = all);
@@ -141,18 +169,18 @@ export function drawDroneLinks(
     ctx.lineCap = 'round';
     ctx.stroke();
 
-    // directional particles (origin -> destination)
+    // directional arrowheads travelling origin -> destination
     if (involved) {
       const count = Math.max(2, Math.round(tn * 7));
       const speed = 0.12 + tn * 0.18;
+      const size = Math.max(4, width * 1.5);
       for (let i = 0; i < count; i++) {
         const tt = ((time * speed) + i / count) % 1;
         const pt = bezier(tt, arc);
+        const tan = bezierTangent(tt, arc);
+        const angle = Math.atan2(tan.y, tan.x);
         const fade = Math.sin(tt * Math.PI);
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, width * 0.55, 0, Math.PI * 2);
-        ctx.fillStyle = itemColor(e.item, 0.9 * fade);
-        ctx.fill();
+        drawArrowHead(ctx, pt.x, pt.y, angle, size, itemColor(e.item, 0.95 * fade));
       }
     }
   }
