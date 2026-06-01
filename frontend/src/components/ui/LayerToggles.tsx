@@ -6,6 +6,7 @@ export interface LayerState {
   rails: boolean;
   baseZone: boolean;
   labels: boolean;
+  infection: boolean;
 }
 
 interface LayerDef {
@@ -20,6 +21,7 @@ const LAYERS: LayerDef[] = [
   { key: 'rails',    label: 'RAILS',       icon: '═' },
   { key: 'baseZone', label: 'ZONE BASE',   icon: '□' },
   { key: 'labels',   label: 'LABELS',      icon: 'A' },
+  { key: 'infection', label: 'INFECTION',  icon: '☣' },
 ];
 
 interface Props {

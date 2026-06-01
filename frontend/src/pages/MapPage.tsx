@@ -105,7 +105,6 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
 
   const [activeFilters, setActiveFilters] = useState<Record<EntityCategory, boolean>>(createDefaultFilters);
   const [nameFilter, setNameFilter] = useState('');
-  const [infectedOnly, setInfectedOnly] = useState(false);
   const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
 
   const flowItemList = useMemo(() => flowItems(links), [links]);
@@ -117,6 +116,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     rails: true,
     baseZone: true,
     labels: true,
+    infection: true,
   });
 
   const toggleFilter = useCallback((cat: EntityCategory) => {
@@ -127,36 +127,21 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  // While the infection filter is active, hide the base-zone rectangles and the
-  // rail network so the few infected buildings (red rings) stand out clearly.
-  // The user's own layer toggles are preserved underneath.
-  const effectiveLayers = useMemo<LayerState>(
-    () => infectedOnly ? { ...layers, baseZone: false, rails: false } : layers,
-    [layers, infectedOnly]
-  );
-
-  // Total count of infected (non-structural) entities, shown on the toggle.
-  const infectedCount = useMemo(
-    () => entities.filter(e => (e.infection ?? 0) > 0 && !isStructural(e)).length,
-    [entities]
-  );
-
-  // A name filter or the "infected only" toggle take over the category filters:
-  // the map then shows the matching entities across every category. Structural
-  // tiles stay excluded; the full set still feeds entityById for link lookups.
+  // A name filter takes over the category filters: the map then shows the
+  // matching entities across every category. Structural tiles stay excluded;
+  // the full set still feeds entityById for link lookups. When the infection
+  // layer is on, infected buildings are always kept (even if their category is
+  // toggled off) so they — and their red ring — are visible.
   const filteredEntities = useMemo(() => {
     const q = nameFilter.trim().toLowerCase();
     let list = entities.filter(e => !isStructural(e));
     if (q) {
       list = list.filter(e => displayName(e).toLowerCase().includes(q));
-    } else if (!infectedOnly) {
-      list = list.filter(e => activeFilters[e.category]);
-    }
-    if (infectedOnly) {
-      list = list.filter(e => (e.infection ?? 0) > 0);
+    } else {
+      list = list.filter(e => activeFilters[e.category] || (layers.infection && (e.infection ?? 0) > 0));
     }
     return list;
-  }, [entities, activeFilters, nameFilter, infectedOnly]);
+  }, [entities, activeFilters, nameFilter, layers.infection]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -167,13 +152,13 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     return () => window.clearTimeout(id);
   }, [zoom, panX, panY]);
 
-  // With a name/infection filter active, list every match (they may be
-  // off-screen); otherwise restrict the list to the viewport for performance.
+  // With a name filter active, list every match (they may be off-screen);
+  // otherwise restrict the list to the viewport for performance.
   const visibleEntities = useMemo(
-    () => (nameFilter.trim() || infectedOnly)
+    () => nameFilter.trim()
       ? filteredEntities
       : entitiesInView(filteredEntities, view, mapContainerRef.current),
-    [filteredEntities, view, nameFilter, infectedOnly]
+    [filteredEntities, view, nameFilter]
   );
 
   const handleRecenter = useCallback(() => {
@@ -202,15 +187,6 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               {filteredEntities.length} entité{filteredEntities.length > 1 ? 's' : ''} — la carte n'affiche que ce filtre
             </div>
           )}
-          <label className={`${styles.infectionToggle} ${infectedOnly ? styles.infectionOn : ''}`}>
-            <input
-              type="checkbox"
-              checked={infectedOnly}
-              onChange={e => setInfectedOnly(e.target.checked)}
-            />
-            <span>☣ Infectés uniquement</span>
-            <em className={styles.infectionCount}>{infectedCount}</em>
-          </label>
           <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
           <EntityList
             entities={visibleEntities}
@@ -232,7 +208,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               panY={panY}
               hoveredEntity={hoveredEntity}
               selectedEntity={selectedEntity}
-              layers={effectiveLayers}
+              layers={layers}
               selectedFlowItem={selectedFlowItem}
               setZoom={setZoom}
               setPanX={setPanX}

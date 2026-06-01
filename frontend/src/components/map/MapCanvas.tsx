@@ -3,7 +3,7 @@ import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/sa
 import type { LayerState } from '../ui/LayerToggles';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
-import { drawEntities, drawLabels, drawEntityHighlight } from './EntityLayer';
+import { drawEntities, drawLabels, drawEntityHighlight, drawInfectionRings } from './EntityLayer';
 import { drawDroneLinks, aggregateFlows } from './DroneLayer';
 import { drawRails } from './RailLayer';
 import {
@@ -103,6 +103,9 @@ export function MapCanvas({
     for (const e of entities) map.set(e.id, e);
     return aggregateFlows(links, map);
   }, [entities, links]);
+
+  // Infected entities get a pulsing ring on the animated layer (cheap: few of them).
+  const infectedEntities = useMemo(() => entities.filter(e => e.infection > 0), [entities]);
 
   // Spatial index for hover hit-testing (rebuilt only when entities change).
   const entityGrid = useMemo(() => buildEntityGrid(entities), [entities]);
@@ -376,7 +379,7 @@ export function MapCanvas({
           if (layers.baseZone) drawBaseZones(sctx, zones, zoom, panX, panY);
           if (layers.rails) drawRails(sctx, splines, zoom, panX, panY, w, h);
           // Plain entities (no hover/selection glow — that goes on the live layer).
-          drawEntities(sctx, entities, zoom, panX, panY, w, h, null, null, 0);
+          drawEntities(sctx, entities, zoom, panX, panY, w, h, null, null);
           if (layers.labels) drawLabels(sctx, entities, zoom, panX, panY, w, h, selectedEntity);
           staticDirtyRef.current = false;
         }
@@ -389,6 +392,9 @@ export function MapCanvas({
       if (layers.drones) {
         drawDroneLinks(ctx, flowEdges, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity, selectedEntity);
       }
+      if (layers.infection) {
+        drawInfectionRings(ctx, infectedEntities, zoom, panX, panY, w, h, timestamp);
+      }
       if (selectedEntity) {
         drawEntityHighlight(ctx, selectedEntity, zoom, panX, panY, w, h, true);
       }
@@ -396,7 +402,7 @@ export function MapCanvas({
         drawEntityHighlight(ctx, hoveredEntity, zoom, panX, panY, w, h, false);
       }
     },
-    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, infectedEntities, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);

@@ -17,8 +17,7 @@ export function drawEntities(
   canvasWidth: number,
   canvasHeight: number,
   hoveredEntity: GameEntity | null,
-  selectedEntity: GameEntity | null,
-  timestamp: number
+  selectedEntity: GameEntity | null
 ): void {
   const maxR = Math.max(2, Math.min(zoom * 3500, 7));
 
@@ -43,23 +42,9 @@ export function drawEntities(
     const isSelected = selectedEntity?.id === entity.id;
     const isOff = entity.status === 'off';
 
-    // Infection ring pulsating (SR-009)
-    if (entity.infection > 0) {
-      const pulseSpeed = 1500;
-      const pulseAlpha =
-        0.3 + 0.5 * Math.abs(Math.sin(timestamp / pulseSpeed * Math.PI));
-      const infectionIntensity = Math.min(entity.infection / 100, 1);
-      const ringRadius = radius * 1.8 + radius * 0.3 * Math.sin(timestamp / pulseSpeed * Math.PI);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(screen.x, screen.y, ringRadius, 0, Math.PI * 2);
-      ctx.strokeStyle = INFECTION_COLOR;
-      ctx.lineWidth = Math.max(1.5, 2.5 * infectionIntensity);
-      ctx.globalAlpha = pulseAlpha * infectionIntensity;
-      ctx.stroke();
-      ctx.restore();
-    }
+    // Infection markers are drawn on the animated layer (drawInfectionRings)
+    // so they pulse and stay visible — the static ring here was nearly
+    // invisible because its alpha was scaled by infection/100.
 
     // Glow on hover/select
     if (isHovered || isSelected) {
@@ -103,6 +88,52 @@ export function drawEntities(
       ctx.fillStyle = '#777777';
       ctx.fillText('OFF', screen.x, screen.y + radius + badgeFontSize + 1);
     }
+  }
+}
+
+/**
+ * Draw a bright pulsing red ring on every infected entity. Runs on the animated
+ * layer each frame so the ring actually pulses, and any infection > 0 is clearly
+ * visible regardless of its magnitude (values range from ~0.01 to 15+).
+ */
+export function drawInfectionRings(
+  ctx: CanvasRenderingContext2D,
+  entities: GameEntity[],
+  zoom: number,
+  panX: number,
+  panY: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  timestamp: number
+): void {
+  const maxR = Math.max(2, Math.min(zoom * 3500, 7));
+  const phase = Math.abs(Math.sin(timestamp / 650));
+  const alpha = 0.55 + 0.45 * phase;
+
+  for (const entity of entities) {
+    if (!(entity.infection > 0)) continue;
+    const screen = world2screen(entity.x, entity.y, zoom, panX, panY);
+    if (
+      screen.x < -20 || screen.x > canvasWidth + 20 ||
+      screen.y < -20 || screen.y > canvasHeight + 20
+    ) {
+      continue;
+    }
+
+    const isInfra = entity.category === 'infra';
+    const radius = isInfra ? Math.max(1.5, Math.min(zoom * 1500, 3)) : maxR;
+    const ringRadius = Math.max(6, radius * 2.2 + 2 + radius * 0.5 * phase);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(screen.x, screen.y, ringRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = INFECTION_COLOR;
+    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = INFECTION_COLOR;
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.restore();
   }
 }
 

@@ -80,43 +80,6 @@
   border-bottom: 1px solid #1e2733;
 }
 
-/* Infection filter */
-.infectionToggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #9aa6b4;
-  cursor: pointer;
-  border-bottom: 1px solid #1e2733;
-  user-select: none;
-}
-
-.infectionToggle:hover {
-  color: #cdd6e0;
-}
-
-.infectionToggle input {
-  accent-color: #ff3030;
-  cursor: pointer;
-}
-
-.infectionOn {
-  color: #ff6b6b;
-  background: rgba(255, 48, 48, 0.08);
-}
-
-.infectionCount {
-  margin-left: auto;
-  font-style: normal;
-  font-size: 11px;
-  padding: 1px 7px;
-  border-radius: 9px;
-  background: rgba(255, 48, 48, 0.18);
-  color: #ff6b6b;
-}
-
 /* Map area (center) */
 .mapArea {
   display: flex;
