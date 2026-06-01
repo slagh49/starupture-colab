@@ -222,14 +222,16 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
             />
 
             <LayerToggles layers={layers} onToggle={toggleLayer} />
-            {layers.drones && (
-              <FlowFilter
-                items={flowItemList}
-                selected={selectedFlowItem}
-                onSelect={setSelectedFlowItem}
-              />
-            )}
-            <Legend />
+            <div className={styles.rightStack}>
+              <Legend />
+              {layers.drones && (
+                <FlowFilter
+                  items={flowItemList}
+                  selected={selectedFlowItem}
+                  onSelect={setSelectedFlowItem}
+                />
+              )}
+            </div>
             <ZoomControls
               onZoomIn={zoomIn}
               onZoomOut={zoomOut}

@@ -1,13 +1,9 @@
 .panel {
-  position: absolute;
-  top: 132px;
-  right: 12px;
   width: 168px;
   background: rgba(10, 14, 20, 0.88);
   border: 1px solid #1a2332;
   border-radius: 4px;
   padding: 8px 8px 6px;
-  z-index: 10;
   font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
 

@@ -94,3 +94,15 @@
   overflow: hidden;
 }
 
+/* Pile de panneaux haut-droite : empilés verticalement sans superposition */
+.rightStack {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
