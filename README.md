@@ -59,7 +59,7 @@ starrupture-web/
 │       │   ├── table/      # ProductionTable, MiniMap, EntityDetail
 │       │   └── ui/         # TabBar, Legend, Tooltip, Badge, UploadButton
 │       ├── hooks/          # useSaveData, useMapInteraction, useAnimation
-│       ├── pages/          # MapPage, ProductionPage
+│       ├── pages/          # MapPage, ProgressionPage, AdminPage
 │       ├── services/       # API Axios typé
 │       ├── constants/      # Couleurs, configuration carte
 │       └── types/          # Types DTO TypeScript
@@ -80,16 +80,13 @@ starrupture-web/
 - Zoom molette centré sur le curseur, déplacement par clic-glisser
 - Retour visuel du curseur (main ouverte au survol de la carte, fermée pendant le déplacement, pointeur sur une entité)
 - Survol avec surbrillance + infobulle, sélection avec panneau détail
-- Flux de drones animés (flèches vertes avec direction)
+- **Flux logistiques** en arcs courbes colorés par ressource, avec **flèches directionnelles animées** (sens producteur → consommateur)
 - Rails DroneRail (orange) et Walkway (cyan pointillé)
 - Alertes visuelles : anneau rouge pulsant pour l'infection, badge OFF
-
-### Tableau de production (ProductionPage)
-- Liste triable et filtrable de toutes les machines
-- Recherche textuelle, filtre par statut (on/off) et catégorie
-- Badges colorés pour catégorie et infection
-- Minimap contextuelle centrée sur l'entité sélectionnée (rayon 60 000 unités)
-- Panneau détail avec informations complètes et liens drones
+- **Filtre par nom** : n'affiche que les entités dont le nom correspond (ex. `soufre-`), toutes catégories confondues
+- **Filtre infection** : isole les bâtiments infectés (masque zones et rails pour les faire ressortir)
+- Filtres par catégorie + liste latérale groupée (catégorie → type), restreinte au viewport
+- La sauvegarde la plus récente est chargée automatiquement au démarrage
 
 ### Import automatique (Administration)
 
