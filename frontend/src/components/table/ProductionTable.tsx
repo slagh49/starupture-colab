@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { GameEntity, EntityCategory } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { cleanName, cleanRecipe } from '../../utils/format';
 import { Badge } from '../ui/Badge';
 import styles from './ProductionTable.module.css';
 
@@ -158,14 +159,14 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
                   className={rowClass}
                   onClick={() => onSelectEntity(isSelected ? null : entity)}
                 >
-                  <td className={styles.td}>{entity.name}</td>
+                  <td className={styles.td}>{cleanName(entity.name)}</td>
                   <td className={styles.td}>
                     <Badge
                       label={CAT_LABELS[entity.category]}
                       color={CAT_COLORS[entity.category]}
                     />
                   </td>
-                  <td className={styles.td}>{entity.recipe ?? '-'}</td>
+                  <td className={styles.td}>{cleanRecipe(entity.recipe) ?? '-'}</td>
                   <td className={styles.td}>
                     <span
                       className={

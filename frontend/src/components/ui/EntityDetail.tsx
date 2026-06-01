@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GameEntity, GameEntityItem } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { cleanName, cleanRecipe } from '../../utils/format';
 import { savesApi } from '../../services/api';
 import styles from './EntityDetail.module.css';
 
@@ -40,7 +41,7 @@ export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element
     <div className={styles.panel}>
       <div className={styles.header}>
         <span className={styles.title} style={{ color }}>
-          {entity.name}
+          {cleanName(entity.name)}
         </span>
         <button
           className={styles.closeBtn}
@@ -63,7 +64,7 @@ export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element
           valueColor={entity.infection > 0 ? CAT_COLORS.danger : undefined}
         />
         {entity.recipe && (
-          <DetailRow label="RECETTE" value={entity.recipe} />
+          <DetailRow label="RECETTE" value={cleanRecipe(entity.recipe) ?? entity.recipe} />
         )}
         <DetailRow
           label="STATUT"

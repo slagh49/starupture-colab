@@ -1,6 +1,7 @@
 import { memo, useMemo, useState } from 'react';
 import type { GameEntity, EntityCategory } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { cleanName } from '../../utils/format';
 import styles from './EntityList.module.css';
 
 interface Props {
@@ -71,7 +72,7 @@ function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Elem
                         className={`${styles.item} ${isSelected ? styles.selected : ''}`}
                         onClick={() => onSelect(entity)}
                       >
-                        <span className={styles.name}>{entity.name}</span>
+                        <span className={styles.name}>{cleanName(entity.name)}</span>
                         {entity.category === 'machine' && entity.status === 'on' && (
                           <span className={styles.badgeOn}>ON</span>
                         )}

@@ -1,6 +1,7 @@
 import type { GameEntity } from '../../types/save.types';
 import { CAT_COLORS } from '../../constants/colors';
 import { world2screen } from '../../constants/mapConfig';
+import { cleanName } from '../../utils/format';
 
 const BASE_RADIUS = 5;
 const LABEL_FONT_SIZE = 10;
@@ -162,7 +163,7 @@ export function drawLabels(
   ctx.font = `${fontSize}px 'Segoe UI', sans-serif`;
   ctx.textAlign = 'center';
 
-  const showLabelsZoom = 0.001;
+  const showLabelsZoom = 0.0035;
 
   for (const entity of entities) {
     const isSelected = selectedEntity?.id === entity.id;
@@ -186,9 +187,10 @@ export function drawLabels(
 
     const labelY = screen.y - 10;
     const color = CAT_COLORS[entity.category];
+    const text = cleanName(entity.name);
 
     ctx.fillStyle = 'rgba(6, 9, 14, 0.7)';
-    const nameWidth = ctx.measureText(entity.name).width;
+    const nameWidth = ctx.measureText(text).width;
     ctx.fillRect(
       screen.x - nameWidth / 2 - 3,
       labelY - fontSize + 1,
@@ -197,23 +199,6 @@ export function drawLabels(
     );
 
     ctx.fillStyle = color;
-    ctx.fillText(entity.name, screen.x, labelY);
-
-    if (entity.recipe) {
-      const recipeY = labelY + fontSize + 2;
-      const recipeText = entity.recipe;
-      const recipeWidth = ctx.measureText(recipeText).width;
-
-      ctx.fillStyle = 'rgba(6, 9, 14, 0.7)';
-      ctx.fillRect(
-        screen.x - recipeWidth / 2 - 3,
-        recipeY - fontSize + 1,
-        recipeWidth + 6,
-        fontSize + 2
-      );
-
-      ctx.fillStyle = '#aab0bc';
-      ctx.fillText(recipeText, screen.x, recipeY);
-    }
+    ctx.fillText(text, screen.x, labelY);
   }
 }
