@@ -22,6 +22,64 @@
   overflow: hidden;
 }
 
+/* Name filter */
+.nameFilter {
+  position: relative;
+  padding: 10px 10px 6px;
+  border-bottom: 1px solid #1e2733;
+}
+
+.nameFilter input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 26px 7px 9px;
+  background: #060910;
+  border: 1px solid #2a3645;
+  border-radius: 4px;
+  color: #cdd6e0;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.nameFilter input:focus {
+  border-color: #00d4ff;
+}
+
+.nameFilter input::placeholder {
+  color: #5b6776;
+}
+
+.nameFilter button {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #8a97a6;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nameFilter button:hover {
+  color: #00d4ff;
+}
+
+.nameFilterHint {
+  padding: 4px 12px 8px;
+  font-size: 11px;
+  color: #00d4ff;
+  border-bottom: 1px solid #1e2733;
+}
+
 /* Map area (center) */
 .mapArea {
   display: flex;

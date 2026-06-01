@@ -11,7 +11,7 @@ import { CoordinateBar } from '../components/ui/CoordinateBar';
 import { FlowFilter } from '../components/ui/FlowFilter';
 import { flowItems } from '../components/map/DroneLayer';
 import { screen2world, WORLD_BOUNDS } from '../constants/mapConfig';
-import { isStructural } from '../utils/format';
+import { isStructural, displayName } from '../utils/format';
 import type { GameEntity } from '../types/save.types';
 import type { LayerState } from '../components/ui/LayerToggles';
 import type { EntityCategory } from '../types/save.types';
@@ -104,6 +104,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
   } = mapInteraction;
 
   const [activeFilters, setActiveFilters] = useState<Record<EntityCategory, boolean>>(createDefaultFilters);
+  const [nameFilter, setNameFilter] = useState('');
   const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
 
   const flowItemList = useMemo(() => flowItems(links), [links]);
@@ -125,12 +126,17 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  // Category-filtered, structural tiles (platforms/rails) excluded everywhere
-  // (map + list). The full set is still used for link resolution via entityById.
-  const filteredEntities = useMemo(
-    () => entities.filter(e => activeFilters[e.category] && !isStructural(e)),
-    [entities, activeFilters]
-  );
+  // When a name filter is active it takes over: the map shows only entities
+  // whose display name matches (any category), ignoring the category toggles.
+  // Otherwise we fall back to the category filters. Structural tiles
+  // (platforms/rails) stay excluded; the full set still feeds entityById.
+  const filteredEntities = useMemo(() => {
+    const q = nameFilter.trim().toLowerCase();
+    if (q) {
+      return entities.filter(e => !isStructural(e) && displayName(e).toLowerCase().includes(q));
+    }
+    return entities.filter(e => activeFilters[e.category] && !isStructural(e));
+  }, [entities, activeFilters, nameFilter]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -141,9 +147,13 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     return () => window.clearTimeout(id);
   }, [zoom, panX, panY]);
 
+  // With a name filter active, list every match (they may be off-screen);
+  // otherwise restrict the list to the current viewport for performance.
   const visibleEntities = useMemo(
-    () => entitiesInView(filteredEntities, view, mapContainerRef.current),
-    [filteredEntities, view]
+    () => nameFilter.trim()
+      ? filteredEntities
+      : entitiesInView(filteredEntities, view, mapContainerRef.current),
+    [filteredEntities, view, nameFilter]
   );
 
   const handleRecenter = useCallback(() => {
@@ -155,6 +165,23 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
       <div className={styles.body}>
         {/* Sidebar */}
         <aside className={styles.sidebar}>
+          <div className={styles.nameFilter}>
+            <input
+              type="text"
+              value={nameFilter}
+              onChange={e => setNameFilter(e.target.value)}
+              placeholder="Filtrer par nom (ex. soufre-)"
+              aria-label="Filtrer les entités par nom"
+            />
+            {nameFilter && (
+              <button type="button" onClick={() => setNameFilter('')} aria-label="Effacer le filtre">×</button>
+            )}
+          </div>
+          {nameFilter.trim() && (
+            <div className={styles.nameFilterHint}>
+              {filteredEntities.length} entité{filteredEntities.length > 1 ? 's' : ''} — la carte n'affiche que ce filtre
+            </div>
+          )}
           <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
           <EntityList
             entities={visibleEntities}

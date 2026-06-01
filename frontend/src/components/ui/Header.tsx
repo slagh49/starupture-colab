@@ -1,29 +1,24 @@
 import type { SaveSession, GameEntity, DroneLink } from '../../types/save.types';
 import { UploadButton } from './UploadButton';
-import { SessionSelector } from './SessionSelector';
 import { formatPlaytime } from '../../utils/format';
 import styles from './Header.module.css';
 
 interface Props {
-  sessions: SaveSession[];
   activeSession: SaveSession | null;
   entities: GameEntity[];
   links: DroneLink[];
   loading: boolean;
   error: string | null;
   onUpload: (file: File) => void;
-  onSelectSession: (session: SaveSession) => void;
 }
 
 export function Header({
-  sessions,
   activeSession,
   entities,
   links,
   loading,
   error,
   onUpload,
-  onSelectSession,
 }: Props): JSX.Element {
   const machineCount = entities.filter(e => e.category === 'machine').length;
   const droneCount = links.reduce((sum, l) => sum + l.droneCount, 0);
@@ -42,11 +37,6 @@ export function Header({
       </div>
 
       <div className={styles.center}>
-        <SessionSelector
-          sessions={sessions}
-          activeSession={activeSession}
-          onSelect={onSelectSession}
-        />
         <UploadButton onUpload={onUpload} loading={loading} />
         {error && <span className={styles.error}>{error}</span>}
       </div>
