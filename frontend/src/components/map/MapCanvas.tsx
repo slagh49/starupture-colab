@@ -231,16 +231,17 @@ export function MapCanvas({
       setMouseScreenX(mx);
       setMouseScreenY(my);
 
-      if (dragStartRef.current) {
-        const dx = mx - dragStartRef.current.x;
-        const dy = my - dragStartRef.current.y;
+      const start = dragStartRef.current;
+      if (start) {
+        const dx = mx - start.x;
+        const dy = my - start.y;
         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
           isDraggingRef.current = true;
           setIsDragging(true);
         }
         canvas.style.cursor = 'grabbing';
-        setPanX(() => dragStartRef.current!.panX + dx);
-        setPanY(() => dragStartRef.current!.panY + dy);
+        setPanX(() => start.panX + dx);
+        setPanY(() => start.panY + dy);
       } else {
         const hit = findEntity(mx, my);
         setHoveredEntity(hit);
