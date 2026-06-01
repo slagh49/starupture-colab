@@ -10,6 +10,8 @@ interface Props {
   loading: boolean;
   error: string | null;
   onUpload: (file: File) => void;
+  username: string;
+  onLogout: () => void;
 }
 
 export function Header({
@@ -19,6 +21,8 @@ export function Header({
   loading,
   error,
   onUpload,
+  username,
+  onLogout,
 }: Props): JSX.Element {
   const machineCount = entities.filter(e => e.category === 'machine').length;
   const droneCount = links.reduce((sum, l) => sum + l.droneCount, 0);
@@ -64,6 +68,10 @@ export function Header({
         <span className={styles.stat}>
           <span className={styles.statLabel}>SAVE</span>
           <span className={styles.statValue}>{saveDate}</span>
+        </span>
+        <span className={styles.user}>
+          <span className={styles.statLabel}>{username}</span>
+          <button type="button" className={styles.logout} onClick={onLogout} title="Déconnexion">⏻</button>
         </span>
       </div>
     </header>

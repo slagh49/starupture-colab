@@ -1,0 +1,134 @@
+.section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #1e2733;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #00d4ff;
+  margin: 0 0 16px;
+}
+
+.createRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.input,
+.select {
+  padding: 7px 9px;
+  background: #060910;
+  border: 1px solid #2a3645;
+  border-radius: 4px;
+  color: #e6edf3;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #00d4ff;
+}
+
+.input {
+  width: 180px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: #6b7a8d;
+  font-weight: 500;
+  border-bottom: 1px solid #1e2733;
+}
+
+.table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #131a23;
+}
+
+.name {
+  color: #e6edf3;
+  font-weight: 600;
+}
+
+.role {
+  padding: 2px 8px;
+  border-radius: 9px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  background: rgba(120, 130, 145, 0.18);
+  color: #9aa6b4;
+}
+
+.admin {
+  background: rgba(0, 212, 255, 0.18);
+  color: #00d4ff;
+}
+
+.pwCell {
+  display: flex;
+  gap: 6px;
+}
+
+.btn,
+.btnPrimary,
+.btnDanger {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid #2a3645;
+  background: transparent;
+  color: #cdd6e0;
+}
+
+.btnPrimary {
+  background: #00d4ff;
+  border-color: #00d4ff;
+  color: #06090e;
+  font-weight: 700;
+}
+
+.btnDanger {
+  border-color: rgba(255, 48, 48, 0.4);
+  color: #ff6b6b;
+}
+
+.btn:disabled,
+.btnPrimary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.ok {
+  background: rgba(57, 255, 20, 0.1);
+  border: 1px solid rgba(57, 255, 20, 0.35);
+  color: #7dff5c;
+}
+
+.err {
+  background: rgba(255, 48, 48, 0.1);
+  border: 1px solid rgba(255, 48, 48, 0.4);
+  color: #ff6b6b;
+}

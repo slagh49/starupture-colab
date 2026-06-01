@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { SaveSession } from '../types/save.types';
 import { adminApi } from '../services/api';
+import { UserManagement } from '../components/admin/UserManagement';
 import styles from './AdminPage.module.css';
 
 interface Props {
@@ -149,6 +150,8 @@ export function AdminPage({ onImported }: Props): JSX.Element {
         Si une URL passerelle est renseignée, le téléchargement passe par le Web-FTP HTTP de l'hébergeur
         (fonctionne serveur de jeu allumé) ; sinon il utilise le FTP direct. Laisse le champ vide pour forcer le FTP.
       </div>
+
+      <UserManagement />
     </div>
   );
 }

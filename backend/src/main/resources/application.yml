@@ -15,6 +15,15 @@ spring:
     max-file-size: 50MB
     max-request-size: 50MB
 
+app:
+  auth:
+    # HMAC signing secret for auth tokens. Override in prod via APP_AUTH_SECRET.
+    secret: ${APP_AUTH_SECRET:starrupture-homelab-default-hmac-secret-change-me-9f3a2b7c1d}
+    token-ttl-hours: 168
+    # Default admin seeded on first start if no users exist.
+    default-admin-user: ${APP_ADMIN_USER:admin}
+    default-admin-password: ${APP_ADMIN_PASSWORD:admin}
+
 server:
   port: 8080
 

@@ -15,6 +15,60 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
 });
 
+export const TOKEN_KEY = 'authToken';
+
+// Attach the bearer token to every request.
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// On 401 (expired/invalid token), drop it and let the app fall back to login.
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401 && localStorage.getItem(TOKEN_KEY)) {
+      localStorage.removeItem(TOKEN_KEY);
+      window.dispatchEvent(new Event('auth:logout'));
+    }
+    return Promise.reject(err);
+  }
+);
+
+export interface AuthUser {
+  username: string;
+  role: string;
+}
+
+export const authApi = {
+  login: (username: string, password: string) =>
+    api.post<{ token: string; username: string; role: string }>('/auth/login', { username, password }),
+  me: () => api.get<AuthUser>('/auth/me'),
+};
+
+export interface CreateUserInput {
+  username: string;
+  password: string;
+  role: string;
+}
+
+export interface ManagedUser {
+  id: string;
+  username: string;
+  role: string;
+  createdAt: string | null;
+}
+
+export const usersApi = {
+  list:        ()                          => api.get<ManagedUser[]>('/admin/users'),
+  create:      (input: CreateUserInput)    => api.post<ManagedUser>('/admin/users', input),
+  setPassword: (id: string, password: string) => api.put(`/admin/users/${id}/password`, { password }),
+  remove:      (id: string)                => api.delete(`/admin/users/${id}`),
+};
+
 const formData = (file: File): FormData => {
   const fd = new FormData();
   fd.append('file', file);
