@@ -15,18 +15,18 @@ import java.io.IOException;
 public class FtpService {
 
     /**
-     * Connect and log in, trying FTPS (explicit TLS) first then plain FTP —
-     * managed game-server hosts (e.g. 4Netplayers) usually require FTPS.
+     * Connect and log in, trying plain FTP first then FTPS (explicit TLS).
      * Returns a ready FTPClient (passive, binary) or throws with the cause.
      */
     private FTPClient connectAndLogin(String host, int port, String user, String password) throws IOException {
         int p = port > 0 ? port : 21;
         IOException last = null;
-        for (boolean tls : new boolean[]{true, false}) {
+        // Plain FTP first (most game-server hosts), FTPS as fallback.
+        for (boolean tls : new boolean[]{false, true}) {
             FTPClient ftp = tls ? new FTPSClient(false) : new FTPClient();
             try {
-                ftp.setConnectTimeout(8000);
-                ftp.setDefaultTimeout(8000);
+                ftp.setConnectTimeout(6000);
+                ftp.setDefaultTimeout(6000);
                 ftp.connect(host, p);
                 if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                     last = new IOException("connexion refusée (code " + ftp.getReplyCode() + ")");
