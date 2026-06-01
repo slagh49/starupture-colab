@@ -127,6 +127,14 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
+  // While the infection filter is active, hide the base-zone rectangles and the
+  // rail network so the few infected buildings (red rings) stand out clearly.
+  // The user's own layer toggles are preserved underneath.
+  const effectiveLayers = useMemo<LayerState>(
+    () => infectedOnly ? { ...layers, baseZone: false, rails: false } : layers,
+    [layers, infectedOnly]
+  );
+
   // Total count of infected (non-structural) entities, shown on the toggle.
   const infectedCount = useMemo(
     () => entities.filter(e => (e.infection ?? 0) > 0 && !isStructural(e)).length,
@@ -224,7 +232,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               panY={panY}
               hoveredEntity={hoveredEntity}
               selectedEntity={selectedEntity}
-              layers={layers}
+              layers={effectiveLayers}
               selectedFlowItem={selectedFlowItem}
               setZoom={setZoom}
               setPanX={setPanX}
