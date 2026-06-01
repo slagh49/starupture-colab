@@ -110,6 +110,17 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
   const flowItemList = useMemo(() => flowItems(links), [links]);
   const entityById = useMemo(() => new Map(entities.map(e => [e.id, e])), [entities]);
 
+  // Diagnostic overlays computed from the FULL entity set (not the filtered one),
+  // so the rings show even when the relevant category is hidden by the filters.
+  const orphanEntities = useMemo(() => {
+    const linked = new Set<string>();
+    for (const l of links) {
+      linked.add(l.fromEntityId);
+      linked.add(l.toEntityId);
+    }
+    return entities.filter(e => e.name.includes('Package') && !linked.has(e.id));
+  }, [entities, links]);
+
   const [layers, setLayers] = useState<LayerState>({
     terrain: true,
     drones: true,
@@ -117,6 +128,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     baseZone: true,
     labels: true,
     infection: true,
+    orphans: false,
   });
 
   const toggleFilter = useCallback((cat: EntityCategory) => {
@@ -209,6 +221,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               hoveredEntity={hoveredEntity}
               selectedEntity={selectedEntity}
               layers={layers}
+              orphanEntities={orphanEntities}
               selectedFlowItem={selectedFlowItem}
               setZoom={setZoom}
               setPanX={setPanX}

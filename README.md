@@ -85,7 +85,8 @@ starrupture-web/
 - Alertes visuelles : anneau rouge pulsant pour l'infection, badge OFF
 - **Filtre par nom** : n'affiche que les entités dont le nom correspond (ex. `soufre-`), toutes catégories confondues
 - **Calque infection** : anneau rouge pulsant sur chaque bâtiment infecté, toujours visible (même si sa catégorie est masquée), activable/désactivable comme les autres calques
-- Calques activables : terrain, flux drones, rails, zones de base, labels, infection
+- **Calque orphelins** : anneau magenta pulsant sur les PackageSender/Receiver sans aucune liaison (ni source ni destination), pour repérer les transmetteurs non configurés
+- Calques activables : terrain, flux drones, rails, zones de base, labels, infection, orphelins
 - Filtres par catégorie + liste latérale groupée (catégorie → type), restreinte au viewport
 - La sauvegarde la plus récente est chargée automatiquement au démarrage
 

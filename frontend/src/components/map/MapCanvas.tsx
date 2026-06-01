@@ -3,7 +3,7 @@ import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/sa
 import type { LayerState } from '../ui/LayerToggles';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
-import { drawEntities, drawLabels, drawEntityHighlight, drawInfectionRings } from './EntityLayer';
+import { drawEntities, drawLabels, drawEntityHighlight, drawInfectionRings, drawOrphanRings } from './EntityLayer';
 import { drawDroneLinks, aggregateFlows } from './DroneLayer';
 import { drawRails } from './RailLayer';
 import {
@@ -46,6 +46,7 @@ interface Props {
   hoveredEntity: GameEntity | null;
   selectedEntity: GameEntity | null;
   layers: LayerState;
+  orphanEntities: GameEntity[];
   selectedFlowItem: string | null;
   setZoom: (fn: (prev: number) => number) => void;
   setPanX: (fn: (prev: number) => number) => void;
@@ -69,6 +70,7 @@ export function MapCanvas({
   hoveredEntity,
   selectedEntity,
   layers,
+  orphanEntities,
   selectedFlowItem,
   setZoom,
   setPanX,
@@ -395,6 +397,9 @@ export function MapCanvas({
       if (layers.infection) {
         drawInfectionRings(ctx, infectedEntities, zoom, panX, panY, w, h, timestamp);
       }
+      if (layers.orphans) {
+        drawOrphanRings(ctx, orphanEntities, zoom, panX, panY, w, h, timestamp);
+      }
       if (selectedEntity) {
         drawEntityHighlight(ctx, selectedEntity, zoom, panX, panY, w, h, true);
       }
@@ -402,7 +407,7 @@ export function MapCanvas({
         drawEntityHighlight(ctx, hoveredEntity, zoom, panX, panY, w, h, false);
       }
     },
-    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, infectedEntities, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, infectedEntities, orphanEntities, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);

@@ -7,6 +7,8 @@ const BASE_RADIUS = 5;
 const LABEL_FONT_SIZE = 10;
 /** Infection ring color from CAT_COLORS.danger */
 const INFECTION_COLOR = '#ff3030';
+/** Ring color for orphan package senders/receivers (magenta) */
+const ORPHAN_COLOR = '#ff5fa2';
 
 export function drawEntities(
   ctx: CanvasRenderingContext2D,
@@ -135,6 +137,61 @@ export function drawInfectionRings(
     ctx.stroke();
     ctx.restore();
   }
+}
+
+/**
+ * Generic pulsing ring used by the diagnostic overlays (no-power, orphans).
+ * Same look as the infection ring but in an arbitrary color.
+ */
+function drawPulsingRings(
+  ctx: CanvasRenderingContext2D,
+  entities: GameEntity[],
+  zoom: number,
+  panX: number,
+  panY: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  timestamp: number,
+  color: string
+): void {
+  const phase = Math.abs(Math.sin(timestamp / 650));
+  const alpha = 0.55 + 0.45 * phase;
+  const baseR = Math.max(2, Math.min(zoom * 3500, 7));
+  const ringRadius = Math.max(6, baseR * 2.2 + 2 + baseR * 0.5 * phase);
+
+  for (const entity of entities) {
+    const screen = world2screen(entity.x, entity.y, zoom, panX, panY);
+    if (
+      screen.x < -20 || screen.x > canvasWidth + 20 ||
+      screen.y < -20 || screen.y > canvasHeight + 20
+    ) {
+      continue;
+    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(screen.x, screen.y, ringRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/** Pulsing magenta ring on orphan package senders/receivers. */
+export function drawOrphanRings(
+  ctx: CanvasRenderingContext2D,
+  entities: GameEntity[],
+  zoom: number,
+  panX: number,
+  panY: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  timestamp: number
+): void {
+  drawPulsingRings(ctx, entities, zoom, panX, panY, canvasWidth, canvasHeight, timestamp, ORPHAN_COLOR);
 }
 
 /**
