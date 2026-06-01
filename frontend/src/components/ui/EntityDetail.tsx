@@ -147,6 +147,11 @@ export function EntityDetail({ entity, sessionId, links, entityById, onClose }: 
             value={`← ${c.name} (${c.item} ×${c.count})`}
           />
         ))}
+        {entity.name.includes('Package') &&
+          connections.out.length === 0 &&
+          connections.in.length === 0 && (
+            <DetailRow label="LIAISON" value="(non configurée)" valueColor={CAT_COLORS.danger} />
+          )}
       </div>
     </div>
   );
