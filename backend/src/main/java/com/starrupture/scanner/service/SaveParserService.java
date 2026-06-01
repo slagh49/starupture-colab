@@ -112,8 +112,15 @@ public class SaveParserService {
         if (lastDot >= 0 && lastDot < name.length() - 1) {
             name = name.substring(lastDot + 1);
         }
-        // Remove common suffixes
-        name = name.replace("_C", "").replace("_c", "");
+        // Strip only the trailing blueprint class suffix (_C), not every "_C"
+        // (which mangled names like Crafter -> rafter, Connecting -> onnecting).
+        if (name.endsWith("_C") || name.endsWith("_c")) {
+            name = name.substring(0, name.length() - 2);
+        }
+        // Strip the DataAsset prefix for readability.
+        if (name.startsWith("DA_")) {
+            name = name.substring(3);
+        }
         return name.isEmpty() ? "Unknown" : name;
     }
 

@@ -11,6 +11,7 @@ import { CoordinateBar } from '../components/ui/CoordinateBar';
 import { FlowFilter } from '../components/ui/FlowFilter';
 import { flowItems } from '../components/map/DroneLayer';
 import { screen2world, WORLD_BOUNDS } from '../constants/mapConfig';
+import { isStructural } from '../utils/format';
 import type { GameEntity } from '../types/save.types';
 import type { LayerState } from '../components/ui/LayerToggles';
 import type { EntityCategory } from '../types/save.types';
@@ -134,9 +135,15 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     return () => window.clearTimeout(id);
   }, [zoom, panX, panY]);
 
+  // The list excludes structural tiles (platforms/rails) — the map keeps them.
+  const listEntities = useMemo(
+    () => filteredEntities.filter(e => !isStructural(e)),
+    [filteredEntities]
+  );
+
   const visibleEntities = useMemo(
-    () => entitiesInView(filteredEntities, view, mapContainerRef.current),
-    [filteredEntities, view]
+    () => entitiesInView(listEntities, view, mapContainerRef.current),
+    [listEntities, view]
   );
 
   const handleRecenter = useCallback(() => {
