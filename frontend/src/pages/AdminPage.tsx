@@ -81,10 +81,7 @@ export function AdminPage({ onImported }: Props): JSX.Element {
     setStatus({ kind: 'info', text: 'Import en cours…' });
     try {
       const res = await adminApi.importNow();
-      const unchanged = res.headers['x-import-unchanged'] === 'true';
-      setStatus({ kind: 'ok', text: unchanged
-        ? 'Aucun changement — la sauvegarde était déjà importée (session réutilisée).'
-        : 'Import réussi — nouvelle session chargée.' });
+      setStatus({ kind: 'ok', text: 'Import réussi — données rechargées (wipe + rechargement).' });
       onImported(res.data);
     } catch (e) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error;

@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -110,40 +107,18 @@ public class AdminService {
                     c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
         }
 
-        // Import différentiel : si le fichier est identique au dernier importé,
-        // on réutilise la session existante au lieu d'en créer une nouvelle.
-        String hash = sha256(bytes);
-        if (hash.equals(c.getLastImportHash()) && c.getLastImportSessionId() != null) {
-            Optional<SaveSession> previous = saveSessionRepository.findById(c.getLastImportSessionId());
-            if (previous.isPresent()) {
-                c.setLastImportAt(LocalDateTime.now());
-                configRepository.save(c);
-                log.info("Import inchangé (hash identique) : session {} réutilisée", previous.get().getId());
-                return new ImportResult(previous.get(), true);
-            }
-        }
+        // Wipe-and-replace : chaque import efface toutes les sessions existantes
+        // puis recharge le .sav à neuf (plus d'import différentiel/dedup).
+        saveSessionRepository.deleteAllInBatch();
 
         String name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
         SaveSession session = saveParserService.parseSavBytes(bytes, name.isEmpty() ? "ftp.sav" : name);
         c.setLastImportAt(LocalDateTime.now());
-        c.setLastImportHash(hash);
+        c.setLastImportHash(null);
         c.setLastImportSessionId(session.getId());
         configRepository.save(c);
-        log.info("Import réussi : session {}", session.getId());
+        log.info("Import réussi (wipe + rechargement) : session {}", session.getId());
         return new ImportResult(session, false);
-    }
-
-    private static String sha256(byte[] data) {
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(data);
-            StringBuilder sb = new StringBuilder(digest.length * 2);
-            for (byte b : digest) {
-                sb.append(Character.forDigit((b >> 4) & 0xF, 16)).append(Character.forDigit(b & 0xF, 16));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 indisponible", e);
-        }
     }
 
     /** Polls every minute and imports when the configured interval has elapsed. */
