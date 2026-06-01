@@ -29,6 +29,7 @@ export interface FlowEdge {
   to: GameEntity;
   item: string;
   vol: number;
+  isPackage: boolean;
 }
 
 /** Aggregate raw drone links into weighted (from, to, item) edges. */
@@ -42,11 +43,12 @@ export function aggregateFlows(
     const to = entityMap.get(link.toEntityId);
     if (!from || !to) continue;
     const item = cleanItemName(link.item ?? 'Unknown');
-    const key = `${link.fromEntityId}>${link.toEntityId}>${item}`;
+    const isPackage = link.state === 'package';
+    const key = `${link.fromEntityId}>${link.toEntityId}>${item}>${isPackage}`;
     const existing = acc.get(key);
     const vol = link.droneCount ?? 1;
     if (existing) existing.vol += vol;
-    else acc.set(key, { from, to, item, vol });
+    else acc.set(key, { from, to, item, vol, isPackage });
   }
   return [...acc.values()];
 }
@@ -125,7 +127,9 @@ export function drawDroneLinks(
     const involved = !focus || e.from.id === focus.id || e.to.id === focus.id;
     const tn = e.vol / maxVol;
     const arc = arcGeometry(e.from, e.to, zoom, panX, panY);
-    const width = 1.2 + tn * 5.5;
+    // Package (sender -> receiver) links are drawn noticeably thicker; their
+    // volume is always 1 so they would otherwise be the thinnest arcs.
+    const width = e.isPackage ? 4 + tn * 3 : 1.2 + tn * 5.5;
     const alpha = involved ? 0.85 : 0.06;
 
     // arc
