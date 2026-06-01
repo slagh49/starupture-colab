@@ -585,8 +585,39 @@ public class SaveParserService {
             droneLinkRepository.save(link);
         }
 
-        log.info("Parsed save file '{}': {} entities, {} drone links",
-                file.getOriginalFilename(), entityMap.size(), pendingDroneLinks.size());
+        // Package routes (PackageSender -> Receiver), a distinct logistics system
+        // stored separately from the drones (CrPackageTransportReplicator).
+        int packageLinks = 0;
+        JsonNode senderConns = root.path("itemData")
+                .path("CrPackageTransportReplicator").path("senderConnections");
+        if (senderConns.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> sc = senderConns.fields();
+            while (sc.hasNext()) {
+                Map.Entry<String, JsonNode> e = sc.next();
+                long receiverId = e.getValue().path("receiver").path("iD").asLong(0);
+                // 4294967295 (0xFFFFFFFF) is the "no receiver configured" sentinel.
+                if (receiverId == 0L || receiverId == 4294967295L) {
+                    continue;
+                }
+                GameEntity fromEntity = entityMap.get(e.getKey());
+                GameEntity toEntity = entityMap.get("(ID=" + receiverId + ")");
+                if (fromEntity == null || toEntity == null) {
+                    continue;
+                }
+                droneLinkRepository.save(DroneLink.builder()
+                        .session(session)
+                        .fromEntity(fromEntity)
+                        .toEntity(toEntity)
+                        .item(e.getValue().path("item").asText(null))
+                        .droneCount(1)
+                        .state("package")
+                        .build());
+                packageLinks++;
+            }
+        }
+
+        log.info("Parsed save file '{}': {} entities, {} drone links, {} package links",
+                file.getOriginalFilename(), entityMap.size(), pendingDroneLinks.size(), packageLinks);
 
         return session;
     }
