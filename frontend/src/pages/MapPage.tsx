@@ -105,6 +105,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
 
   const [activeFilters, setActiveFilters] = useState<Record<EntityCategory, boolean>>(createDefaultFilters);
   const [nameFilter, setNameFilter] = useState('');
+  const [infectedOnly, setInfectedOnly] = useState(false);
   const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
 
   const flowItemList = useMemo(() => flowItems(links), [links]);
@@ -126,17 +127,28 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  // When a name filter is active it takes over: the map shows only entities
-  // whose display name matches (any category), ignoring the category toggles.
-  // Otherwise we fall back to the category filters. Structural tiles
-  // (platforms/rails) stay excluded; the full set still feeds entityById.
+  // Total count of infected (non-structural) entities, shown on the toggle.
+  const infectedCount = useMemo(
+    () => entities.filter(e => (e.infection ?? 0) > 0 && !isStructural(e)).length,
+    [entities]
+  );
+
+  // A name filter or the "infected only" toggle take over the category filters:
+  // the map then shows the matching entities across every category. Structural
+  // tiles stay excluded; the full set still feeds entityById for link lookups.
   const filteredEntities = useMemo(() => {
     const q = nameFilter.trim().toLowerCase();
+    let list = entities.filter(e => !isStructural(e));
     if (q) {
-      return entities.filter(e => !isStructural(e) && displayName(e).toLowerCase().includes(q));
+      list = list.filter(e => displayName(e).toLowerCase().includes(q));
+    } else if (!infectedOnly) {
+      list = list.filter(e => activeFilters[e.category]);
     }
-    return entities.filter(e => activeFilters[e.category] && !isStructural(e));
-  }, [entities, activeFilters, nameFilter]);
+    if (infectedOnly) {
+      list = list.filter(e => (e.infection ?? 0) > 0);
+    }
+    return list;
+  }, [entities, activeFilters, nameFilter, infectedOnly]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -147,13 +159,13 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     return () => window.clearTimeout(id);
   }, [zoom, panX, panY]);
 
-  // With a name filter active, list every match (they may be off-screen);
-  // otherwise restrict the list to the current viewport for performance.
+  // With a name/infection filter active, list every match (they may be
+  // off-screen); otherwise restrict the list to the viewport for performance.
   const visibleEntities = useMemo(
-    () => nameFilter.trim()
+    () => (nameFilter.trim() || infectedOnly)
       ? filteredEntities
       : entitiesInView(filteredEntities, view, mapContainerRef.current),
-    [filteredEntities, view, nameFilter]
+    [filteredEntities, view, nameFilter, infectedOnly]
   );
 
   const handleRecenter = useCallback(() => {
@@ -182,6 +194,15 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               {filteredEntities.length} entité{filteredEntities.length > 1 ? 's' : ''} — la carte n'affiche que ce filtre
             </div>
           )}
+          <label className={`${styles.infectionToggle} ${infectedOnly ? styles.infectionOn : ''}`}>
+            <input
+              type="checkbox"
+              checked={infectedOnly}
+              onChange={e => setInfectedOnly(e.target.checked)}
+            />
+            <span>☣ Infectés uniquement</span>
+            <em className={styles.infectionCount}>{infectedCount}</em>
+          </label>
           <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
           <EntityList
             entities={visibleEntities}
