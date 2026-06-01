@@ -51,4 +51,12 @@ public class AppConfig {
 
     @Column(name = "last_import_at")
     private LocalDateTime lastImportAt;
+
+    // SHA-256 of the last imported .sav + the session it produced, to skip
+    // re-importing an unchanged file (differential import).
+    @Column(name = "last_import_hash")
+    private String lastImportHash;
+
+    @Column(name = "last_import_session_id")
+    private UUID lastImportSessionId;
 }

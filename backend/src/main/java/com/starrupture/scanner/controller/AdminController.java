@@ -2,7 +2,6 @@ package com.starrupture.scanner.controller;
 
 import com.starrupture.scanner.dto.AppConfigDto;
 import com.starrupture.scanner.dto.AppConfigInput;
-import com.starrupture.scanner.entity.SaveSession;
 import com.starrupture.scanner.service.AdminService;
 import com.starrupture.scanner.service.EntityService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +38,10 @@ public class AdminController {
     @PostMapping("/import")
     public ResponseEntity<Object> importNow() {
         try {
-            SaveSession session = adminService.importNow();
-            return ResponseEntity.ok(entityService.toSessionDto(session, 0));
+            AdminService.ImportResult result = adminService.importNow();
+            return ResponseEntity.ok()
+                    .header("X-Import-Unchanged", String.valueOf(result.unchanged()))
+                    .body(entityService.toSessionDto(result.session(), 0));
         } catch (Exception e) {
             String msg = e.getMessage() != null ? e.getMessage() : "Échec de l'import FTP";
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of("error", msg));

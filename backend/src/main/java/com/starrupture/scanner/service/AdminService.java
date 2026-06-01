@@ -5,6 +5,7 @@ import com.starrupture.scanner.dto.AppConfigInput;
 import com.starrupture.scanner.entity.AppConfig;
 import com.starrupture.scanner.entity.SaveSession;
 import com.starrupture.scanner.repository.AppConfigRepository;
+import com.starrupture.scanner.repository.SaveSessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +24,13 @@ import java.time.LocalDateTime;
 public class AdminService {
 
     private final AppConfigRepository configRepository;
+    private final SaveSessionRepository saveSessionRepository;
     private final FtpService ftpService;
     private final HttpBridgeService httpBridgeService;
     private final SaveParserService saveParserService;
+
+    /** Result of an import: the session and whether the file was unchanged (deduped). */
+    public record ImportResult(SaveSession session, boolean unchanged) { }
 
     @Transactional
     public AppConfig getOrCreateConfig() {
@@ -85,7 +93,7 @@ public class AdminService {
     }
 
     @Transactional
-    public SaveSession importNow() throws IOException {
+    public ImportResult importNow() throws IOException {
         AppConfig c = getOrCreateConfig();
         if (c.getFtpPath() == null || c.getFtpPath().isBlank()) {
             throw new IOException("Chemin du fichier manquant");
@@ -101,12 +109,41 @@ public class AdminService {
             bytes = ftpService.download(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
                     c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
         }
+
+        // Import différentiel : si le fichier est identique au dernier importé,
+        // on réutilise la session existante au lieu d'en créer une nouvelle.
+        String hash = sha256(bytes);
+        if (hash.equals(c.getLastImportHash()) && c.getLastImportSessionId() != null) {
+            Optional<SaveSession> previous = saveSessionRepository.findById(c.getLastImportSessionId());
+            if (previous.isPresent()) {
+                c.setLastImportAt(LocalDateTime.now());
+                configRepository.save(c);
+                log.info("Import inchangé (hash identique) : session {} réutilisée", previous.get().getId());
+                return new ImportResult(previous.get(), true);
+            }
+        }
+
         String name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
         SaveSession session = saveParserService.parseSavBytes(bytes, name.isEmpty() ? "ftp.sav" : name);
         c.setLastImportAt(LocalDateTime.now());
+        c.setLastImportHash(hash);
+        c.setLastImportSessionId(session.getId());
         configRepository.save(c);
-        log.info("Auto-import FTP réussi : session {}", session.getId());
-        return session;
+        log.info("Import réussi : session {}", session.getId());
+        return new ImportResult(session, false);
+    }
+
+    private static String sha256(byte[] data) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(data);
+            StringBuilder sb = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                sb.append(Character.forDigit((b >> 4) & 0xF, 16)).append(Character.forDigit(b & 0xF, 16));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 indisponible", e);
+        }
     }
 
     /** Polls every minute and imports when the configured interval has elapsed. */
