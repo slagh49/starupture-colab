@@ -15,6 +15,7 @@ public class AppConfigInput {
     // Optional: only updates the stored password when non-blank.
     private String ftpPassword;
     private String ftpPath;
+    private String bridgeUrl;
     private Boolean autoImportEnabled;
     private Integer autoImportIntervalMinutes;
 }

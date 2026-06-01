@@ -21,6 +21,7 @@ public class AdminService {
 
     private final AppConfigRepository configRepository;
     private final FtpService ftpService;
+    private final HttpBridgeService httpBridgeService;
     private final SaveParserService saveParserService;
 
     @Transactional
@@ -36,6 +37,7 @@ public class AdminService {
                 .ftpUser(c.getFtpUser())
                 .hasPassword(c.getFtpPassword() != null && !c.getFtpPassword().isEmpty())
                 .ftpPath(c.getFtpPath())
+                .bridgeUrl(c.getBridgeUrl())
                 .autoImportEnabled(c.getAutoImportEnabled())
                 .autoImportIntervalMinutes(c.getAutoImportIntervalMinutes())
                 .lastImportAt(c.getLastImportAt())
@@ -49,6 +51,9 @@ public class AdminService {
         c.setFtpPort(in.getFtpPort() != null ? in.getFtpPort() : 21);
         c.setFtpUser(in.getFtpUser());
         c.setFtpPath(in.getFtpPath());
+        if (in.getBridgeUrl() != null) {
+            c.setBridgeUrl(in.getBridgeUrl().isBlank() ? null : in.getBridgeUrl().strip());
+        }
         c.setAutoImportEnabled(Boolean.TRUE.equals(in.getAutoImportEnabled()));
         c.setAutoImportIntervalMinutes(
                 in.getAutoImportIntervalMinutes() != null ? in.getAutoImportIntervalMinutes() : 30);
@@ -61,6 +66,13 @@ public class AdminService {
     /** Returns null on success, otherwise the error message. */
     public String testConnection() {
         AppConfig c = getOrCreateConfig();
+        if (useBridge(c)) {
+            if (c.getFtpPath() == null || c.getFtpPath().isBlank()) {
+                return "Chemin du fichier manquant (requis pour la passerelle)";
+            }
+            return httpBridgeService.test(c.getBridgeUrl(), c.getFtpHost(),
+                    c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+        }
         if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
             return "Hôte FTP manquant";
         }
@@ -68,15 +80,27 @@ public class AdminService {
                 c.getFtpUser(), c.getFtpPassword());
     }
 
+    private boolean useBridge(AppConfig c) {
+        return c.getBridgeUrl() != null && !c.getBridgeUrl().isBlank();
+    }
+
     @Transactional
     public SaveSession importNow() throws IOException {
         AppConfig c = getOrCreateConfig();
-        if (c.getFtpHost() == null || c.getFtpHost().isBlank()
-                || c.getFtpPath() == null || c.getFtpPath().isBlank()) {
-            throw new IOException("FTP non configuré (hôte/chemin manquant)");
+        if (c.getFtpPath() == null || c.getFtpPath().isBlank()) {
+            throw new IOException("Chemin du fichier manquant");
         }
-        byte[] bytes = ftpService.download(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
-                c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+        byte[] bytes;
+        if (useBridge(c)) {
+            bytes = httpBridgeService.download(c.getBridgeUrl(), c.getFtpHost(),
+                    c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+        } else {
+            if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
+                throw new IOException("FTP non configuré (hôte manquant)");
+            }
+            bytes = ftpService.download(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
+                    c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+        }
         String name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
         SaveSession session = saveParserService.parseSavBytes(bytes, name.isEmpty() ? "ftp.sav" : name);
         c.setLastImportAt(LocalDateTime.now());

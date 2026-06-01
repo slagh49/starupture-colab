@@ -40,6 +40,7 @@ export interface AppConfigInput {
   ftpUser: string;
   ftpPassword?: string;
   ftpPath: string;
+  bridgeUrl: string;
   autoImportEnabled: boolean;
   autoImportIntervalMinutes: number;
 }

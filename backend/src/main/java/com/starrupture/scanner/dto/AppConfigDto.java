@@ -17,6 +17,7 @@ public class AppConfigDto {
     // Whether a password is stored (the password itself is never returned).
     private Boolean hasPassword;
     private String ftpPath;
+    private String bridgeUrl;
     private Boolean autoImportEnabled;
     private Integer autoImportIntervalMinutes;
     private LocalDateTime lastImportAt;

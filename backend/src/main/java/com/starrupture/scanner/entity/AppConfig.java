@@ -35,6 +35,12 @@ public class AppConfig {
     @Column(name = "ftp_path")
     private String ftpPath;
 
+    // HTTP Web-FTP bridge URL (Monsta FTP handler). When set, the import
+    // downloads over HTTP via the host instead of a direct passive FTP transfer.
+    @Column(name = "bridge_url")
+    @Builder.Default
+    private String bridgeUrl = "https://ftp.4np.4players.de/bridges/php/handler.php";
+
     @Column(name = "auto_import_enabled")
     @Builder.Default
     private Boolean autoImportEnabled = false;

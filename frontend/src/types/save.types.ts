@@ -80,6 +80,7 @@ export interface AppConfig {
   ftpUser: string | null;
   hasPassword: boolean;
   ftpPath: string | null;
+  bridgeUrl: string | null;
   autoImportEnabled: boolean;
   autoImportIntervalMinutes: number;
   lastImportAt: string | null;

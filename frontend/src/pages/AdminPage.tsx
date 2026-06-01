@@ -19,6 +19,7 @@ export function AdminPage({ onImported }: Props): JSX.Element {
   const [password, setPassword] = useState('');
   const [hasPassword, setHasPassword] = useState(false);
   const [path, setPath] = useState('');
+  const [bridgeUrl, setBridgeUrl] = useState('');
   const [autoEnabled, setAutoEnabled] = useState(false);
   const [interval, setIntervalMin] = useState(30);
   const [lastImport, setLastImport] = useState<string | null>(null);
@@ -33,6 +34,7 @@ export function AdminPage({ onImported }: Props): JSX.Element {
       setUser(c.ftpUser ?? '');
       setHasPassword(c.hasPassword);
       setPath(c.ftpPath ?? '');
+      setBridgeUrl(c.bridgeUrl ?? '');
       setAutoEnabled(c.autoImportEnabled);
       setIntervalMin(c.autoImportIntervalMinutes ?? 30);
       setLastImport(c.lastImportAt);
@@ -46,7 +48,7 @@ export function AdminPage({ onImported }: Props): JSX.Element {
       const res = await adminApi.saveConfig({
         ftpHost: host, ftpPort: port, ftpUser: user,
         ftpPassword: password || undefined,
-        ftpPath: path, autoImportEnabled: autoEnabled, autoImportIntervalMinutes: interval,
+        ftpPath: path, bridgeUrl, autoImportEnabled: autoEnabled, autoImportIntervalMinutes: interval,
       });
       setHasPassword(res.data.hasPassword);
       setPassword('');
@@ -114,6 +116,11 @@ export function AdminPage({ onImported }: Props): JSX.Element {
           <span>Chemin du fichier .sav</span>
           <input value={path} onChange={e => setPath(e.target.value)} placeholder="/saves/AutoSave0.sav" />
         </label>
+        <label className={`${styles.field} ${styles.full}`}>
+          <span>URL passerelle HTTP (Web-FTP) <em>— recommandé, contourne le FTP passif</em></span>
+          <input value={bridgeUrl} onChange={e => setBridgeUrl(e.target.value)}
+                 placeholder="https://ftp.4np.4players.de/bridges/php/handler.php" />
+        </label>
 
         <label className={styles.checkbox}>
           <input type="checkbox" checked={autoEnabled} onChange={e => setAutoEnabled(e.target.checked)} />
@@ -136,6 +143,8 @@ export function AdminPage({ onImported }: Props): JSX.Element {
       {lastImport && <div className={styles.meta}>Dernier import auto : {new Date(lastImport).toLocaleString('fr-FR')}</div>}
       <div className={styles.note}>
         Les identifiants sont stockés sur le serveur (homelab). Le mot de passe n'est jamais renvoyé à l'interface.
+        Si une URL passerelle est renseignée, le téléchargement passe par le Web-FTP HTTP de l'hébergeur
+        (fonctionne serveur de jeu allumé) ; sinon il utilise le FTP direct. Laisse le champ vide pour forcer le FTP.
       </div>
     </div>
   );
