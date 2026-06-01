@@ -125,8 +125,10 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
+  // Category-filtered, structural tiles (platforms/rails) excluded everywhere
+  // (map + list). The full set is still used for link resolution via entityById.
   const filteredEntities = useMemo(
-    () => entities.filter(e => activeFilters[e.category]),
+    () => entities.filter(e => activeFilters[e.category] && !isStructural(e)),
     [entities, activeFilters]
   );
 
@@ -139,15 +141,9 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     return () => window.clearTimeout(id);
   }, [zoom, panX, panY]);
 
-  // The list excludes structural tiles (platforms/rails) — the map keeps them.
-  const listEntities = useMemo(
-    () => filteredEntities.filter(e => !isStructural(e)),
-    [filteredEntities]
-  );
-
   const visibleEntities = useMemo(
-    () => entitiesInView(listEntities, view, mapContainerRef.current),
-    [listEntities, view]
+    () => entitiesInView(filteredEntities, view, mapContainerRef.current),
+    [filteredEntities, view]
   );
 
   const handleRecenter = useCallback(() => {
