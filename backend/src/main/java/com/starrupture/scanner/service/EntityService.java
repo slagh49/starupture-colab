@@ -35,6 +35,12 @@ public class EntityService {
                 .map(this::toSessionDto);
     }
 
+    public String getProgression(UUID sessionId) {
+        return saveSessionRepository.findById(sessionId)
+                .map(SaveSession::getProgression)
+                .orElse(null);
+    }
+
     @Transactional
     public void deleteSession(UUID sessionId) {
         if (!saveSessionRepository.existsById(sessionId)) {

@@ -60,6 +60,20 @@ export interface BaseZone {
   maxY: number;
 }
 
+export interface Corporation {
+  name: string;
+  level: number;
+  reputation: number;
+  researchTier1: number;
+  researchTier2: number;
+}
+
+export interface Progression {
+  corporations: Corporation[];
+  recipesUnlocked: number;
+  recipesLocked: number;
+}
+
 export interface SessionSummary {
   totalEntities: number;
   activeMachines: number;

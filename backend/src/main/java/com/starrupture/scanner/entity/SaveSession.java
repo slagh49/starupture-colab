@@ -37,6 +37,9 @@ public class SaveSession {
     @Column(name = "world_time")
     private Double worldTime;
 
+    @Column(columnDefinition = "text")
+    private String progression;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<GameEntity> entities = new ArrayList<>();

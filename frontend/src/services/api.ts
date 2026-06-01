@@ -7,6 +7,7 @@ import type {
   RailSpline,
   BaseZone,
   SessionSummary,
+  Progression,
 } from '../types/save.types';
 
 const api = axios.create({
@@ -29,4 +30,5 @@ export const savesApi = {
   splines:  (id: string)   => api.get<RailSpline[]>(`/saves/${id}/splines`),
   zones:    (id: string)   => api.get<BaseZone[]>(`/saves/${id}/zones`),
   summary:  (id: string)   => api.get<SessionSummary>(`/saves/${id}/summary`),
+  progression: (id: string) => api.get<Progression>(`/saves/${id}/progression`),
 };

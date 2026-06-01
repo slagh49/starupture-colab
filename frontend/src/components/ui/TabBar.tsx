@@ -1,8 +1,10 @@
 import styles from './TabBar.module.css';
 
+export type TabId = 'map' | 'production' | 'progression';
+
 interface Props {
-  activeTab: 'map' | 'production';
-  onTabChange: (tab: 'map' | 'production') => void;
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
 }
 
 export function TabBar({ activeTab, onTabChange }: Props): JSX.Element {
@@ -34,6 +36,19 @@ export function TabBar({ activeTab, onTabChange }: Props): JSX.Element {
           <line x1="6" y1="1" x2="6" y2="14" />
         </svg>
         PRODUCTION
+      </button>
+      <button
+        className={`${styles.tab} ${activeTab === 'progression' ? styles.active : ''}`}
+        onClick={() => onTabChange('progression')}
+        type="button"
+      >
+        <svg className={styles.icon} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <line x1="2" y1="14" x2="2" y2="9" />
+          <line x1="6" y1="14" x2="6" y2="6" />
+          <line x1="10" y1="14" x2="10" y2="3" />
+          <line x1="14" y1="14" x2="14" y2="7" />
+        </svg>
+        PROGRESSION
       </button>
     </nav>
   );

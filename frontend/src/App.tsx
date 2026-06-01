@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Header } from './components/ui/Header';
 import { TabBar } from './components/ui/TabBar';
+import type { TabId } from './components/ui/TabBar';
 import { MapPage } from './pages/MapPage';
 import { ProductionPage } from './pages/ProductionPage';
+import { ProgressionPage } from './pages/ProgressionPage';
 import { useSaveData } from './hooks/useSaveData';
 import { useMapInteraction } from './hooks/useMapInteraction';
 import styles from './App.module.css';
-
-type TabId = 'map' | 'production';
 
 export function App(): JSX.Element {
   const [activeTab, setActiveTab] = useState<TabId>('map');
@@ -28,13 +28,14 @@ export function App(): JSX.Element {
       />
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       <div className={styles.content}>
-        {activeTab === 'map' ? (
+        {activeTab === 'map' && (
           <MapPage saveData={saveData} mapInteraction={mapInteraction} />
-        ) : (
-          <ProductionPage
-            entities={saveData.entities}
-            links={saveData.links}
-          />
+        )}
+        {activeTab === 'production' && (
+          <ProductionPage entities={saveData.entities} links={saveData.links} />
+        )}
+        {activeTab === 'progression' && (
+          <ProgressionPage sessionId={saveData.activeSession?.id ?? null} />
         )}
       </div>
     </div>

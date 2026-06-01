@@ -47,6 +47,12 @@ public class SaveController {
         return ResponseEntity.ok(sessions);
     }
 
+    @GetMapping(value = "/{id}/progression", produces = "application/json")
+    public ResponseEntity<String> getProgression(@PathVariable UUID id) {
+        String progression = entityService.getProgression(id);
+        return ResponseEntity.ok(progression != null ? progression : "{}");
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSave(@PathVariable UUID id) {
         entityService.deleteSession(id);

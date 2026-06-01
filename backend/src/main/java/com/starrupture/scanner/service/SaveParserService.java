@@ -415,6 +415,29 @@ public class SaveParserService {
             worldTime = root.path("worldTime").asDouble(0.0);
         }
 
+        // Progression: corporation levels/reputation + recipe (plan) counts.
+        String progressionJson = null;
+        try {
+            Map<String, Object> progression = new LinkedHashMap<>();
+            List<Map<String, Object>> corps = new ArrayList<>();
+            for (JsonNode c : root.path("itemData").path("CrCorporationsOwner").path("corporations")) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("name", c.path("name").asText());
+                m.put("level", c.path("level").asInt());
+                m.put("reputation", c.path("reputation").asLong());
+                m.put("researchTier1", c.path("researchPointsTier1").asInt());
+                m.put("researchTier2", c.path("researchPointsTier2").asInt());
+                corps.add(m);
+            }
+            progression.put("corporations", corps);
+            JsonNode recipes = root.path("itemData").path("CrCraftingRecipeOwner");
+            progression.put("recipesUnlocked", recipes.path("unlockedRecipes").size());
+            progression.put("recipesLocked", recipes.path("lockedRecipes").size());
+            progressionJson = objectMapper.writeValueAsString(progression);
+        } catch (Exception e) {
+            log.warn("Failed to extract progression: {}", e.getMessage());
+        }
+
         // Create session from root metadata
         String filename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown";
         SaveSession session = SaveSession.builder()
@@ -423,6 +446,7 @@ public class SaveParserService {
                 .playtime(playtime)
                 .timestamp(root.path("timestamp").asText(null))
                 .worldTime(worldTime)
+                .progression(progressionJson)
                 .build();
 
         session = saveSessionRepository.save(session);
