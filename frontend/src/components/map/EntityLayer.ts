@@ -20,20 +20,24 @@ export function drawEntities(
   selectedEntity: GameEntity | null,
   timestamp: number
 ): void {
-  const radius = Math.max(2, BASE_RADIUS * Math.min(zoom * 2000, 3));
+  const maxR = Math.max(2, Math.min(zoom * 3500, 7));
 
   for (const entity of entities) {
     const screen = world2screen(entity.x, entity.y, zoom, panX, panY);
 
     if (
-      screen.x < -radius * 2 ||
-      screen.x > canvasWidth + radius * 2 ||
-      screen.y < -radius * 2 ||
-      screen.y > canvasHeight + radius * 2
+      screen.x < -maxR * 2 ||
+      screen.x > canvasWidth + maxR * 2 ||
+      screen.y < -maxR * 2 ||
+      screen.y > canvasHeight + maxR * 2
     ) {
       continue;
     }
 
+    // Structural tiles (platforms/rails) are tiny and faint so they don't
+    // bury the map, the machines and the flows under a grey blob.
+    const isInfra = entity.category === 'infra';
+    const radius = isInfra ? Math.max(1.5, Math.min(zoom * 1500, 3)) : maxR;
     const color = CAT_COLORS[entity.category];
     const isHovered = hoveredEntity?.id === entity.id;
     const isSelected = selectedEntity?.id === entity.id;
@@ -73,7 +77,7 @@ export function drawEntities(
     ctx.beginPath();
     ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
-    ctx.globalAlpha = isOff ? 0.4 : 1;
+    ctx.globalAlpha = isOff ? 0.4 : isInfra ? 0.5 : 1;
     ctx.fill();
     ctx.globalAlpha = 1;
 

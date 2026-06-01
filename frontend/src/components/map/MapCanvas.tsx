@@ -127,6 +127,8 @@ export function MapCanvas({
     img.src = MAP_IMAGE.path;
     img.onload = () => {
       mapImageRef.current = img;
+      // The static cache may have been drawn before the image loaded.
+      staticDirtyRef.current = true;
     };
   }, []);
 
