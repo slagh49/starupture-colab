@@ -420,6 +420,18 @@ public class SaveParserService {
         // Navigate to entities
         JsonNode entities = root.path("itemData").path("Mass").path("entities");
 
+        // Player-assigned custom names: gameId -> name (separate subsystem).
+        Map<String, String> customNames = new HashMap<>();
+        JsonNode customNamesNode = root.path("itemData")
+                .path("CrBuildingCustomNameSubsystem").path("customNames");
+        if (customNamesNode.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> cnFields = customNamesNode.fields();
+            while (cnFields.hasNext()) {
+                Map.Entry<String, JsonNode> e = cnFields.next();
+                customNames.put(e.getKey(), e.getValue().asText());
+            }
+        }
+
         // Map to resolve drone links: gameId -> GameEntity
         Map<String, GameEntity> entityMap = new HashMap<>();
         // Pending drone data: list of (srcGameId, dstGameId, item)
@@ -447,6 +459,7 @@ public class SaveParserService {
                         .session(session)
                         .gameId(gameId)
                         .name(name)
+                        .customName(customNames.get(gameId))
                         .category(category)
                         .x(coords[0])
                         .y(coords[1])

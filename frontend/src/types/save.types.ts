@@ -15,6 +15,7 @@ export interface GameEntity {
   id: string;
   gameId: string;
   name: string;
+  customName: string | null;
   category: EntityCategory;
   x: number;
   y: number;

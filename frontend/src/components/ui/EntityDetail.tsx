@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GameEntity, GameEntityItem } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
-import { cleanName, cleanRecipe } from '../../utils/format';
+import { displayName, cleanRecipe } from '../../utils/format';
 import { savesApi } from '../../services/api';
 import styles from './EntityDetail.module.css';
 
@@ -41,7 +41,7 @@ export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element
     <div className={styles.panel}>
       <div className={styles.header}>
         <span className={styles.title} style={{ color }}>
-          {cleanName(entity.name)}
+          {displayName(entity)}
         </span>
         <button
           className={styles.closeBtn}

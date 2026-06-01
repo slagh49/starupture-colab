@@ -27,6 +27,9 @@ public class GameEntity {
 
     private String name;
 
+    @Column(name = "custom_name")
+    private String customName;
+
     private String category;
 
     @Column(nullable = false)

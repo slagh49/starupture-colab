@@ -1,3 +1,11 @@
+import type { GameEntity } from '../types/save.types';
+
+/** Display label for an entity: the player's custom name if set, else the type. */
+export function displayName(entity: GameEntity): string {
+  const custom = entity.customName?.trim();
+  return custom ? custom : cleanName(entity.name);
+}
+
 /** Strip engine prefixes from an entity name (e.g. "DA_BaseCore" -> "BaseCore"). */
 export function cleanName(name: string): string {
   let s = name;

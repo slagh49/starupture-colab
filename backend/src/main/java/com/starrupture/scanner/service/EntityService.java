@@ -141,6 +141,7 @@ public class EntityService {
                 .id(entity.getId().toString())
                 .gameId(entity.getGameId())
                 .name(entity.getName())
+                .customName(entity.getCustomName())
                 .category(entity.getCategory())
                 .x(entity.getX())
                 .y(entity.getY())

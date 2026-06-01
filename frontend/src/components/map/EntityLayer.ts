@@ -1,7 +1,7 @@
 import type { GameEntity } from '../../types/save.types';
 import { CAT_COLORS } from '../../constants/colors';
 import { world2screen } from '../../constants/mapConfig';
-import { cleanName } from '../../utils/format';
+import { displayName } from '../../utils/format';
 
 const BASE_RADIUS = 5;
 const LABEL_FONT_SIZE = 10;
@@ -171,8 +171,12 @@ export function drawLabels(
 
   for (const entity of entities) {
     const isSelected = selectedEntity?.id === entity.id;
+    const hasCustomName = !!entity.customName?.trim();
+    // Player-named buildings are always labelled (that's why they were named);
+    // type labels only appear once zoomed in enough to avoid clutter.
     const showLabel =
       isSelected ||
+      hasCustomName ||
       (zoom >= showLabelsZoom &&
         (entity.category === 'machine' || entity.category === 'basecore'));
 
@@ -191,7 +195,7 @@ export function drawLabels(
 
     const labelY = screen.y - 10;
     const color = CAT_COLORS[entity.category];
-    const text = cleanName(entity.name);
+    const text = displayName(entity);
 
     ctx.fillStyle = 'rgba(6, 9, 14, 0.7)';
     const nameWidth = ctx.measureText(text).width;

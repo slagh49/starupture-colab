@@ -12,6 +12,7 @@ public class GameEntityDto {
     private String id;
     private String gameId;
     private String name;
+    private String customName;
     private String category;
     private Double x;
     private Double y;
