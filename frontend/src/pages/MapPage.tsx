@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { MapCanvas } from '../components/map/MapCanvas';
 import { Legend } from '../components/ui/Legend';
 import { Tooltip } from '../components/ui/Tooltip';
@@ -10,6 +10,8 @@ import { ZoomControls } from '../components/ui/ZoomControls';
 import { CoordinateBar } from '../components/ui/CoordinateBar';
 import { FlowFilter } from '../components/ui/FlowFilter';
 import { flowItems } from '../components/map/DroneLayer';
+import { screen2world, WORLD_BOUNDS } from '../constants/mapConfig';
+import type { GameEntity } from '../types/save.types';
 import type { LayerState } from '../components/ui/LayerToggles';
 import type { EntityCategory } from '../types/save.types';
 import type { UseSaveDataReturn } from '../hooks/useSaveData';
@@ -31,6 +33,39 @@ function createDefaultFilters(): Record<EntityCategory, boolean> {
     filters[cat] = true;
   }
   return filters;
+}
+
+interface ViewState {
+  zoom: number;
+  panX: number;
+  panY: number;
+}
+
+/** Keep only entities whose world position falls inside the current viewport.
+ *  When the view covers (almost) the whole world, return all of them. */
+function entitiesInView(
+  entities: GameEntity[],
+  view: ViewState,
+  container: HTMLElement | null
+): GameEntity[] {
+  if (!container) return entities;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  if (!w || !h) return entities;
+
+  const tl = screen2world(0, 0, view.zoom, view.panX, view.panY);
+  const br = screen2world(w, h, view.zoom, view.panX, view.panY);
+  const minX = Math.min(tl.x, br.x);
+  const maxX = Math.max(tl.x, br.x);
+  const minY = Math.min(tl.y, br.y);
+  const maxY = Math.max(tl.y, br.y);
+
+  const worldW = WORLD_BOUNDS.maxX - WORLD_BOUNDS.minX;
+  const worldH = WORLD_BOUNDS.maxY - WORLD_BOUNDS.minY;
+  if (maxX - minX >= worldW * 0.9 && maxY - minY >= worldH * 0.9) {
+    return entities;
+  }
+  return entities.filter(e => e.x >= minX && e.x <= maxX && e.y >= minY && e.y <= maxY);
 }
 
 export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
@@ -90,6 +125,20 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
     [entities, activeFilters]
   );
 
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  // Debounced view: avoids recomputing the visible list on every pan frame.
+  const [view, setView] = useState<ViewState>({ zoom, panX, panY });
+  useEffect(() => {
+    const id = window.setTimeout(() => setView({ zoom, panX, panY }), 120);
+    return () => window.clearTimeout(id);
+  }, [zoom, panX, panY]);
+
+  const visibleEntities = useMemo(
+    () => entitiesInView(filteredEntities, view, mapContainerRef.current),
+    [filteredEntities, view]
+  );
+
   const handleRecenter = useCallback(() => {
     resetView();
   }, [resetView]);
@@ -101,7 +150,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
         <aside className={styles.sidebar}>
           <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
           <EntityList
-            entities={filteredEntities}
+            entities={visibleEntities}
             selectedEntity={selectedEntity}
             onSelect={setSelectedEntity}
           />
@@ -109,7 +158,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
 
         {/* Map area */}
         <div className={styles.mapArea}>
-          <div className={styles.mapContainer}>
+          <div className={styles.mapContainer} ref={mapContainerRef}>
             <MapCanvas
               entities={filteredEntities}
               links={links}
