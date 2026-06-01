@@ -3,7 +3,7 @@ import type { GameEntity, DroneLink, RailSpline, BaseZone } from '../../types/sa
 import type { LayerState } from '../ui/LayerToggles';
 import { useAnimation } from '../../hooks/useAnimation';
 import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from './TerrainLayer';
-import { drawEntities, drawLabels } from './EntityLayer';
+import { drawEntities, drawLabels, drawEntityHighlight } from './EntityLayer';
 import { drawDroneLinks, aggregateFlows } from './DroneLayer';
 import { drawRails } from './RailLayer';
 import {
@@ -108,6 +108,14 @@ export function MapCanvas({
   const entityGrid = useMemo(() => buildEntityGrid(entities), [entities]);
   const entityGridRef = useRef(entityGrid);
   entityGridRef.current = entityGrid;
+
+  // Offscreen cache for static layers (terrain/rails/entities/labels). Redrawn
+  // only when the view or data changes — not every animation frame.
+  const staticCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const staticDirtyRef = useRef(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { staticDirtyRef.current = true; },
+    [zoom, panX, panY, entities, splines, zones, layers, selectedEntity]);
 
   useEffect(() => {
     terrainRef.current = createTerrainCanvas();
@@ -336,36 +344,56 @@ export function MapCanvas({
       const w = canvas.width;
       const h = canvas.height;
 
-      if (layers.terrain) {
-        const mapImage = mapImageRef.current;
-        if (mapImage && MAP_IMAGE) {
-          drawTerrainImage(ctx, mapImage, zoom, panX, panY, MAP_IMAGE.bounds, w, h);
-        } else {
-          drawTerrain(ctx, terrain, zoom, panX, panY, w, h);
+      // (Re)build the static cache only when the view or data changed.
+      let staticCanvas = staticCanvasRef.current;
+      if (!staticCanvas || staticCanvas.width !== w || staticCanvas.height !== h) {
+        staticCanvas = document.createElement('canvas');
+        staticCanvas.width = w;
+        staticCanvas.height = h;
+        staticCanvasRef.current = staticCanvas;
+        staticDirtyRef.current = true;
+      }
+
+      if (staticDirtyRef.current) {
+        const sctx = staticCanvas.getContext('2d');
+        if (sctx) {
+          if (layers.terrain) {
+            const mapImage = mapImageRef.current;
+            if (mapImage && MAP_IMAGE) {
+              drawTerrainImage(sctx, mapImage, zoom, panX, panY, MAP_IMAGE.bounds, w, h);
+            } else {
+              drawTerrain(sctx, terrain, zoom, panX, panY, w, h);
+            }
+          } else {
+            sctx.fillStyle = '#06090e';
+            sctx.fillRect(0, 0, w, h);
+          }
+          drawOverlay(sctx, w, h);
+          drawGrid(sctx, zoom, panX, panY, w, h);
+          if (layers.baseZone) drawBaseZones(sctx, zones, zoom, panX, panY);
+          if (layers.rails) drawRails(sctx, splines, zoom, panX, panY, w, h);
+          // Plain entities (no hover/selection glow — that goes on the live layer).
+          drawEntities(sctx, entities, zoom, panX, panY, w, h, null, null, 0);
+          if (layers.labels) drawLabels(sctx, entities, zoom, panX, panY, w, h, selectedEntity);
+          staticDirtyRef.current = false;
         }
-      } else {
-        ctx.fillStyle = '#06090e';
-        ctx.fillRect(0, 0, w, h);
       }
 
-      drawOverlay(ctx, w, h);
-      drawGrid(ctx, zoom, panX, panY, w, h);
+      // Composite the cached static layers, then the animated content on top.
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(staticCanvas, 0, 0);
 
-      if (layers.baseZone) {
-        drawBaseZones(ctx, zones, zoom, panX, panY);
-      }
-      if (layers.rails) {
-        drawRails(ctx, splines, zoom, panX, panY, w, h);
-      }
       if (layers.drones) {
         drawDroneLinks(ctx, flowEdges, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity);
       }
-      drawEntities(ctx, entities, zoom, panX, panY, w, h, hoveredEntity, selectedEntity, timestamp);
-      if (layers.labels) {
-        drawLabels(ctx, entities, zoom, panX, panY, w, h, selectedEntity);
+      if (selectedEntity) {
+        drawEntityHighlight(ctx, selectedEntity, zoom, panX, panY, w, h, true);
+      }
+      if (hoveredEntity && hoveredEntity.id !== selectedEntity?.id) {
+        drawEntityHighlight(ctx, hoveredEntity, zoom, panX, panY, w, h, false);
       }
     },
-    [zoom, panX, panY, entities, links, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);

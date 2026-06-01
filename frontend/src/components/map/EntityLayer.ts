@@ -101,6 +101,53 @@ export function drawEntities(
   }
 }
 
+/**
+ * Draw the hover/selection highlight for a single entity. Used on the animated
+ * layer so that hovering does not force a full redraw of the (cached) entities.
+ */
+export function drawEntityHighlight(
+  ctx: CanvasRenderingContext2D,
+  entity: GameEntity,
+  zoom: number,
+  panX: number,
+  panY: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  selected: boolean
+): void {
+  const radius = Math.max(2, BASE_RADIUS * Math.min(zoom * 2000, 3));
+  const screen = world2screen(entity.x, entity.y, zoom, panX, panY);
+  if (
+    screen.x < -radius * 2 ||
+    screen.x > canvasWidth + radius * 2 ||
+    screen.y < -radius * 2 ||
+    screen.y > canvasHeight + radius * 2
+  ) {
+    return;
+  }
+
+  const color = CAT_COLORS[entity.category];
+
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = selected ? 20 : 12;
+  ctx.beginPath();
+  ctx.arc(screen.x, screen.y, radius * 1.3, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  if (selected) {
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
 export function drawLabels(
   ctx: CanvasRenderingContext2D,
   entities: GameEntity[],
