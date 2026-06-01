@@ -51,7 +51,7 @@ starrupture-web/
 │   │   ├── config/         # CORS, cache Redis
 │   │   └── exception/      # Gestion globale des erreurs
 │   └── src/main/resources/
-│       └── db/migration/   # Flyway V1 (schéma) + V2 (index)
+│       └── db/migration/   # Flyway V1 (schéma) → V7 (config import + passerelle)
 ├── frontend/               # Application React + TypeScript
 │   └── src/
 │       ├── components/
@@ -91,6 +91,15 @@ starrupture-web/
 - Minimap contextuelle centrée sur l'entité sélectionnée (rayon 60 000 unités)
 - Panneau détail avec informations complètes et liens drones
 
+### Import automatique (Administration)
+
+Onglet **Administration** pour importer le `.sav` directement depuis le FTP de l'hébergeur du serveur de jeu, sans upload manuel.
+
+- Configuration FTP stockée côté serveur (hôte, port, utilisateur, mot de passe, chemin) ; le mot de passe n'est jamais renvoyé à l'interface
+- **Passerelle HTTP Web-FTP** (recommandé) : le `.sav` est téléchargé via le bridge HTTP de l'hébergeur (ex. 4Netplayers `handler.php`), qui réalise le FTP côté LAN et renvoie le fichier en HTTPS. Cela contourne le **canal de données FTP passif** souvent bloqué côté client, et fonctionne **serveur de jeu allumé**
+- Repli automatique sur FTP direct (FTP puis FTPS) si l'URL passerelle est laissée vide
+- Import manuel (« Importer maintenant ») ou **automatique** à intervalle configurable (`@Scheduled`)
+
 ### API REST
 
 | Méthode | Point d'entrée | Description |
@@ -103,6 +112,10 @@ starrupture-web/
 | GET | `/api/saves/{id}/splines` | Rails et splines |
 | GET | `/api/saves/{id}/zones` | Zones de base (bounding boxes) |
 | GET | `/api/saves/{id}/summary` | Statistiques agrégées |
+| GET | `/api/saves/{id}/progression` | Réputation corporations + plans débloqués |
+| GET / PUT | `/api/admin/config` | Lecture / écriture de la configuration d'import FTP |
+| POST | `/api/admin/test` | Test de connexion (passerelle HTTP ou FTP) |
+| POST | `/api/admin/import` | Import immédiat du `.sav` depuis le FTP/passerelle |
 
 ## Démarrage rapide
 
