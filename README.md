@@ -99,7 +99,27 @@ Onglet **Administration** pour importer le `.sav` directement depuis le FTP de l
 - Import manuel (« Importer maintenant ») ou **automatique** à intervalle configurable (`@Scheduled`)
 - **Import différentiel** : empreinte SHA-256 du dernier `.sav` ; si le fichier est inchangé, la session existante est réutilisée au lieu de créer un doublon (en-tête `X-Import-Unchanged`)
 
+### Authentification
+
+L'application est protégée par une **mire de connexion**. Auth légère sans dépendance externe :
+
+- Mots de passe hachés en **PBKDF2-HMAC-SHA256**, jetons d'API **signés HMAC** (sans état, stockés côté client dans `localStorage`)
+- Un **admin par défaut** (`admin` / `admin`) est créé au premier démarrage si aucun compte n'existe — **à changer immédiatement** via l'interface (configurable via `APP_ADMIN_USER`/`APP_ADMIN_PASSWORD`)
+- L'**administrateur** gère les comptes (création, définition de mot de passe, suppression, rôle ADMIN/USER) depuis l'onglet Administration
+- Toute route `/api/**` exige un jeton valide ; `/api/admin/**` exige le rôle ADMIN. L'onglet Administration est masqué pour les utilisateurs non‑admin
+- Secret de signature configurable via `APP_AUTH_SECRET` (à définir en prod)
+
 ### API REST
+
+> Toutes les routes `/api/**` (sauf `/api/auth/login`) exigent l'en-tête `Authorization: Bearer <jeton>`.
+
+| Méthode | Point d'entrée | Description |
+|---------|----------------|-------------|
+| POST | `/api/auth/login` | Connexion → jeton signé (public) |
+| GET | `/api/auth/me` | Utilisateur courant (nom, rôle) |
+| GET / POST | `/api/admin/users` | Liste / création d'utilisateurs (ADMIN) |
+| PUT | `/api/admin/users/{id}/password` | Définir le mot de passe (ADMIN) |
+| DELETE | `/api/admin/users/{id}` | Suppression d'un utilisateur (ADMIN) |
 
 | Méthode | Point d'entrée | Description |
 |---------|----------------|-------------|
