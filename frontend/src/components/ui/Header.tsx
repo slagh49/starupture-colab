@@ -1,6 +1,7 @@
 import type { SaveSession, GameEntity, DroneLink } from '../../types/save.types';
 import { UploadButton } from './UploadButton';
 import { SessionSelector } from './SessionSelector';
+import { formatPlaytime } from '../../utils/format';
 import styles from './Header.module.css';
 
 interface Props {
@@ -26,7 +27,7 @@ export function Header({
 }: Props): JSX.Element {
   const machineCount = entities.filter(e => e.category === 'machine').length;
   const droneCount = links.reduce((sum, l) => sum + l.droneCount, 0);
-  const playtime = activeSession ? activeSession.playtime.toFixed(1) : '—';
+  const playtime = activeSession ? formatPlaytime(activeSession.playtime) : '—';
   const saveDate = activeSession
     ? activeSession.timestamp.slice(0, 10).replace(/-/g, '')
     : '—';
@@ -68,7 +69,7 @@ export function Header({
       <div className={styles.right}>
         <span className={styles.stat}>
           <span className={styles.statLabel}>TEMPS JEU</span>
-          <span className={styles.statValue}>{playtime}s</span>
+          <span className={styles.statValue}>{playtime}</span>
         </span>
         <span className={styles.stat}>
           <span className={styles.statLabel}>SAVE</span>

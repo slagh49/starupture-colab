@@ -79,6 +79,7 @@ export function useSaveData(): UseSaveDataReturn {
     setLoading(true);
     setError(null);
     setActiveSession(session);
+    localStorage.setItem('activeSessionId', session.id);
     try {
       const [entitiesRes, linksRes, splinesRes, zonesRes] = await Promise.all([
         savesApi.entities(session.id),
@@ -134,6 +135,14 @@ export function useSaveData(): UseSaveDataReturn {
   useEffect(() => {
     void loadSessions();
   }, [loadSessions]);
+
+  // Auto-load the last selected session so the file doesn't have to be re-picked.
+  useEffect(() => {
+    if (activeSession || sessions.length === 0) return;
+    const lastId = localStorage.getItem('activeSessionId');
+    const match = lastId ? sessions.find(s => s.id === lastId) : undefined;
+    if (match) void selectSession(match);
+  }, [sessions, activeSession, selectSession]);
 
   return {
     sessions,

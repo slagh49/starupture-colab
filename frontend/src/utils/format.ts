@@ -16,6 +16,19 @@ export function displayName(entity: GameEntity): string {
   return custom ? custom : cleanName(entity.name);
 }
 
+/** Format a duration in seconds as "Xj Yh Zmin". */
+export function formatPlaytime(seconds: number | null | undefined): string {
+  if (!seconds || seconds < 0) return '—';
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const parts: string[] = [];
+  if (d) parts.push(`${d}j`);
+  if (h || d) parts.push(`${h}h`);
+  parts.push(`${m}min`);
+  return parts.join(' ');
+}
+
 /** Strip engine prefixes from an entity name (e.g. "DA_BaseCore" -> "BaseCore"). */
 export function cleanName(name: string): string {
   let s = name;
