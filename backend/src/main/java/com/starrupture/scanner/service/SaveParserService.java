@@ -46,6 +46,9 @@ public class SaveParserService {
     static final Pattern DRONE_SRC = Pattern.compile("CurrentMovementStart=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_DST = Pattern.compile("CurrentMovementTarget=\\(ID=(\\d+)\\)");
     static final Pattern DRONE_ITEM = Pattern.compile("ItemDataBase=\"([^\"]+)\"");
+    // The drone's full route: first path Start = true producer, last End = true consumer.
+    static final Pattern PATH_START = Pattern.compile("Start=\\(NetID=\\([^)]*\\),Entity=\\(ID=(\\d+)\\)");
+    static final Pattern PATH_END = Pattern.compile("End=\\(NetID=\\([^)]*\\),Entity=\\(ID=(\\d+)\\)");
     static final Pattern SPLINE_PT = Pattern.compile("Position=\\(X=([\\d.\\-]+),Y=([\\d.\\-]+)");
     static final Pattern BBOX = Pattern.compile(
             "CachedBoundingBox=\\(Min=\\(X=([\\d.\\-]+),Y=([\\d.\\-]+).*?Max=\\(X=([\\d.\\-]+),Y=([\\d.\\-]+)");
@@ -493,15 +496,42 @@ public class SaveParserService {
                     gameEntityItemRepository.saveAll(inventoryItems);
                 }
 
-                // Extract drone link data
+                // Extract drone link data: use the full route (first path Start =
+                // real producer, last path End = real consumer) so links connect
+                // actual machines instead of the current rail hop.
                 for (String frag : fragments) {
-                    Matcher srcMatch = DRONE_SRC.matcher(frag);
-                    Matcher dstMatch = DRONE_DST.matcher(frag);
-                    Matcher itemMatch = DRONE_ITEM.matcher(frag);
+                    if (!frag.contains("CrLogisticsAgentFragment")) continue;
 
-                    if (srcMatch.find() && dstMatch.find()) {
-                        String srcId = "(ID=" + srcMatch.group(1) + ")";
-                        String dstId = "(ID=" + dstMatch.group(1) + ")";
+                    String srcId = null;
+                    String dstId = null;
+                    int pathIdx = frag.indexOf("CurrentPath=");
+                    if (pathIdx >= 0) {
+                        String path = frag.substring(pathIdx);
+                        Matcher pathStart = PATH_START.matcher(path);
+                        if (pathStart.find()) {
+                            srcId = "(ID=" + pathStart.group(1) + ")";
+                        }
+                        Matcher pathEnd = PATH_END.matcher(path);
+                        String lastEnd = null;
+                        while (pathEnd.find()) {
+                            lastEnd = pathEnd.group(1);
+                        }
+                        if (lastEnd != null) {
+                            dstId = "(ID=" + lastEnd + ")";
+                        }
+                    }
+                    // Fallback to the current movement hop if no path is present.
+                    if (srcId == null || dstId == null) {
+                        Matcher srcMatch = DRONE_SRC.matcher(frag);
+                        Matcher dstMatch = DRONE_DST.matcher(frag);
+                        if (srcMatch.find() && dstMatch.find()) {
+                            if (srcId == null) srcId = "(ID=" + srcMatch.group(1) + ")";
+                            if (dstId == null) dstId = "(ID=" + dstMatch.group(1) + ")";
+                        }
+                    }
+
+                    if (srcId != null && dstId != null && !srcId.equals(dstId)) {
+                        Matcher itemMatch = DRONE_ITEM.matcher(frag);
                         String item = itemMatch.find() ? itemMatch.group(1) : null;
                         pendingDroneLinks.add(new String[]{srcId, dstId, item});
                     }
