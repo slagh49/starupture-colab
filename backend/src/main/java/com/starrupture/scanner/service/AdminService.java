@@ -5,7 +5,6 @@ import com.starrupture.scanner.dto.AppConfigInput;
 import com.starrupture.scanner.entity.AppConfig;
 import com.starrupture.scanner.entity.SaveSession;
 import com.starrupture.scanner.repository.AppConfigRepository;
-import com.starrupture.scanner.repository.SaveSessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 public class AdminService {
 
     private final AppConfigRepository configRepository;
-    private final SaveSessionRepository saveSessionRepository;
     private final FtpService ftpService;
     private final HttpBridgeService httpBridgeService;
     private final SaveParserService saveParserService;
@@ -107,10 +105,8 @@ public class AdminService {
                     c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
         }
 
-        // Wipe-and-replace : chaque import efface toutes les sessions existantes
-        // puis recharge le .sav à neuf (plus d'import différentiel/dedup).
-        saveSessionRepository.deleteAllInBatch();
-
+        // Le wipe-and-replace (efface les sessions existantes) est fait dans
+        // parseSavBytes, commun à l'upload manuel et à l'import FTP.
         String name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
         SaveSession session = saveParserService.parseSavBytes(bytes, name.isEmpty() ? "ftp.sav" : name);
         c.setLastImportAt(LocalDateTime.now());

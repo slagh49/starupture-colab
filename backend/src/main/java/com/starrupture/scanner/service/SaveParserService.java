@@ -454,6 +454,12 @@ public class SaveParserService {
                 .progression(progressionJson)
                 .build();
 
+        // Wipe-and-replace : l'appli ne conserve qu'un seul état (la dernière
+        // sauvegarde chargée). Chaque parse — upload manuel comme import FTP —
+        // efface toutes les sessions existantes avant de recharger à neuf.
+        // Transactionnel : si le parsing échoue plus loin, le wipe est annulé.
+        saveSessionRepository.deleteAllInBatch();
+
         session = saveSessionRepository.save(session);
 
         // Navigate to entities

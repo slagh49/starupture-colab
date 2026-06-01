@@ -1,11 +1,17 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://postgres:5432/starrupture}
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/starrupture?reWriteBatchedInserts=true}
     username: ${DB_USER:scanner}
     password: ${DB_PASSWORD:scanner}
   jpa:
     hibernate.ddl-auto: validate
     show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
   flyway:
     enabled: true
   data.redis:

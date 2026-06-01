@@ -97,7 +97,8 @@ Onglet **Administration** pour importer le `.sav` directement depuis le FTP de l
 - **Passerelle HTTP Web-FTP** (recommandé) : le `.sav` est téléchargé via le bridge HTTP de l'hébergeur (ex. 4Netplayers `handler.php`), qui réalise le FTP côté LAN et renvoie le fichier en HTTPS. Cela contourne le **canal de données FTP passif** souvent bloqué côté client, et fonctionne **serveur de jeu allumé**
 - Repli automatique sur FTP direct (FTP puis FTPS) si l'URL passerelle est laissée vide
 - Import manuel (« Importer maintenant ») ou **automatique** à intervalle configurable (`@Scheduled`)
-- **Import wipe-and-replace** : chaque import efface toutes les sessions existantes puis recharge le `.sav` à neuf — l'application ne conserve donc qu'un seul état (le dernier import). Opération atomique (`@Transactional`) : en cas d'échec du parsing, le wipe est annulé
+- **Wipe-and-replace** : tout chargement de sauvegarde (upload manuel **ou** import FTP) efface d'abord les sessions existantes puis recharge le `.sav` à neuf — l'application ne conserve donc qu'un seul état (le dernier chargé). Logique commune dans `parseSavBytes`, atomique (`@Transactional`) : en cas d'échec du parsing, le wipe est annulé
+- **Insertions par lot** : parsing accéléré via le batch JDBC Hibernate (`batch_size`, `order_inserts`, `reWriteBatchedInserts`) — indispensable pour les sauvegardes à plusieurs dizaines de milliers d'entités
 
 ### Authentification
 
