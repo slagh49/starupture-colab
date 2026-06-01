@@ -136,12 +136,13 @@ export function useSaveData(): UseSaveDataReturn {
     void loadSessions();
   }, [loadSessions]);
 
-  // Auto-load the last selected session so the file doesn't have to be re-picked.
+  // No session picker anymore: open the most recent save on startup so the
+  // map is never empty and auto-imported updates show up on reload. The list
+  // is returned most-recent-first by the API.
   useEffect(() => {
     if (activeSession || sessions.length === 0) return;
-    const lastId = localStorage.getItem('activeSessionId');
-    const match = lastId ? sessions.find(s => s.id === lastId) : undefined;
-    if (match) void selectSession(match);
+    const latest = sessions[0];
+    if (latest) void selectSession(latest);
   }, [sessions, activeSession, selectSession]);
 
   return {
