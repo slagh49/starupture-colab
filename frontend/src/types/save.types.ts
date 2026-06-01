@@ -74,6 +74,17 @@ export interface Progression {
   recipesLocked: number;
 }
 
+export interface AppConfig {
+  ftpHost: string | null;
+  ftpPort: number | null;
+  ftpUser: string | null;
+  hasPassword: boolean;
+  ftpPath: string | null;
+  autoImportEnabled: boolean;
+  autoImportIntervalMinutes: number;
+  lastImportAt: string | null;
+}
+
 export interface SessionSummary {
   totalEntities: number;
   activeMachines: number;

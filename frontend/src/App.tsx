@@ -5,6 +5,7 @@ import type { TabId } from './components/ui/TabBar';
 import { MapPage } from './pages/MapPage';
 import { ProductionPage } from './pages/ProductionPage';
 import { ProgressionPage } from './pages/ProgressionPage';
+import { AdminPage } from './pages/AdminPage';
 import { useSaveData } from './hooks/useSaveData';
 import { useMapInteraction } from './hooks/useMapInteraction';
 import styles from './App.module.css';
@@ -36,6 +37,15 @@ export function App(): JSX.Element {
         )}
         {activeTab === 'progression' && (
           <ProgressionPage sessionId={saveData.activeSession?.id ?? null} />
+        )}
+        {activeTab === 'admin' && (
+          <AdminPage
+            onImported={session => {
+              void saveData.loadSessions();
+              void saveData.selectSession(session);
+              setActiveTab('map');
+            }}
+          />
         )}
       </div>
     </div>

@@ -8,6 +8,7 @@ import type {
   BaseZone,
   SessionSummary,
   Progression,
+  AppConfig,
 } from '../types/save.types';
 
 const api = axios.create({
@@ -31,4 +32,21 @@ export const savesApi = {
   zones:    (id: string)   => api.get<BaseZone[]>(`/saves/${id}/zones`),
   summary:  (id: string)   => api.get<SessionSummary>(`/saves/${id}/summary`),
   progression: (id: string) => api.get<Progression>(`/saves/${id}/progression`),
+};
+
+export interface AppConfigInput {
+  ftpHost: string;
+  ftpPort: number;
+  ftpUser: string;
+  ftpPassword?: string;
+  ftpPath: string;
+  autoImportEnabled: boolean;
+  autoImportIntervalMinutes: number;
+}
+
+export const adminApi = {
+  getConfig: ()                    => api.get<AppConfig>('/admin/config'),
+  saveConfig: (cfg: AppConfigInput) => api.put<AppConfig>('/admin/config', cfg),
+  test:      ()                    => api.post<{ ok: boolean }>('/admin/test'),
+  importNow: ()                    => api.post<SaveSession>('/admin/import'),
 };

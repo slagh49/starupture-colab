@@ -398,7 +398,12 @@ public class SaveParserService {
      */
     @Transactional
     public SaveSession parseSavFile(MultipartFile file) throws IOException {
-        byte[] raw = file.getBytes();
+        return parseSavBytes(file.getBytes(), file.getOriginalFilename());
+    }
+
+    /** Parse a save provided as raw bytes (e.g. fetched from an FTP server). */
+    @Transactional
+    public SaveSession parseSavBytes(byte[] raw, String originalFilename) throws IOException {
         String json = readFileContent(raw);
 
         JsonNode root = objectMapper.readTree(json);
@@ -439,7 +444,7 @@ public class SaveParserService {
         }
 
         // Create session from root metadata
-        String filename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown";
+        String filename = originalFilename != null ? originalFilename : "unknown";
         SaveSession session = SaveSession.builder()
                 .filename(filename)
                 .sessionName(root.has("sessionName") ? root.path("sessionName").asText(null) : null)
@@ -641,7 +646,7 @@ public class SaveParserService {
         }
 
         log.info("Parsed save file '{}': {} entities, {} drone links, {} package links",
-                file.getOriginalFilename(), entityMap.size(), pendingDroneLinks.size(), packageLinks);
+                filename, entityMap.size(), pendingDroneLinks.size(), packageLinks);
 
         return session;
     }
