@@ -84,7 +84,8 @@ starrupture-web/
 - Rails DroneRail (orange) et Walkway (cyan pointillé)
 - Alertes visuelles : anneau rouge pulsant pour l'infection, badge OFF
 - **Filtre par nom** : n'affiche que les entités dont le nom correspond (ex. `soufre-`), toutes catégories confondues
-- **Filtre infection** : isole les bâtiments infectés (masque zones et rails pour les faire ressortir)
+- **Calque infection** : anneau rouge pulsant sur chaque bâtiment infecté, toujours visible (même si sa catégorie est masquée), activable/désactivable comme les autres calques
+- Calques activables : terrain, flux drones, rails, zones de base, labels, infection
 - Filtres par catégorie + liste latérale groupée (catégorie → type), restreinte au viewport
 - La sauvegarde la plus récente est chargée automatiquement au démarrage
 
