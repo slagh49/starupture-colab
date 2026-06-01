@@ -107,6 +107,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
   const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
 
   const flowItemList = useMemo(() => flowItems(links), [links]);
+  const entityById = useMemo(() => new Map(entities.map(e => [e.id, e])), [entities]);
 
   const [layers, setLayers] = useState<LayerState>({
     terrain: true,
@@ -220,6 +221,8 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               <EntityDetail
                 entity={selectedEntity}
                 sessionId={saveData.activeSession?.id ?? null}
+                links={links}
+                entityById={entityById}
                 onClose={() => setSelectedEntity(null)}
               />
             )}

@@ -72,9 +72,9 @@ function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Elem
                   {typeEntries.map(([type, items]) => {
                     const tkey = `${cat}:${type}`;
                     const tOpen = openTypes.has(tkey);
-                    // custom-named instances first
+                    // alphabetical by display name (natural order for the digits)
                     const sorted = [...items].sort((a, b) =>
-                      Number(!!b.customName) - Number(!!a.customName)
+                      displayName(a).localeCompare(displayName(b), undefined, { numeric: true })
                     );
                     return (
                       <div key={tkey}>

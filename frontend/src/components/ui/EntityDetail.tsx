@@ -1,19 +1,57 @@
-import { useState, useEffect } from 'react';
-import type { GameEntity, GameEntityItem } from '../../types/save.types';
+import { useState, useEffect, useMemo } from 'react';
+import type { GameEntity, GameEntityItem, DroneLink } from '../../types/save.types';
 import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
 import { displayName, cleanRecipe } from '../../utils/format';
+import { cleanItemName } from '../map/DroneLayer';
 import { savesApi } from '../../services/api';
 import styles from './EntityDetail.module.css';
+
+interface Conn {
+  name: string;
+  item: string;
+  count: number;
+}
 
 interface Props {
   entity: GameEntity;
   sessionId: string | null;
+  links: DroneLink[];
+  entityById: Map<string, GameEntity>;
   onClose: () => void;
 }
 
-export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element {
+export function EntityDetail({ entity, sessionId, links, entityById, onClose }: Props): JSX.Element {
   const color = CAT_COLORS[entity.category];
   const [items, setItems] = useState<GameEntityItem[]>([]);
+
+  // Drone-link connections of this entity (where it sends to / receives from).
+  const connections = useMemo(() => {
+    const out = new Map<string, Conn>();
+    const inc = new Map<string, Conn>();
+    for (const l of links) {
+      const cnt = l.droneCount ?? 1;
+      if (l.fromEntityId === entity.id) {
+        const item = cleanItemName(l.item ?? '');
+        const key = l.toEntityId + '|' + item;
+        const e = out.get(key);
+        if (e) e.count += cnt;
+        else {
+          const other = entityById.get(l.toEntityId);
+          out.set(key, { name: other ? displayName(other) : '?', item, count: cnt });
+        }
+      } else if (l.toEntityId === entity.id) {
+        const item = cleanItemName(l.item ?? '');
+        const key = l.fromEntityId + '|' + item;
+        const e = inc.get(key);
+        if (e) e.count += cnt;
+        else {
+          const other = entityById.get(l.fromEntityId);
+          inc.set(key, { name: other ? displayName(other) : '?', item, count: cnt });
+        }
+      }
+    }
+    return { out: [...out.values()], in: [...inc.values()] };
+  }, [entity.id, links, entityById]);
 
   useEffect(() => {
     if (!sessionId) {
@@ -93,6 +131,22 @@ export function EntityDetail({ entity, sessionId, onClose }: Props): JSX.Element
         {outputs.length > 0 && (
           <ItemSection title="SORTIE" items={outputs} />
         )}
+
+        {connections.out.map((c, i) => (
+          <DetailRow
+            key={`out-${i}`}
+            label={i === 0 ? 'VERS' : ''}
+            value={`→ ${c.name} (${c.item} ×${c.count})`}
+            valueColor={CAT_COLORS.machine}
+          />
+        ))}
+        {connections.in.map((c, i) => (
+          <DetailRow
+            key={`in-${i}`}
+            label={i === 0 ? 'DEPUIS' : ''}
+            value={`← ${c.name} (${c.item} ×${c.count})`}
+          />
+        ))}
       </div>
     </div>
   );

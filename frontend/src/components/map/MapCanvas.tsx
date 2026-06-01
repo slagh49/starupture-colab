@@ -387,7 +387,7 @@ export function MapCanvas({
       ctx.drawImage(staticCanvas, 0, 0);
 
       if (layers.drones) {
-        drawDroneLinks(ctx, flowEdges, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity);
+        drawDroneLinks(ctx, flowEdges, zoom, panX, panY, timestamp, selectedFlowItem, hoveredEntity, selectedEntity);
       }
       if (selectedEntity) {
         drawEntityHighlight(ctx, selectedEntity, zoom, panX, panY, w, h, true);

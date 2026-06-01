@@ -110,17 +110,19 @@ export function drawDroneLinks(
   panY: number,
   timestamp: number,
   selectedItem: string | null = null,
-  hoveredEntity: GameEntity | null = null
+  hoveredEntity: GameEntity | null = null,
+  selectedEntity: GameEntity | null = null
 ): void {
   const edges = selectedItem ? allEdges.filter(e => e.item === selectedItem) : allEdges;
   if (edges.length === 0) return;
 
+  // Hover wins, otherwise the selected entity isolates its own connections.
+  const focus = hoveredEntity ?? selectedEntity;
   const maxVol = edges.reduce((m, e) => Math.max(m, e.vol), 1);
   const time = timestamp / 1000;
 
   for (const e of edges) {
-    const involved =
-      !hoveredEntity || e.from.id === hoveredEntity.id || e.to.id === hoveredEntity.id;
+    const involved = !focus || e.from.id === focus.id || e.to.id === focus.id;
     const tn = e.vol / maxVol;
     const arc = arcGeometry(e.from, e.to, zoom, panX, panY);
     const width = 1.2 + tn * 5.5;
