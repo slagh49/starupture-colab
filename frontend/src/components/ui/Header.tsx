@@ -43,7 +43,9 @@ export function Header({
         <span className={styles.logo}>STARRUPTURE</span>
         <span className={styles.separator}>—</span>
         <span className={styles.subtitle}>BASE SCANNER</span>
-        <span className={styles.version}>v3.0</span>
+        <span className={styles.version} title="Build déployé">
+          {import.meta.env.VITE_APP_VERSION ?? 'dev'}
+        </span>
       </div>
 
       <div className={styles.center}>
