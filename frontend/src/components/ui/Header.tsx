@@ -1,5 +1,7 @@
 import type { SaveSession, GameEntity, DroneLink } from '../../types/save.types';
+import type { ThemeId } from '../../constants/themes';
 import { UploadButton } from './UploadButton';
+import { ThemeSwitcher } from './ThemeSwitcher';
 import { formatPlaytime, formatSaveDate } from '../../utils/format';
 import styles from './Header.module.css';
 
@@ -12,6 +14,8 @@ interface Props {
   onUpload: (file: File) => void;
   username: string;
   onLogout: () => void;
+  theme: ThemeId;
+  onThemeChange: (theme: ThemeId) => void;
 }
 
 export function Header({
@@ -23,6 +27,8 @@ export function Header({
   onUpload,
   username,
   onLogout,
+  theme,
+  onThemeChange,
 }: Props): JSX.Element {
   const machineCount = entities.filter(e => e.category === 'machine').length;
   const droneCount = links.reduce((sum, l) => sum + l.droneCount, 0);
@@ -77,6 +83,7 @@ export function Header({
           <span className={styles.statLabel}>SAVE</span>
           <span className={styles.statValue}>{saveDate}</span>
         </span>
+        <ThemeSwitcher theme={theme} onThemeChange={onThemeChange} />
         <span className={styles.user}>
           <span className={styles.statLabel}>{username}</span>
           <button type="button" className={styles.logout} onClick={onLogout} title="Déconnexion">⏻</button>

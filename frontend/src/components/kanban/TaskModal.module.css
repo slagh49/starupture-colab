@@ -24,7 +24,7 @@
   margin: 0 0 16px;
   font-size: 14px;
   font-weight: 700;
-  color: #00d4ff;
+  color: var(--accent);
   letter-spacing: 1px;
 }
 
@@ -68,7 +68,7 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #00d4ff;
+  border-color: var(--accent);
 }
 
 .textarea {
@@ -104,8 +104,8 @@
 }
 
 .save {
-  background: #00d4ff;
-  border: 1px solid #00d4ff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
   color: #04121a;
   font-weight: 700;
 }

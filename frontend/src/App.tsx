@@ -10,11 +10,14 @@ import { LoginPage } from './pages/LoginPage';
 import { useSaveData } from './hooks/useSaveData';
 import { useMapInteraction } from './hooks/useMapInteraction';
 import { useAuth } from './hooks/useAuth';
+import { useTheme } from './hooks/useTheme';
+import type { ThemeId } from './constants/themes';
 import type { AuthUser } from './services/api';
 import styles from './App.module.css';
 
 export function App(): JSX.Element {
   const auth = useAuth();
+  const { theme, setTheme } = useTheme();
 
   if (!auth.ready) {
     return <div className={styles.loading}>Chargement…</div>;
@@ -22,15 +25,24 @@ export function App(): JSX.Element {
   if (!auth.user) {
     return <LoginPage onLogin={auth.login} />;
   }
-  return <AuthedApp user={auth.user} onLogout={auth.logout} />;
+  return (
+    <AuthedApp
+      user={auth.user}
+      onLogout={auth.logout}
+      theme={theme}
+      onThemeChange={setTheme}
+    />
+  );
 }
 
 interface AuthedProps {
   user: AuthUser;
   onLogout: () => void;
+  theme: ThemeId;
+  onThemeChange: (theme: ThemeId) => void;
 }
 
-function AuthedApp({ user, onLogout }: AuthedProps): JSX.Element {
+function AuthedApp({ user, onLogout, theme, onThemeChange }: AuthedProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<TabId>('map');
   const saveData = useSaveData();
   const mapInteraction = useMapInteraction();
@@ -54,6 +66,8 @@ function AuthedApp({ user, onLogout }: AuthedProps): JSX.Element {
         onUpload={saveData.uploadFile}
         username={user.username}
         onLogout={onLogout}
+        theme={theme}
+        onThemeChange={onThemeChange}
       />
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
       <div className={styles.content}>

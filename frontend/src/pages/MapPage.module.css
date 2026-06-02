@@ -43,7 +43,7 @@
 }
 
 .nameFilter input:focus {
-  border-color: #00d4ff;
+  border-color: var(--accent);
 }
 
 .nameFilter input::placeholder {
@@ -70,13 +70,13 @@
 }
 
 .nameFilter button:hover {
-  color: #00d4ff;
+  color: var(--accent);
 }
 
 .nameFilterHint {
   padding: 4px 12px 8px;
   font-size: 11px;
-  color: #00d4ff;
+  color: var(--accent);
   border-bottom: 1px solid #1e2733;
 }
 

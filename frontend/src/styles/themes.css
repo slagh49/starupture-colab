@@ -1,0 +1,58 @@
+/*
+ * Thèmes graphiques : chaque thème redéfinit l'accent de l'UI selon l'identité
+ * d'une corporation StarRupture. Les fonds sombres et les couleurs sémantiques
+ * de catégories d'entités (CAT_COLORS) restent partagés pour la lisibilité.
+ *
+ * Le thème est appliqué via l'attribut [data-theme] sur <html> (voir useTheme).
+ * --accent      : accent principal (titres, bordures, surbrillances, logo)
+ * --accent-rgb  : même couleur en triplet RGB pour les rgba() translucides
+ * --accent-2    : accent secondaire (états actifs, succès, flux)
+ */
+
+:root,
+:root[data-theme='default'] {
+  --accent: #00d4ff;
+  --accent-rgb: 0, 212, 255;
+  --accent-2: #39ff14;
+  --accent-2-rgb: 57, 255, 20;
+}
+
+/* Selenian Corporation — orange industriel */
+:root[data-theme='selenian'] {
+  --accent: #f5872a;
+  --accent-rgb: 245, 135, 42;
+  --accent-2: #ffc24d;
+  --accent-2-rgb: 255, 194, 77;
+}
+
+/* Moon Energy — argent lunaire + cyan */
+:root[data-theme='moon'] {
+  --accent: #aebfcc;
+  --accent-rgb: 174, 191, 204;
+  --accent-2: #00d4ff;
+  --accent-2-rgb: 0, 212, 255;
+}
+
+/* Clever Robotics — rouge */
+:root[data-theme='clever'] {
+  --accent: #ff4438;
+  --accent-rgb: 255, 68, 56;
+  --accent-2: #ff9a66;
+  --accent-2-rgb: 255, 154, 102;
+}
+
+/* Future Health Solutions — turquoise médical */
+:root[data-theme='future'] {
+  --accent: #2dd4bf;
+  --accent-rgb: 45, 212, 191;
+  --accent-2: #6ee7d6;
+  --accent-2-rgb: 110, 231, 214;
+}
+
+/* Griffith Blue — bleu */
+:root[data-theme='griffith'] {
+  --accent: #4a90ff;
+  --accent-rgb: 74, 144, 255;
+  --accent-2: #7aa9ff;
+  --accent-2-rgb: 122, 169, 255;
+}

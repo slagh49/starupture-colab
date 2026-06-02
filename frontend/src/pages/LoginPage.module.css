@@ -31,7 +31,7 @@
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: #00d4ff;
+  color: var(--accent);
 }
 
 .subtitle {
@@ -68,7 +68,7 @@
 }
 
 .field input:focus {
-  border-color: #00d4ff;
+  border-color: var(--accent);
 }
 
 .error {
@@ -83,7 +83,7 @@
 .button {
   margin-top: 6px;
   padding: 10px;
-  background: #00d4ff;
+  background: var(--accent);
   border: none;
   border-radius: 4px;
   color: #06090e;

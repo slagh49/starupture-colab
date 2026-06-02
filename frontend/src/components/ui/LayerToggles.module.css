@@ -25,14 +25,14 @@
 }
 
 .toggle:hover {
-  border-color: #00d4ff55;
+  border-color: rgba(var(--accent-rgb), 0.33);
   color: #c8d0dc;
 }
 
 .toggle.active {
-  color: #00d4ff;
-  border-color: #00d4ff55;
-  background: rgba(0, 212, 255, 0.08);
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.33);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .icon {

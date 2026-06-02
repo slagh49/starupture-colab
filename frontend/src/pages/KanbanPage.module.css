@@ -36,8 +36,8 @@
 }
 
 .column.dragOver {
-  border-color: #00d4ff;
-  box-shadow: 0 0 0 1px #00d4ff66 inset;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.4) inset;
 }
 
 .colHead {
@@ -51,7 +51,7 @@
 .colTitle {
   font-size: 13px;
   font-weight: 700;
-  color: #00d4ff;
+  color: var(--accent);
   letter-spacing: 1px;
   text-transform: uppercase;
   flex: 1;
@@ -85,7 +85,7 @@
 }
 
 .colActions button:hover {
-  color: #00d4ff;
+  color: var(--accent);
   background: #131920;
 }
 
@@ -120,8 +120,8 @@
 }
 
 .addTask:hover {
-  border-color: #39ff14;
-  color: #39ff14;
+  border-color: var(--accent-2);
+  color: var(--accent-2);
 }
 
 .addColumn {
@@ -138,6 +138,6 @@
 }
 
 .addColumn:hover {
-  border-color: #00d4ff;
-  color: #00d4ff;
+  border-color: var(--accent);
+  color: var(--accent);
 }

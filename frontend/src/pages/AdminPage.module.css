@@ -41,7 +41,7 @@
 }
 
 .field em {
-  color: #39ff14;
+  color: var(--accent-2);
   font-style: normal;
   font-size: 10px;
 }
@@ -114,7 +114,7 @@
   font-size: 12px;
 }
 
-.ok { background: rgba(57, 255, 20, 0.1); color: #39ff14; border: 1px solid rgba(57, 255, 20, 0.3); }
+.ok { background: rgba(var(--accent-2-rgb), 0.1); color: var(--accent-2); border: 1px solid rgba(var(--accent-2-rgb), 0.3); }
 .err { background: rgba(255, 48, 48, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 48, 48, 0.3); }
 .info { background: rgba(57, 192, 200, 0.1); color: #39c0c8; border: 1px solid rgba(57, 192, 200, 0.3); }
 

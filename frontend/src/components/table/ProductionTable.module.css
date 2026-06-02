@@ -95,11 +95,11 @@
 }
 
 .trSelected {
-  background: rgba(0, 212, 255, 0.08);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .trSelected:hover {
-  background: rgba(0, 212, 255, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
 }
 
 .td {
@@ -126,7 +126,7 @@
 }
 
 .statusOn {
-  color: #39ff14;
+  color: var(--accent-2);
   font-weight: 600;
   font-size: 11px;
 }

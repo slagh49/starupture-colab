@@ -12,7 +12,7 @@
 
 .select:focus {
   outline: none;
-  border-color: #00d4ff;
+  border-color: var(--accent);
 }
 
 .empty {

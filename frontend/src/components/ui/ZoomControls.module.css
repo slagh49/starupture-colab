@@ -17,7 +17,7 @@
   background: rgba(10, 14, 20, 0.9);
   border: 1px solid #1e2733;
   border-radius: 4px;
-  color: #00d4ff;
+  color: var(--accent);
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -27,8 +27,8 @@
 }
 
 .btn:hover {
-  background: rgba(0, 212, 255, 0.12);
-  border-color: #00d4ff55;
+  background: rgba(var(--accent-rgb), 0.12);
+  border-color: rgba(var(--accent-rgb), 0.33);
 }
 
 .icon {

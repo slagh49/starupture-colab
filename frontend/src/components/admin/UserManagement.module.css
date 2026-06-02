@@ -8,7 +8,7 @@
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 2px;
-  color: #00d4ff;
+  color: var(--accent);
   margin: 0 0 16px;
 }
 
@@ -33,7 +33,7 @@
 
 .input:focus,
 .select:focus {
-  border-color: #00d4ff;
+  border-color: var(--accent);
 }
 
 .input {
@@ -74,8 +74,8 @@
 }
 
 .admin {
-  background: rgba(0, 212, 255, 0.18);
-  color: #00d4ff;
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
 }
 
 .pwCell {
@@ -97,8 +97,8 @@
 }
 
 .btnPrimary {
-  background: #00d4ff;
-  border-color: #00d4ff;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #06090e;
   font-weight: 700;
 }
@@ -122,8 +122,8 @@
 }
 
 .ok {
-  background: rgba(57, 255, 20, 0.1);
-  border: 1px solid rgba(57, 255, 20, 0.35);
+  background: rgba(var(--accent-2-rgb), 0.1);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.35);
   color: #7dff5c;
 }
 

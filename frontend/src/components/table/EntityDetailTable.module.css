@@ -76,7 +76,7 @@
 }
 
 .linkItem {
-  color: #39ff14;
+  color: var(--accent-2);
 }
 
 .linkCount {

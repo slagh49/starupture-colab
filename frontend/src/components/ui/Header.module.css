@@ -37,7 +37,7 @@
 .logo {
   font-size: 14px;
   font-weight: 700;
-  color: #00d4ff;
+  color: var(--accent);
   letter-spacing: 2px;
 }
 
@@ -48,7 +48,7 @@
 
 .subtitle {
   font-size: 12px;
-  color: #39ff14;
+  color: var(--accent-2);
   letter-spacing: 1.5px;
 }
 
@@ -99,7 +99,7 @@
 
 .statValue {
   font-size: 12px;
-  color: #00d4ff;
+  color: var(--accent);
   font-weight: 700;
 }
 

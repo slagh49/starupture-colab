@@ -20,7 +20,7 @@
 
 .count {
   font-size: 10px;
-  color: #00d4ff;
+  color: var(--accent);
   font-weight: 700;
 }
 
@@ -60,11 +60,11 @@
 }
 
 .item:hover {
-  background: rgba(0, 212, 255, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .item.selected {
-  background: rgba(0, 212, 255, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
 }
 
 .more {
@@ -89,7 +89,7 @@
 }
 
 .group:hover {
-  background: rgba(0, 212, 255, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .subgroup {
@@ -106,7 +106,7 @@
 }
 
 .subgroup:hover {
-  background: rgba(0, 212, 255, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .subgroup .groupName {
@@ -155,9 +155,9 @@
 .badgeOn {
   font-size: 9px;
   font-weight: 700;
-  color: #39ff14;
-  background: rgba(57, 255, 20, 0.12);
-  border: 1px solid rgba(57, 255, 20, 0.3);
+  color: var(--accent-2);
+  background: rgba(var(--accent-2-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.3);
   border-radius: 2px;
   padding: 0 4px;
   letter-spacing: 0.5px;

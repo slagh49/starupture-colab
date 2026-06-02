@@ -122,6 +122,14 @@ Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour org
 - Chaque tâche mémorise son **auteur** (utilisateur courant)
 - Données **indépendantes des sauvegardes** : le kanban n'est jamais effacé par le wipe-and-replace de l'import
 
+### Thèmes graphiques
+
+Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**identité d'une corporation** StarRupture.
+
+- 6 thèmes : **Terminal** (cyan/vert par défaut), **Selenian** (orange), **Moon Energy** (argent/cyan), **Clever Robotics** (rouge), **Future Health** (turquoise), **Griffith Blue** (bleu)
+- Implémenté en **variables CSS** (`--accent`, `--accent-2`) appliquées via `[data-theme]` sur `<html>` ; choix **persisté** dans `localStorage`
+- Les fonds sombres et les **couleurs sémantiques des catégories d'entités** (carte) restent inchangés pour la lisibilité — seul l'accent décoratif change
+
 ### API REST
 
 > Toutes les routes `/api/**` (sauf `/api/auth/login`) exigent l'en-tête `Authorization: Bearer <jeton>`.

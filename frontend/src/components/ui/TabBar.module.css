@@ -32,7 +32,7 @@
 }
 
 .tab.active {
-  color: #00d4ff;
+  color: var(--accent);
 }
 
 .tab.active::after {
@@ -42,7 +42,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #00d4ff;
+  background: var(--accent);
 }
 
 .icon {
