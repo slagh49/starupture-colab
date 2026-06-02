@@ -7,6 +7,9 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   DOCKER_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend
   DOCKER_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend
+  # Version affichée dans l'app : v<MAJEUR>.<numéro de pipeline>.
+  # Majeur volontaire (passer à 2 pour basculer en 2.x) ; mineur auto-incrémenté.
+  APP_MAJOR: "1"
 
 # ---------- BUILD ----------
 
@@ -71,7 +74,7 @@ package-frontend:
       artifacts: true
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build --build-arg APP_VERSION=$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_FRONTEND:latest frontend/
+    - docker build --build-arg APP_VERSION=v$APP_MAJOR.$CI_PIPELINE_IID -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA -t $DOCKER_IMAGE_FRONTEND:latest frontend/
     - docker push $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHORT_SHA
     - docker push $DOCKER_IMAGE_FRONTEND:latest
   only:
