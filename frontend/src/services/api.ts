@@ -10,6 +10,13 @@ import type {
   Progression,
   AppConfig,
 } from '../types/save.types';
+import type {
+  KanbanBoard,
+  KanbanColumn,
+  KanbanTask,
+  KanbanUser,
+  TaskFields,
+} from '../types/kanban.types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
@@ -98,6 +105,20 @@ export interface AppConfigInput {
   autoImportEnabled: boolean;
   autoImportIntervalMinutes: number;
 }
+
+export const kanbanApi = {
+  board:        ()                              => api.get<KanbanBoard>('/kanban/board'),
+  users:        ()                              => api.get<KanbanUser[]>('/kanban/users'),
+  createColumn: (title: string)                 => api.post<KanbanColumn>('/kanban/columns', { title }),
+  renameColumn: (id: string, title: string)     => api.put<KanbanColumn>(`/kanban/columns/${id}`, { title }),
+  deleteColumn: (id: string)                    => api.delete(`/kanban/columns/${id}`),
+  createTask:   (columnId: string, fields: TaskFields) =>
+    api.post<KanbanTask>('/kanban/tasks', { columnId, ...fields }),
+  updateTask:   (id: string, fields: TaskFields) => api.put<KanbanTask>(`/kanban/tasks/${id}`, fields),
+  moveTask:     (id: string, columnId: string, position: number) =>
+    api.put<KanbanTask>(`/kanban/tasks/${id}/move`, { columnId, position }),
+  deleteTask:   (id: string)                    => api.delete(`/kanban/tasks/${id}`),
+};
 
 export const adminApi = {
   getConfig: ()                    => api.get<AppConfig>('/admin/config'),

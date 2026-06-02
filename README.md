@@ -51,7 +51,7 @@ starrupture-web/
 │   │   ├── config/         # CORS, cache Redis
 │   │   └── exception/      # Gestion globale des erreurs
 │   └── src/main/resources/
-│       └── db/migration/   # Flyway V1 (schéma) → V7 (config import + passerelle)
+│       └── db/migration/   # Flyway V1 (schéma) → V11 (kanban TODO)
 ├── frontend/               # Application React + TypeScript
 │   └── src/
 │       ├── components/
@@ -112,6 +112,16 @@ L'application est protégée par une **mire de connexion**. Auth légère sans d
 - Toute route `/api/**` exige un jeton valide ; `/api/admin/**` exige le rôle ADMIN. L'onglet Administration est masqué pour les utilisateurs non‑admin
 - Secret de signature configurable via `APP_AUTH_SECRET` (à définir en prod)
 
+### Tableau TODO (kanban)
+
+Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour organiser les chantiers de la base.
+
+- **Colonnes personnalisables** : créer, renommer, supprimer (À faire / En cours / Terminé par défaut)
+- **Tâches** avec titre, description, **priorité** (basse/normale/haute, pastille colorée), **assigné à** (parmi les comptes existants) et **échéance** (mise en évidence si dépassée)
+- **Glisser-déposer** des cartes entre colonnes et réordonnancement (drag & drop natif HTML5, sans dépendance)
+- Chaque tâche mémorise son **auteur** (utilisateur courant)
+- Données **indépendantes des sauvegardes** : le kanban n'est jamais effacé par le wipe-and-replace de l'import
+
 ### API REST
 
 > Toutes les routes `/api/**` (sauf `/api/auth/login`) exigent l'en-tête `Authorization: Bearer <jeton>`.
@@ -138,6 +148,14 @@ L'application est protégée par une **mire de connexion**. Auth légère sans d
 | GET / PUT | `/api/admin/config` | Lecture / écriture de la configuration d'import FTP |
 | POST | `/api/admin/test` | Test de connexion (passerelle HTTP ou FTP) |
 | POST | `/api/admin/import` | Import immédiat du `.sav` depuis le FTP/passerelle |
+
+| Méthode | Point d'entrée | Description |
+|---------|----------------|-------------|
+| GET | `/api/kanban/board` | Tableau kanban complet (colonnes + tâches) |
+| GET | `/api/kanban/users` | Liste des utilisateurs (pour l'assignation) |
+| POST / PUT / DELETE | `/api/kanban/columns[/{id}]` | Créer / renommer / supprimer une colonne |
+| POST / PUT / DELETE | `/api/kanban/tasks[/{id}]` | Créer / modifier / supprimer une tâche |
+| PUT | `/api/kanban/tasks/{id}/move` | Déplacer une tâche (colonne + position) |
 
 ## Démarrage rapide
 

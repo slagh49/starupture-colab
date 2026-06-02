@@ -1,6 +1,6 @@
 import styles from './TabBar.module.css';
 
-export type TabId = 'map' | 'progression' | 'admin';
+export type TabId = 'map' | 'progression' | 'todo' | 'admin';
 
 interface Props {
   activeTab: TabId;
@@ -37,6 +37,18 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
           <line x1="14" y1="14" x2="14" y2="7" />
         </svg>
         PROGRESSION
+      </button>
+      <button
+        className={`${styles.tab} ${activeTab === 'todo' ? styles.active : ''}`}
+        onClick={() => onTabChange('todo')}
+        type="button"
+      >
+        <svg className={styles.icon} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="1.5" y="2" width="3.5" height="12" rx="0.5" />
+          <rect x="6.25" y="2" width="3.5" height="8" rx="0.5" />
+          <rect x="11" y="2" width="3.5" height="5" rx="0.5" />
+        </svg>
+        TODO
       </button>
       {isAdmin && (
         <button

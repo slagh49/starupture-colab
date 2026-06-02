@@ -1,0 +1,143 @@
+.page {
+  height: 100%;
+  overflow: hidden;
+  background: #0a0e14;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7a8d;
+  font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+.board {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  height: 100%;
+  padding: 16px;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 290px;
+  max-height: 100%;
+  background: #0d1117;
+  border: 1px solid #1e2733;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.column.dragOver {
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 1px #00d4ff66 inset;
+}
+
+.colHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1e2733;
+}
+
+.colTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #00d4ff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  font-size: 11px;
+  color: #6b7a8d;
+  background: #131920;
+  border: 1px solid #1e2733;
+  border-radius: 10px;
+  padding: 1px 8px;
+}
+
+.colActions {
+  display: flex;
+  gap: 2px;
+}
+
+.colActions button {
+  background: transparent;
+  border: none;
+  color: #6b7a8d;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.colActions button:hover {
+  color: #00d4ff;
+  background: #131920;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 60px;
+}
+
+.colEmpty {
+  color: #46505e;
+  font-size: 11px;
+  text-align: center;
+  padding: 16px 0;
+  margin: 0;
+}
+
+.addTask {
+  margin: 0 10px 10px;
+  padding: 7px;
+  background: transparent;
+  border: 1px dashed #2a3645;
+  border-radius: 6px;
+  color: #8a97a6;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addTask:hover {
+  border-color: #39ff14;
+  color: #39ff14;
+}
+
+.addColumn {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px dashed #2a3645;
+  border-radius: 8px;
+  color: #8a97a6;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addColumn:hover {
+  border-color: #00d4ff;
+  color: #00d4ff;
+}

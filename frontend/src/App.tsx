@@ -4,6 +4,7 @@ import { TabBar } from './components/ui/TabBar';
 import type { TabId } from './components/ui/TabBar';
 import { MapPage } from './pages/MapPage';
 import { ProgressionPage } from './pages/ProgressionPage';
+import { KanbanPage } from './pages/KanbanPage';
 import { AdminPage } from './pages/AdminPage';
 import { LoginPage } from './pages/LoginPage';
 import { useSaveData } from './hooks/useSaveData';
@@ -62,6 +63,7 @@ function AuthedApp({ user, onLogout }: AuthedProps): JSX.Element {
         {activeTab === 'progression' && (
           <ProgressionPage sessionId={saveData.activeSession?.id ?? null} />
         )}
+        {activeTab === 'todo' && <KanbanPage />}
         {activeTab === 'admin' && isAdmin && (
           <AdminPage
             onImported={session => {

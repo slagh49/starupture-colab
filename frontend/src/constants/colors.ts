@@ -20,6 +20,21 @@ export const CAT_LABELS: Record<EntityCategory, string> = {
   loot:     'LOOTABLES',
 };
 
+import type { Priority } from '../types/kanban.types';
+
+/** Couleur + libellé par priorité de tâche (onglet TODO). */
+export const PRIORITY_COLORS: Record<Priority, string> = {
+  LOW:    '#6b7a8d',
+  NORMAL: '#00d4ff',
+  HIGH:   '#ff3030',
+};
+
+export const PRIORITY_LABELS: Record<Priority, string> = {
+  LOW:    'BASSE',
+  NORMAL: 'NORMALE',
+  HIGH:   'HAUTE',
+};
+
 /** UI theme palette */
 export const UI = {
   bgDark:       '#0a0e14',
