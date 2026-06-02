@@ -19,4 +19,6 @@ public class SaveSessionDto {
     private LocalDateTime uploadAt;
     private Double worldTime;
     private int entityCount;
+    /** Vrai si ce save est identique au précédent import (jeu non sauvegardé depuis). */
+    private boolean sameAsPrevious;
 }

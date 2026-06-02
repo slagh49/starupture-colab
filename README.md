@@ -100,6 +100,7 @@ Onglet **Administration** pour importer le `.sav` directement depuis le FTP de l
 - Import manuel (« Importer maintenant ») ou **automatique** à intervalle configurable (`@Scheduled`)
 - **Wipe-and-replace** : tout chargement de sauvegarde (upload manuel **ou** import FTP) efface d'abord les sessions existantes puis recharge le `.sav` à neuf — l'application ne conserve donc qu'un seul état (le dernier chargé). Logique commune dans `parseSavBytes`, atomique (`@Transactional`) : en cas d'échec du parsing, le wipe est annulé
 - **Insertions par lot** : parsing accéléré via le batch JDBC Hibernate (`batch_size`, `order_inserts`, `reWriteBatchedInserts`) — indispensable pour les sauvegardes à plusieurs dizaines de milliers d'entités
+- **Garde-fou « sauvegarde identique »** : à l'import, le backend compare le `timestamp` interne et le `playtime` du nouveau `.sav` à ceux du précédent. S'ils sont inchangés, le jeu n'a écrit aucune nouvelle sauvegarde (fichier gelé) : un **bandeau d'alerte** s'affiche dans l'en-tête. La date affichée dans l'en-tête est désormais la **date interne du save** (moment où le jeu a écrit), et non la date d'upload — ce qui révèle un fichier périmé même si sa date de téléchargement paraît récente
 
 ### Authentification
 

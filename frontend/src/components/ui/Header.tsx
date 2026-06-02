@@ -1,6 +1,6 @@
 import type { SaveSession, GameEntity, DroneLink } from '../../types/save.types';
 import { UploadButton } from './UploadButton';
-import { formatPlaytime } from '../../utils/format';
+import { formatPlaytime, formatSaveDate } from '../../utils/format';
 import styles from './Header.module.css';
 
 interface Props {
@@ -27,12 +27,18 @@ export function Header({
   const machineCount = entities.filter(e => e.category === 'machine').length;
   const droneCount = links.reduce((sum, l) => sum + l.droneCount, 0);
   const playtime = activeSession ? formatPlaytime(activeSession.playtime) : '—';
-  const saveDate = activeSession
-    ? activeSession.timestamp.slice(0, 10).replace(/-/g, '')
-    : '—';
+  const saveDate = activeSession ? formatSaveDate(activeSession.timestamp) : '—';
+  const duplicate = activeSession?.sameAsPrevious ?? false;
 
   return (
     <header className={styles.header}>
+      {duplicate && (
+        <div className={styles.dupBanner} role="alert">
+          ⚠️ Sauvegarde identique à la précédente — le jeu n'a rien écrit de neuf
+          (save daté du {saveDate}). Tes derniers changements en partie ne sont pas
+          dans ce fichier.
+        </div>
+      )}
       <div className={styles.left}>
         <span className={styles.logo}>STARRUPTURE</span>
         <span className={styles.separator}>—</span>

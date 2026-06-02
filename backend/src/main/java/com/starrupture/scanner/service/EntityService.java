@@ -126,6 +126,7 @@ public class EntityService {
                 .uploadAt(entity.getUploadAt())
                 .worldTime(entity.getWorldTime())
                 .entityCount((int) gameEntityRepository.countBySessionId(entity.getId()))
+                .sameAsPrevious(entity.isSameAsPrevious())
                 .build();
     }
 
@@ -139,6 +140,7 @@ public class EntityService {
                 .uploadAt(entity.getUploadAt())
                 .worldTime(entity.getWorldTime())
                 .entityCount(entityCount)
+                .sameAsPrevious(entity.isSameAsPrevious())
                 .build();
     }
 

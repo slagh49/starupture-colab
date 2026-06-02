@@ -40,6 +40,14 @@ public class SaveSession {
     @Column(columnDefinition = "text")
     private String progression;
 
+    /**
+     * Vrai lorsque le save importé est identique au précédent (même timestamp
+     * interne et même playtime) : le jeu n'a écrit aucune nouvelle sauvegarde.
+     * Calculé à l'import, non persisté — sert uniquement à alerter l'utilisateur.
+     */
+    @Transient
+    private boolean sameAsPrevious;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<GameEntity> entities = new ArrayList<>();

@@ -445,14 +445,23 @@ public class SaveParserService {
 
         // Create session from root metadata
         String filename = originalFilename != null ? originalFilename : "unknown";
+        String timestamp = root.path("timestamp").asText(null);
         SaveSession session = SaveSession.builder()
                 .filename(filename)
                 .sessionName(root.has("sessionName") ? root.path("sessionName").asText(null) : null)
                 .playtime(playtime)
-                .timestamp(root.path("timestamp").asText(null))
+                .timestamp(timestamp)
                 .worldTime(worldTime)
                 .progression(progressionJson)
                 .build();
+
+        // Avant le wipe : mémoriser l'état précédent pour détecter un import
+        // identique (même save rechargé). Si le timestamp interne ET le playtime
+        // sont inchangés, le jeu n'a écrit aucune nouvelle sauvegarde — on prévient
+        // l'utilisateur plutôt que de lui laisser croire que ses données sont à jour.
+        List<SaveSession> previous = saveSessionRepository.findAllByOrderByUploadAtDesc();
+        String prevTimestamp = previous.isEmpty() ? null : previous.get(0).getTimestamp();
+        Double prevPlaytime = previous.isEmpty() ? null : previous.get(0).getPlaytime();
 
         // Wipe-and-replace : l'appli ne conserve qu'un seul état (la dernière
         // sauvegarde chargée). Chaque parse — upload manuel comme import FTP —
@@ -461,6 +470,15 @@ public class SaveParserService {
         saveSessionRepository.deleteAllInBatch();
 
         session = saveSessionRepository.save(session);
+
+        boolean sameAsPrevious = !previous.isEmpty()
+                && Objects.equals(prevTimestamp, timestamp)
+                && Objects.equals(prevPlaytime, playtime);
+        session.setSameAsPrevious(sameAsPrevious);
+        if (sameAsPrevious) {
+            log.warn("Import identique au précédent (timestamp={}, playtime={}) : "
+                    + "le jeu n'a pas produit de nouvelle sauvegarde.", timestamp, playtime);
+        }
 
         // Navigate to entities
         JsonNode entities = root.path("itemData").path("Mass").path("entities");

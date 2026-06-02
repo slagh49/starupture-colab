@@ -29,6 +29,22 @@ export function formatPlaytime(seconds: number | null | undefined): string {
   return parts.join(' ');
 }
 
+/**
+ * Format the save's internal timestamp ("YYYYMMDDHHMMSS") as "YYYY-MM-DD HH:MM".
+ * This is the moment the GAME wrote the save — not the upload time — so it reveals
+ * a frozen/stale save even when the file's download date looks recent.
+ */
+export function formatSaveDate(timestamp: string | null | undefined): string {
+  if (!timestamp || !/^\d{8}/.test(timestamp)) return '—';
+  const y = timestamp.slice(0, 4);
+  const mo = timestamp.slice(4, 6);
+  const d = timestamp.slice(6, 8);
+  const h = timestamp.slice(8, 10);
+  const mi = timestamp.slice(10, 12);
+  const time = h && mi ? ` ${h}:${mi}` : '';
+  return `${y}-${mo}-${d}${time}`;
+}
+
 /** Strip engine prefixes from an entity name (e.g. "DA_BaseCore" -> "BaseCore"). */
 export function cleanName(name: string): string {
   let s = name;

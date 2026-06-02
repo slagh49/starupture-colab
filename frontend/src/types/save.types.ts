@@ -9,6 +9,8 @@ export interface SaveSession {
   playtime: number;
   timestamp: string;
   uploadAt: string;
+  /** Vrai si ce save est identique au précédent import (jeu non sauvegardé depuis). */
+  sameAsPrevious?: boolean;
 }
 
 export interface GameEntity {

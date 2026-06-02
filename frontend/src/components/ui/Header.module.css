@@ -1,4 +1,5 @@
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -8,6 +9,22 @@
   border-bottom: 1px solid #1a2332;
   flex-shrink: 0;
   font-family: 'Share Tech Mono', 'Fira Mono', monospace;
+}
+
+/* Bandeau d'alerte plein-largeur sous le header (save identique réimporté). */
+.dupBanner {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 7px 16px;
+  background: #3a2a08;
+  border-bottom: 1px solid #b8860b;
+  color: #ffcc55;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
 }
 
 .left {
