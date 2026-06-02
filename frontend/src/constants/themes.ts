@@ -1,5 +1,5 @@
 /** Thèmes graphiques basés sur l'identité des corporations StarRupture. */
-export type ThemeId = 'default' | 'selenian' | 'moon' | 'clever' | 'future' | 'griffith';
+export type ThemeId = 'default' | 'selenian' | 'moon' | 'clever' | 'future' | 'griffith' | 'light';
 
 export interface ThemeMeta {
   id: ThemeId;
@@ -16,6 +16,7 @@ export const THEMES: ThemeMeta[] = [
   { id: 'clever',   label: 'Clever Robotics',      swatch: '#ff4438' },
   { id: 'future',   label: 'Future Health',        swatch: '#2dd4bf' },
   { id: 'griffith', label: 'Griffith Blue',        swatch: '#4a90ff' },
+  { id: 'light',    label: 'Clair',                swatch: '#e8edf2' },
 ];
 
 export const DEFAULT_THEME: ThemeId = 'default';

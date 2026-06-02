@@ -1,6 +1,6 @@
 .container {
-  background: #0d1117;
-  border: 1px solid #1e2733;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -10,14 +10,14 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #4a5568;
-  border-bottom: 1px solid #1e2733;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
 }
 
 .empty {
   padding: 16px 10px;
   text-align: center;
-  color: #4a5568;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
@@ -40,15 +40,15 @@
 }
 
 .label {
-  color: #6b7a8d;
+  color: var(--text-muted);
 }
 
 .value {
-  color: #c8d0dc;
+  color: var(--text);
 }
 
 .valueMono {
-  color: #c8d0dc;
+  color: var(--text);
   font-family: monospace;
   font-size: 10px;
 }
@@ -56,13 +56,13 @@
 .linksSection {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #1e2733;
+  border-top: 1px solid var(--border);
 }
 
 .linksTitle {
   font-size: 10px;
   font-weight: 600;
-  color: #4a5568;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -80,6 +80,6 @@
 }
 
 .linkCount {
-  color: #6b7a8d;
+  color: var(--text-muted);
   font-family: monospace;
 }

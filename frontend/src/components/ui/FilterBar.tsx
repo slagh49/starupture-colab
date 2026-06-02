@@ -25,13 +25,13 @@ export function FilterBar({ activeFilters, onToggle }: Props): JSX.Element {
               type="button"
               className={`${styles.filterBtn} ${active ? styles.active : ''}`}
               style={{
-                borderColor: active ? color : '#1e2733',
-                color: active ? color : '#6b7a8d',
+                borderColor: active ? color : 'var(--border)',
+                color: active ? color : 'var(--text-muted)',
                 backgroundColor: active ? `${color}15` : 'transparent',
               }}
               onClick={() => onToggle(cat)}
             >
-              <span className={styles.dot} style={{ backgroundColor: active ? color : '#6b7a8d' }} />
+              <span className={styles.dot} style={{ backgroundColor: active ? color : 'var(--text-muted)' }} />
               {CAT_LABELS[cat]}
             </button>
           );

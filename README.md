@@ -126,9 +126,10 @@ Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour org
 
 Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**identité d'une corporation** StarRupture.
 
-- 6 thèmes : **Terminal** (cyan/vert par défaut), **Selenian** (orange), **Moon Energy** (argent/cyan), **Clever Robotics** (rouge), **Future Health** (turquoise), **Griffith Blue** (bleu)
-- Implémenté en **variables CSS** (`--accent`, `--accent-2`) appliquées via `[data-theme]` sur `<html>` ; choix **persisté** dans `localStorage`
-- Les fonds sombres et les **couleurs sémantiques des catégories d'entités** (carte) restent inchangés pour la lisibilité — seul l'accent décoratif change
+- 6 thèmes sombres : **Terminal** (cyan/vert par défaut), **Selenian** (orange), **Moon Energy** (argent/cyan), **Clever Robotics** (rouge), **Future Health** (turquoise), **Griffith Blue** (bleu) — ils ne changent que l'**accent**
+- 1 thème **Clair** : fonds clairs + accent assombri pour le contraste — redéfinit en plus les neutres (fonds, bordures, textes)
+- Implémenté en **variables CSS** : accent (`--accent`, `--accent-2` + triplets `-rgb`) et neutres (`--bg*`, `--border*`, `--text*`), appliquées via `[data-theme]` sur `<html>` ; choix **persisté** dans `localStorage`
+- Les **couleurs sémantiques des catégories d'entités** (carte) restent inchangées pour la lisibilité
 
 ### API REST
 

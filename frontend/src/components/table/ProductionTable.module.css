@@ -10,7 +10,7 @@
   gap: 8px;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -19,28 +19,28 @@
   min-width: 120px;
   max-width: 280px;
   padding: 6px 10px;
-  background: #0d1117;
-  border: 1px solid #1e2733;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  color: #c8d0dc;
+  color: var(--text);
   font-size: 12px;
   outline: none;
 }
 
 .search:focus {
-  border-color: #30363d;
+  border-color: var(--border-strong);
 }
 
 .search::placeholder {
-  color: #4a5568;
+  color: var(--text-muted);
 }
 
 .filter {
   padding: 6px 8px;
-  background: #0d1117;
-  border: 1px solid #1e2733;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  color: #c8d0dc;
+  color: var(--text);
   font-size: 12px;
   outline: none;
   cursor: pointer;
@@ -48,7 +48,7 @@
 
 .count {
   font-size: 11px;
-  color: #4a5568;
+  color: var(--text-muted);
   margin-left: auto;
   white-space: nowrap;
 }
@@ -67,22 +67,22 @@
 .th {
   position: sticky;
   top: 0;
-  background: #0d1117;
+  background: var(--bg-panel);
   padding: 8px 10px;
   text-align: left;
-  color: #6b7a8d;
+  color: var(--text-muted);
   font-weight: 600;
   font-size: 11px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
 }
 
 .th:hover {
-  color: #c8d0dc;
+  color: var(--text);
 }
 
 .tr {
@@ -104,15 +104,15 @@
 
 .td {
   padding: 6px 10px;
-  border-bottom: 1px solid #111820;
-  color: #c8d0dc;
+  border-bottom: 1px solid var(--bg-panel);
+  color: var(--text);
   white-space: nowrap;
 }
 
 .tdPosition {
   padding: 6px 10px;
-  border-bottom: 1px solid #111820;
-  color: #6b7a8d;
+  border-bottom: 1px solid var(--bg-panel);
+  color: var(--text-muted);
   font-family: monospace;
   font-size: 11px;
   white-space: nowrap;
@@ -121,7 +121,7 @@
 .tdEmpty {
   padding: 24px 10px;
   text-align: center;
-  color: #4a5568;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -138,5 +138,5 @@
 }
 
 .noInfection {
-  color: #3a4556;
+  color: var(--border-strong);
 }

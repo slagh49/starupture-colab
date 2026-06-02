@@ -1,13 +1,13 @@
 .filterBar {
   padding: 12px;
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #6b7a8d;
+  color: var(--text-muted);
   margin-bottom: 8px;
   font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
@@ -23,7 +23,7 @@
   align-items: center;
   gap: 5px;
   background: transparent;
-  border: 1px solid #1e2733;
+  border: 1px solid var(--border);
   border-radius: 3px;
   padding: 3px 8px;
   font-size: 10px;
@@ -36,7 +36,7 @@
 }
 
 .filterBtn:hover {
-  border-color: #6b7a8d;
+  border-color: var(--text-muted);
 }
 
 .filterBtn.active:hover {

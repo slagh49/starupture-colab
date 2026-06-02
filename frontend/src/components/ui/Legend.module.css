@@ -1,6 +1,6 @@
 .legend {
-  background: rgba(10, 14, 20, 0.88);
-  border: 1px solid #1a2332;
+  background: rgba(var(--bg-rgb), 0.88);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 8px 12px;
   font-family: 'Share Tech Mono', 'Fira Mono', monospace;
@@ -10,7 +10,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #6b7a8d;
+  color: var(--text-muted);
   margin-bottom: 6px;
 }
 
@@ -35,6 +35,6 @@
 
 .label {
   font-size: 10px;
-  color: #c8d0dc;
+  color: var(--text);
   letter-spacing: 0.5px;
 }

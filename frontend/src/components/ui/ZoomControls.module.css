@@ -14,8 +14,8 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: rgba(10, 14, 20, 0.9);
-  border: 1px solid #1e2733;
+  background: rgba(var(--bg-rgb), 0.9);
+  border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--accent);
   font-size: 18px;

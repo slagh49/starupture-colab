@@ -17,8 +17,8 @@
   flex-direction: column;
   width: 240px;
   min-width: 240px;
-  background: #0d1117;
-  border-right: 1px solid #1e2733;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -26,17 +26,17 @@
 .nameFilter {
   position: relative;
   padding: 10px 10px 6px;
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
 }
 
 .nameFilter input {
   width: 100%;
   box-sizing: border-box;
   padding: 7px 26px 7px 9px;
-  background: #060910;
-  border: 1px solid #2a3645;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-strong);
   border-radius: 4px;
-  color: #cdd6e0;
+  color: var(--text);
   font-family: inherit;
   font-size: 12px;
   outline: none;
@@ -47,7 +47,7 @@
 }
 
 .nameFilter input::placeholder {
-  color: #5b6776;
+  color: var(--text-muted);
 }
 
 .nameFilter button {
@@ -63,7 +63,7 @@
   padding: 0;
   background: transparent;
   border: none;
-  color: #8a97a6;
+  color: var(--text-2);
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
@@ -77,7 +77,7 @@
   padding: 4px 12px 8px;
   font-size: 11px;
   color: var(--accent);
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
 }
 
 /* Map area (center) */

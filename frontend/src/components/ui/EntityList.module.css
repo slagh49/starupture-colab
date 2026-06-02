@@ -13,7 +13,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #6b7a8d;
+  color: var(--text-muted);
   padding: 0 12px 8px 12px;
   font-family: 'Share Tech Mono', 'Fira Mono', monospace;
 }
@@ -40,7 +40,7 @@
 }
 
 .list::-webkit-scrollbar-thumb {
-  background: #1e2733;
+  background: var(--border);
   border-radius: 2px;
 }
 
@@ -69,7 +69,7 @@
 
 .more {
   font-size: 10px;
-  color: #6b7a8d;
+  color: var(--text-muted);
   text-align: center;
   padding: 8px 4px;
   font-style: italic;
@@ -111,12 +111,12 @@
 
 .subgroup .groupName {
   font-weight: 400;
-  color: #9aa4b2;
+  color: var(--text-2);
 }
 
 .chevron {
   font-size: 9px;
-  color: #6b7a8d;
+  color: var(--text-muted);
   width: 9px;
   flex-shrink: 0;
 }
@@ -126,12 +126,12 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #c8d0dc;
+  color: var(--text);
 }
 
 .groupItems {
   padding-left: 10px;
-  border-left: 1px solid #1a2332;
+  border-left: 1px solid var(--border);
   margin-left: 11px;
 }
 
@@ -145,7 +145,7 @@
 
 .name {
   font-size: 11px;
-  color: #c8d0dc;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

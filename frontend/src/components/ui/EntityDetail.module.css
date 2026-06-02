@@ -3,8 +3,8 @@
   bottom: 16px;
   left: 16px;
   width: 260px;
-  background: rgba(10, 14, 20, 0.92);
-  border: 1px solid #1a2332;
+  background: rgba(var(--bg-rgb), 0.92);
+  border: 1px solid var(--border);
   border-radius: 4px;
   z-index: 15;
   overflow: hidden;
@@ -16,7 +16,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #1e2733;
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
@@ -28,7 +28,7 @@
 .closeBtn {
   background: none;
   border: none;
-  color: #6b7a8d;
+  color: var(--text-muted);
   font-size: 14px;
   cursor: pointer;
   padding: 0 4px;
@@ -37,7 +37,7 @@
 }
 
 .closeBtn:hover {
-  color: #c8d0dc;
+  color: var(--text);
 }
 
 .body {
@@ -58,14 +58,14 @@
 .label {
   font-size: 9px;
   font-weight: 600;
-  color: #6b7a8d;
+  color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .value {
   font-size: 11px;
-  color: #c8d0dc;
+  color: var(--text);
   text-align: right;
   max-width: 150px;
   overflow: hidden;

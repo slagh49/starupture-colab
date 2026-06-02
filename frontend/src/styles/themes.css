@@ -1,20 +1,37 @@
 /*
- * Thèmes graphiques : chaque thème redéfinit l'accent de l'UI selon l'identité
- * d'une corporation StarRupture. Les fonds sombres et les couleurs sémantiques
- * de catégories d'entités (CAT_COLORS) restent partagés pour la lisibilité.
+ * Thèmes graphiques. Deux axes coexistent :
+ *  - l'ACCENT (identité corporation) : --accent / --accent-2 (+ triplets -rgb)
+ *  - les NEUTRES (fonds / bordures / textes) : --bg*, --border*, --text*
  *
- * Le thème est appliqué via l'attribut [data-theme] sur <html> (voir useTheme).
- * --accent      : accent principal (titres, bordures, surbrillances, logo)
- * --accent-rgb  : même couleur en triplet RGB pour les rgba() translucides
- * --accent-2    : accent secondaire (états actifs, succès, flux)
+ * :root définit le socle SOMBRE. Les thèmes corporation ne changent que
+ * l'accent (ils héritent des neutres sombres). Le thème « clair » redéfinit
+ * en plus tous les neutres.
+ *
+ * Appliqué via l'attribut [data-theme] sur <html> (voir hooks/useTheme.ts).
  */
 
 :root,
 :root[data-theme='default'] {
+  /* Accent (Terminal) */
   --accent: #00d4ff;
   --accent-rgb: 0, 212, 255;
   --accent-2: #39ff14;
   --accent-2-rgb: 57, 255, 20;
+
+  /* Neutres — socle sombre */
+  --bg: #0a0e14;
+  --bg-rgb: 10, 14, 20;
+  --bg-deep: #06090e;
+  --bg-panel: #0d1117;
+  --bg-surface: #131920;
+  --bg-surface-2: #161d26;
+  --border: #1e2733;
+  --border-strong: #2a3645;
+  --text-bright: #e8edf2;
+  --text: #c8d0dc;
+  --text-2: #8a97a6;
+  --text-muted: #6b7a8d;
+  --text-faint: #46505e;
 }
 
 /* Selenian Corporation — orange industriel */
@@ -55,4 +72,32 @@
   --accent-rgb: 74, 144, 255;
   --accent-2: #7aa9ff;
   --accent-2-rgb: 122, 169, 255;
+}
+
+/* Thème clair — fonds clairs + accent assombri pour le contraste */
+:root[data-theme='light'] {
+  --accent: #0b84a8;
+  --accent-rgb: 11, 132, 168;
+  --accent-2: #2a9d3f;
+  --accent-2-rgb: 42, 157, 63;
+
+  --bg: #eef1f5;
+  --bg-rgb: 238, 241, 245;
+  --bg-deep: #e2e7ee;
+  --bg-panel: #ffffff;
+  --bg-surface: #f4f6f9;
+  --bg-surface-2: #e7ecf2;
+  --border: #d2d9e2;
+  --border-strong: #b8c2cf;
+  --text-bright: #0d1422;
+  --text: #1c2733;
+  --text-2: #46505e;
+  --text-muted: #66717f;
+  --text-faint: #9aa4b2;
+}
+
+/* Fond et texte de base pilotés par le thème courant. */
+body {
+  background: var(--bg);
+  color: var(--text);
 }
