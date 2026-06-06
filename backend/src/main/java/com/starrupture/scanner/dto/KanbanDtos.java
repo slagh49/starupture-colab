@@ -55,4 +55,7 @@ public final class KanbanDtos {
 
     /** Déplacement d'une tâche (glisser-déposer) : colonne cible + index cible. */
     public record MoveInput(String columnId, int position) {}
+
+    /** Déplacement d'une colonne (glisser-déposer) : index cible. */
+    public record PositionInput(int position) {}
 }

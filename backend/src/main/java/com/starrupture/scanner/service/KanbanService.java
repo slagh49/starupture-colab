@@ -76,6 +76,27 @@ public class KanbanService {
                         .toList());
     }
 
+    /** Déplace une colonne à un index donné (glisser-déposer). */
+    @Transactional
+    public ColumnDto moveColumn(UUID id, int position) {
+        KanbanColumn col = column(id);
+        List<KanbanColumn> cols = columnRepository.findAllByOrderByPositionAsc();
+        cols.removeIf(c -> c.getId().equals(id));
+        int index = Math.max(0, Math.min(position, cols.size()));
+        cols.add(index, col);
+        for (int i = 0; i < cols.size(); i++) {
+            cols.get(i).setPosition(i);
+        }
+        columnRepository.saveAll(cols);
+        return new ColumnDto(
+                col.getId().toString(),
+                col.getTitle(),
+                col.getPosition(),
+                taskRepository.findByColumnIdOrderByPositionAsc(col.getId()).stream()
+                        .map(this::toTaskDto)
+                        .toList());
+    }
+
     @Transactional
     public void deleteColumn(UUID id) {
         KanbanColumn col = column(id);

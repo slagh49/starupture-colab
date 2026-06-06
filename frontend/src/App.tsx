@@ -11,7 +11,7 @@ import { useSaveData } from './hooks/useSaveData';
 import { useMapInteraction } from './hooks/useMapInteraction';
 import { useAuth } from './hooks/useAuth';
 import { useTheme } from './hooks/useTheme';
-import type { ThemeId } from './constants/themes';
+import { THEME_ACCENTS, type ThemeId } from './constants/themes';
 import type { AuthUser } from './services/api';
 import styles from './App.module.css';
 
@@ -72,7 +72,7 @@ function AuthedApp({ user, onLogout, theme, onThemeChange }: AuthedProps): JSX.E
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
       <div className={styles.content}>
         {activeTab === 'map' && (
-          <MapPage saveData={saveData} mapInteraction={mapInteraction} />
+          <MapPage saveData={saveData} mapInteraction={mapInteraction} accent={THEME_ACCENTS[theme]} />
         )}
         {activeTab === 'progression' && (
           <ProgressionPage sessionId={saveData.activeSession?.id ?? null} />

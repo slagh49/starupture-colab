@@ -17,6 +17,7 @@ export function KanbanPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [modal, setModal] = useState<ModalState | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
+  const [dragColId, setDragColId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -93,6 +94,19 @@ export function KanbanPage(): JSX.Element {
     await load();
   };
 
+  // Réordonnancement des colonnes : index calculé sur la liste sans la colonne
+  // déplacée (= sémantique backend « retire puis insère »).
+  const dropColumn = async (targetCol: KanbanColumn): Promise<void> => {
+    const id = dragColId;
+    setDragColId(null);
+    setDragOverCol(null);
+    if (!id || id === targetCol.id || !board) return;
+    const rest = board.columns.filter(c => c.id !== id);
+    const index = rest.findIndex(c => c.id === targetCol.id);
+    await kanbanApi.moveColumn(id, index < 0 ? rest.length : index);
+    await load();
+  };
+
   if (error) {
     return <div className={styles.empty}>{error}</div>;
   }
@@ -106,12 +120,19 @@ export function KanbanPage(): JSX.Element {
         {board.columns.map(col => (
           <section
             key={col.id}
-            className={`${styles.column} ${dragOverCol === col.id ? styles.dragOver : ''}`}
+            className={`${styles.column} ${dragOverCol === col.id ? styles.dragOver : ''} ${dragColId === col.id ? styles.colDragging : ''}`}
             onDragOver={e => { e.preventDefault(); setDragOverCol(col.id); }}
             onDragLeave={() => setDragOverCol(prev => (prev === col.id ? null : prev))}
-            onDrop={() => void drop(col, null)}
+            onDrop={() => (dragColId ? void dropColumn(col) : void drop(col, null))}
           >
-            <header className={styles.colHead}>
+            <header
+              className={styles.colHead}
+              draggable
+              onDragStart={e => { e.stopPropagation(); setDragColId(col.id); }}
+              onDragEnd={() => { setDragColId(null); setDragOverCol(null); }}
+              title="Glisser pour réordonner la colonne"
+            >
+              <span className={styles.grip}>⠿</span>
               <span className={styles.colTitle}>{col.title}</span>
               <span className={styles.count}>{col.tasks.length}</span>
               <div className={styles.colActions}>
@@ -124,7 +145,7 @@ export function KanbanPage(): JSX.Element {
               {col.tasks.map(task => (
                 <div
                   key={task.id}
-                  onDrop={e => { e.stopPropagation(); void drop(col, task.id); }}
+                  onDrop={e => { e.stopPropagation(); if (dragColId) { void dropColumn(col); } else { void drop(col, task.id); } }}
                   onDragOver={e => { e.preventDefault(); setDragOverCol(col.id); }}
                 >
                   <TaskCard

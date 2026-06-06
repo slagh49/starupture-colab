@@ -1,9 +1,8 @@
 import type { RailSpline } from '../../types/save.types';
 import { world2screen } from '../../constants/mapConfig';
 
-/** Colors from constants/colors.ts: infra=#ff6b35 (orange), basecore=#00d4ff (cyan) */
+/** DroneRail reste orange (infra) ; le walkway suit l'accent du thème. */
 const DRONE_RAIL_COLOR = '#ff6b35';
-const WALKWAY_COLOR = '#00d4ff';
 
 export function drawRails(
   ctx: CanvasRenderingContext2D,
@@ -12,7 +11,8 @@ export function drawRails(
   panX: number,
   panY: number,
   _canvasWidth: number,
-  _canvasHeight: number
+  _canvasHeight: number,
+  walkwayColor: string
 ): void {
   for (const spline of splines) {
     if (spline.points.length < 2) continue;
@@ -32,7 +32,7 @@ export function drawRails(
     if (maxX < 0 || minX > _canvasWidth || maxY < 0 || minY > _canvasHeight) continue;
 
     const isDroneRail = spline.splineType === 'DroneRail';
-    ctx.strokeStyle = isDroneRail ? DRONE_RAIL_COLOR : WALKWAY_COLOR;
+    ctx.strokeStyle = isDroneRail ? DRONE_RAIL_COLOR : walkwayColor;
     ctx.lineWidth = Math.max(1, (isDroneRail ? 2 : 1.5) * zoom * 1000);
     ctx.globalAlpha = isDroneRail ? 0.8 : 0.6;
 

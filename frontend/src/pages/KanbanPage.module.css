@@ -40,12 +40,28 @@
   box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.4) inset;
 }
 
+.column.colDragging {
+  opacity: 0.45;
+}
+
 .colHead {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
+  cursor: grab;
+}
+
+.colHead:active {
+  cursor: grabbing;
+}
+
+.grip {
+  color: var(--text-faint);
+  font-size: 12px;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .colTitle {

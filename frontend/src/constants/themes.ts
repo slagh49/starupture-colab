@@ -20,3 +20,18 @@ export const THEMES: ThemeMeta[] = [
 ];
 
 export const DEFAULT_THEME: ThemeId = 'default';
+
+/**
+ * Accent principal de chaque thème, en hex — pour le rendu canvas de la carte
+ * (zone de base, walkway) qui ne peut pas lire les variables CSS. Doit rester
+ * synchronisé avec --accent dans styles/themes.css.
+ */
+export const THEME_ACCENTS: Record<ThemeId, string> = {
+  default:  '#00d4ff',
+  selenian: '#f5872a',
+  moon:     '#aebfcc',
+  clever:   '#ff4438',
+  future:   '#2dd4bf',
+  griffith: '#4a90ff',
+  light:    '#0b84a8',
+};

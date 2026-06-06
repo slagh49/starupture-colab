@@ -111,6 +111,7 @@ export const kanbanApi = {
   users:        ()                              => api.get<KanbanUser[]>('/kanban/users'),
   createColumn: (title: string)                 => api.post<KanbanColumn>('/kanban/columns', { title }),
   renameColumn: (id: string, title: string)     => api.put<KanbanColumn>(`/kanban/columns/${id}`, { title }),
+  moveColumn:   (id: string, position: number)  => api.put<KanbanColumn>(`/kanban/columns/${id}/move`, { position }),
   deleteColumn: (id: string)                    => api.delete(`/kanban/columns/${id}`),
   createTask:   (columnId: string, fields: TaskFields) =>
     api.post<KanbanTask>('/kanban/tasks', { columnId, ...fields }),

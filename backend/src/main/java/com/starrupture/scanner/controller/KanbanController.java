@@ -44,6 +44,11 @@ public class KanbanController {
         return kanbanService.renameColumn(id, input);
     }
 
+    @PutMapping("/columns/{id}/move")
+    public ColumnDto moveColumn(@PathVariable UUID id, @RequestBody PositionInput input) {
+        return kanbanService.moveColumn(id, input.position());
+    }
+
     @DeleteMapping("/columns/{id}")
     public ResponseEntity<Void> deleteColumn(@PathVariable UUID id) {
         kanbanService.deleteColumn(id);

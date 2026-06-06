@@ -35,11 +35,21 @@ function buildEntityGrid(entities: GameEntity[]): Map<string, GameEntity[]> {
   return grid;
 }
 
+/** Convertit un accent hex (#rrggbb) en rgba() pour les traits translucides. */
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 interface Props {
   entities: GameEntity[];
   links: DroneLink[];
   splines: RailSpline[];
   zones: BaseZone[];
+  /** Accent du thème courant (hex) : zone de base + walkway. */
+  accent: string;
   zoom: number;
   panX: number;
   panY: number;
@@ -64,6 +74,7 @@ export function MapCanvas({
   links,
   splines,
   zones,
+  accent,
   zoom,
   panX,
   panY,
@@ -120,7 +131,7 @@ export function MapCanvas({
   const staticDirtyRef = useRef(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { staticDirtyRef.current = true; },
-    [zoom, panX, panY, entities, splines, zones, layers, selectedEntity]);
+    [zoom, panX, panY, entities, splines, zones, accent, layers, selectedEntity]);
 
   useEffect(() => {
     terrainRef.current = createTerrainCanvas();
@@ -299,7 +310,7 @@ export function MapCanvas({
   const drawGrid = useCallback(
     (ctx: CanvasRenderingContext2D, z: number, px: number, py: number, w: number, h: number) => {
       if (z < GRID_ZOOM_THRESHOLD) return;
-      ctx.strokeStyle = 'rgba(200, 208, 220, 0.08)';
+      ctx.strokeStyle = hexToRgba(accent, 0.08);
       ctx.lineWidth = 1;
 
       const startX = Math.floor(WORLD_BOUNDS.minX / GRID_SPACING) * GRID_SPACING;
@@ -324,7 +335,7 @@ export function MapCanvas({
         }
       }
     },
-    []
+    [accent]
   );
 
   const drawBaseZones = useCallback(
@@ -332,14 +343,14 @@ export function MapCanvas({
       for (const zone of currentZones) {
         const tl = world2screen(zone.minX, zone.minY, z, px, py);
         const br = world2screen(zone.maxX, zone.maxY, z, px, py);
-        ctx.strokeStyle = '#00d4ff';
+        ctx.strokeStyle = accent;
         ctx.lineWidth = 1.5;
         ctx.setLineDash([8, 4]);
         ctx.strokeRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
         ctx.setLineDash([]);
       }
     },
-    []
+    [accent]
   );
 
   const render = useCallback(
@@ -379,7 +390,7 @@ export function MapCanvas({
           drawOverlay(sctx, w, h);
           drawGrid(sctx, zoom, panX, panY, w, h);
           if (layers.baseZone) drawBaseZones(sctx, zones, zoom, panX, panY);
-          if (layers.rails) drawRails(sctx, splines, zoom, panX, panY, w, h);
+          if (layers.rails) drawRails(sctx, splines, zoom, panX, panY, w, h, accent);
           // Plain entities (no hover/selection glow — that goes on the live layer).
           drawEntities(sctx, entities, zoom, panX, panY, w, h, null, null);
           if (layers.labels) drawLabels(sctx, entities, zoom, panX, panY, w, h, selectedEntity);
@@ -407,7 +418,7 @@ export function MapCanvas({
         drawEntityHighlight(ctx, hoveredEntity, zoom, panX, panY, w, h, false);
       }
     },
-    [zoom, panX, panY, entities, splines, zones, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, infectedEntities, orphanEntities, drawGrid, drawBaseZones]
+    [zoom, panX, panY, entities, splines, zones, accent, hoveredEntity, selectedEntity, layers, selectedFlowItem, flowEdges, infectedEntities, orphanEntities, drawGrid, drawBaseZones]
   );
 
   useAnimation(render, true);

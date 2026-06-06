@@ -116,7 +116,7 @@ L'application est protégée par une **mire de connexion**. Auth légère sans d
 
 Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour organiser les chantiers de la base.
 
-- **Colonnes personnalisables** : créer, renommer, supprimer (À faire / En cours / Terminé par défaut)
+- **Colonnes personnalisables** : créer, renommer, supprimer, **réordonner par glisser-déposer** (poignée ⠿ sur l'en-tête de colonne) — À faire / En cours / Terminé par défaut
 - **Tâches** avec titre, description, **priorité** (basse/normale/haute, pastille colorée), **assigné à** (parmi les comptes existants) et **échéance** (mise en évidence si dépassée)
 - **Glisser-déposer** des cartes entre colonnes et réordonnancement (drag & drop natif HTML5, sans dépendance)
 - Chaque tâche mémorise son **auteur** (utilisateur courant)
@@ -129,6 +129,7 @@ Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**id
 - 6 thèmes sombres : **Terminal** (cyan/vert par défaut), **Selenian** (orange), **Moon Energy** (argent/cyan), **Clever Robotics** (rouge), **Future Health** (turquoise), **Griffith Blue** (bleu) — ils ne changent que l'**accent**
 - 1 thème **Clair** : fonds clairs + accent assombri pour le contraste — redéfinit en plus les neutres (fonds, bordures, textes)
 - Implémenté en **variables CSS** : accent (`--accent`, `--accent-2` + triplets `-rgb`) et neutres (`--bg*`, `--border*`, `--text*`), appliquées via `[data-theme]` sur `<html>` ; choix **persisté** dans `localStorage`
+- L'accent s'étend à la **carte** : contour de la zone de base, walkways et grille suivent le thème (le rendu canvas lit `THEME_ACCENTS`, synchronisé avec les variables CSS)
 - Les **couleurs sémantiques des catégories d'entités** (carte) restent inchangées pour la lisibilité
 
 ### API REST

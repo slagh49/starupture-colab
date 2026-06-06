@@ -22,6 +22,8 @@ import styles from './MapPage.module.css';
 interface Props {
   saveData: UseSaveDataReturn;
   mapInteraction: UseMapInteractionReturn;
+  /** Accent du thème courant (hex) pour les éléments d'accent de la carte. */
+  accent: string;
 }
 
 const ALL_CATEGORIES: EntityCategory[] = [
@@ -72,7 +74,7 @@ function entitiesInView(
   return entities.filter(e => e.x >= minX && e.x <= maxX && e.y >= minY && e.y <= maxY);
 }
 
-export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
+export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Element {
   const {
     entities,
     links,
@@ -215,6 +217,7 @@ export function MapPage({ saveData, mapInteraction }: Props): JSX.Element {
               links={links}
               splines={splines}
               zones={zones}
+              accent={accent}
               zoom={zoom}
               panX={panX}
               panY={panY}
