@@ -282,6 +282,17 @@ public class SaveParserService {
         return s.isEmpty() ? "Unknown" : s;
     }
 
+    private String cleanRecipePath(String path) {
+        String s = path;
+        int dot = s.indexOf('.');
+        if (dot > 0) s = s.substring(0, dot);
+        int slash = s.lastIndexOf('/');
+        if (slash >= 0 && slash < s.length() - 1) s = s.substring(slash + 1);
+        if (s.startsWith("CR_")) s = s.substring(3);
+        if (s.startsWith("I_")) s = s.substring(2);
+        return s.isEmpty() ? "Unknown" : s;
+    }
+
     /**
      * Extract spline points from fragment values.
      */
@@ -438,6 +449,34 @@ public class SaveParserService {
             JsonNode recipes = root.path("itemData").path("CrCraftingRecipeOwner");
             progression.put("recipesUnlocked", recipes.path("unlockedRecipes").size());
             progression.put("recipesLocked", recipes.path("lockedRecipes").size());
+
+            // Liste nommée des recettes débloquées
+            List<String> unlockedNames = new ArrayList<>();
+            for (JsonNode r : recipes.path("unlockedRecipes")) {
+                unlockedNames.add(cleanRecipePath(r.asText()));
+            }
+            java.util.Collections.sort(unlockedNames);
+            progression.put("unlockedRecipeNames", unlockedNames);
+
+            // Liste nommée des recettes verrouillées + items collectés
+            List<Map<String, Object>> lockedDetails = new ArrayList<>();
+            Iterator<Map.Entry<String, JsonNode>> lockedIt = recipes.path("lockedRecipes").fields();
+            while (lockedIt.hasNext()) {
+                Map.Entry<String, JsonNode> entry = lockedIt.next();
+                Map<String, Object> recipe = new LinkedHashMap<>();
+                recipe.put("name", cleanRecipePath(entry.getKey()));
+                List<Map<String, Object>> items = new ArrayList<>();
+                for (JsonNode item : entry.getValue().path("items")) {
+                    Map<String, Object> it = new LinkedHashMap<>();
+                    it.put("item", cleanRecipePath(item.path("item").asText()));
+                    it.put("count", item.path("count").asInt(0));
+                    items.add(it);
+                }
+                recipe.put("items", items);
+                lockedDetails.add(recipe);
+            }
+            lockedDetails.sort(Comparator.comparing(r -> (String) r.get("name")));
+            progression.put("lockedRecipeDetails", lockedDetails);
             progressionJson = objectMapper.writeValueAsString(progression);
         } catch (Exception e) {
             log.warn("Failed to extract progression: {}", e.getMessage());

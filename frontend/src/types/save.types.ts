@@ -70,10 +70,22 @@ export interface Corporation {
   researchTier2: number;
 }
 
+export interface LockedRecipeItem {
+  item: string;
+  count: number;
+}
+
+export interface LockedRecipe {
+  name: string;
+  items: LockedRecipeItem[];
+}
+
 export interface Progression {
   corporations: Corporation[];
   recipesUnlocked: number;
   recipesLocked: number;
+  unlockedRecipeNames?: string[];
+  lockedRecipeDetails?: LockedRecipe[];
 }
 
 export interface AppConfig {

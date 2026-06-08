@@ -132,3 +132,69 @@
   min-width: 44px;
   text-align: right;
 }
+
+/* --- Recettes débloquées : badges compacts --- */
+
+.recipeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.recipeBadge {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(var(--accent-2-rgb), 0.1);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.3);
+  border-radius: 4px;
+  color: var(--accent-2);
+  letter-spacing: 0.5px;
+}
+
+/* --- Recettes verrouillées : cartes avec items --- */
+
+.lockedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.lockedCard {
+  background: rgba(var(--bg-rgb), 0.9);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.lockedCard.started {
+  border-color: rgba(var(--accent-rgb), 0.35);
+}
+
+.lockedName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.lockedItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lockedItem {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  background: var(--bg-surface);
+  border-radius: 3px;
+}
+
+.lockedItem.collected {
+  color: var(--accent);
+}
+
+.lockedItem b {
+  font-weight: 700;
+}

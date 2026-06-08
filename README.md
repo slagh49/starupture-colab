@@ -154,7 +154,7 @@ Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**id
 | GET | `/api/saves/{id}/splines` | Rails et splines |
 | GET | `/api/saves/{id}/zones` | Zones de base (bounding boxes) |
 | GET | `/api/saves/{id}/summary` | Statistiques agrégées |
-| GET | `/api/saves/{id}/progression` | Réputation corporations + plans débloqués |
+| GET | `/api/saves/{id}/progression` | Corporations, plans débloqués/verrouillés + items collectés |
 | GET / PUT | `/api/admin/config` | Lecture / écriture de la configuration d'import FTP |
 | POST | `/api/admin/test` | Test de connexion (passerelle HTTP ou FTP) |
 | POST | `/api/admin/import` | Import immédiat du `.sav` depuis le FTP/passerelle |

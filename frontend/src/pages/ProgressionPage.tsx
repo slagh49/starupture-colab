@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Progression } from '../types/save.types';
+import type { Progression, LockedRecipe } from '../types/save.types';
 import { savesApi } from '../services/api';
 import styles from './ProgressionPage.module.css';
 
@@ -94,6 +94,40 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
           <div className={styles.planPct}>{pct}%</div>
         </div>
       </div>
+
+      {data.unlockedRecipeNames && data.unlockedRecipeNames.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.title}>RECETTES DÉBLOQUÉES ({data.unlockedRecipeNames.length})</h2>
+          <div className={styles.recipeList}>
+            {data.unlockedRecipeNames.map(name => (
+              <span key={name} className={styles.recipeBadge}>{name}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.lockedRecipeDetails && data.lockedRecipeDetails.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.title}>RECETTES VERROUILLÉES ({data.lockedRecipeDetails.length})</h2>
+          <div className={styles.lockedGrid}>
+            {data.lockedRecipeDetails.map((r: LockedRecipe) => {
+              const hasProgress = r.items.some(it => it.count > 0);
+              return (
+                <div key={r.name} className={`${styles.lockedCard} ${hasProgress ? styles.started : ''}`}>
+                  <div className={styles.lockedName}>{r.name}</div>
+                  <div className={styles.lockedItems}>
+                    {r.items.map(it => (
+                      <span key={it.item} className={`${styles.lockedItem} ${it.count > 0 ? styles.collected : ''}`}>
+                        {it.item}: <b>{it.count.toLocaleString('fr-FR')}</b>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
