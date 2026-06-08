@@ -1,5 +1,7 @@
 package com.starrupture.scanner.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Comparator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 /**
  * Downloads the .sav through the host's HTTP Web-FTP bridge (Monsta FTP handler):
@@ -60,6 +66,64 @@ public class HttpBridgeService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("Téléchargement passerelle interrompu");
+        }
+    }
+
+    /** Résultat d'un téléchargement nommé (filename + contenu brut). */
+    public record NamedDownload(String filename, byte[] bytes) {}
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Liste le dossier via la passerelle (action=list), prend le .sav le plus
+     * récent, et le télécharge. Résout la rotation des slots AutoSave0/1/2.
+     */
+    public NamedDownload downloadMostRecent(String bridgeUrl, String host, String user, String password, String directory) throws IOException {
+        // Lister le dossier
+        String listUrl = bridgeUrl + "?action=list"
+                + "&h=" + enc(host)
+                + "&u=" + enc(user)
+                + "&p=" + enc(password)
+                + "&path=" + enc(directory);
+        HttpRequest req = HttpRequest.newBuilder(URI.create(listUrl))
+                .timeout(Duration.ofSeconds(30))
+                .GET().build();
+        try {
+            HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() != 200) {
+                throw new IOException("Passerelle list : code " + resp.statusCode());
+            }
+
+            JsonNode root = objectMapper.readTree(resp.body());
+            // Monsta FTP renvoie { data: [ {name, type, mtime, size}, ... ] } ou
+            // directement un tableau. On gère les deux.
+            JsonNode items = root.has("data") ? root.path("data") : root;
+            if (!items.isArray()) {
+                throw new IOException("Réponse de listing inattendue : " + resp.body().substring(0, Math.min(200, resp.body().length())));
+            }
+
+            record FileEntry(String name, long mtime) {}
+            FileEntry best = StreamSupport.stream(
+                            Spliterators.spliteratorUnknownSize(items.elements(), Spliterator.ORDERED), false)
+                    .filter(n -> {
+                        String name = n.path("name").asText("");
+                        String type = n.has("type") ? n.path("type").asText("") : "";
+                        return name.toLowerCase().endsWith(".sav") && !"dir".equalsIgnoreCase(type);
+                    })
+                    .map(n -> new FileEntry(n.path("name").asText(), n.path("mtime").asLong(0)))
+                    .max(Comparator.comparingLong(e -> e.mtime))
+                    .orElseThrow(() -> new IOException("Aucun fichier .sav trouvé dans " + directory));
+
+            log.info("Slot le plus récent (passerelle) : {} (mtime={})", best.name, best.mtime);
+
+            String filePath = directory.endsWith("/")
+                    ? directory + best.name
+                    : directory + "/" + best.name;
+            return new NamedDownload(best.name, download(bridgeUrl, host, user, password, filePath));
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Listing passerelle interrompu");
         }
     }
 

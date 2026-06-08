@@ -3,12 +3,15 @@ package com.starrupture.scanner.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 @Service
 @Slf4j
@@ -65,6 +68,39 @@ public class FtpService {
                         + " (" + ftp.getReplyString().trim() + ")");
             }
             return out.toByteArray();
+        } finally {
+            disconnect(ftp);
+        }
+    }
+
+    /** Résultat d'un téléchargement nommé (filename + contenu brut). */
+    public record NamedDownload(String filename, byte[] bytes) {}
+
+    /**
+     * Liste le dossier distant, prend le .sav le plus récent (par date de
+     * modification FTP) et le télécharge. Résout le problème de rotation des
+     * slots AutoSave0/1/2 du serveur de jeu.
+     */
+    public NamedDownload downloadMostRecent(String host, int port, String user, String password, String directory) throws IOException {
+        FTPClient ftp = connectAndLogin(host, port, user, password);
+        try {
+            FTPFile[] files = ftp.listFiles(directory);
+            FTPFile best = Arrays.stream(files)
+                    .filter(f -> f.isFile() && f.getName().toLowerCase().endsWith(".sav"))
+                    .max(Comparator.comparing(f -> f.getTimestamp().getTimeInMillis()))
+                    .orElseThrow(() -> new IOException("Aucun fichier .sav trouvé dans " + directory));
+
+            String remotePath = directory.endsWith("/")
+                    ? directory + best.getName()
+                    : directory + "/" + best.getName();
+            log.info("Slot le plus récent : {} ({})", best.getName(), best.getTimestamp().getTime());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            if (!ftp.retrieveFile(remotePath, out)) {
+                throw new IOException("Impossible de télécharger " + remotePath
+                        + " (" + ftp.getReplyString().trim() + ")");
+            }
+            return new NamedDownload(best.getName(), out.toByteArray());
         } finally {
             disconnect(ftp);
         }

@@ -87,33 +87,67 @@ public class AdminService {
         return c.getBridgeUrl() != null && !c.getBridgeUrl().isBlank();
     }
 
+    /**
+     * Si ftpPath finit par '/' ou ne contient pas '.sav', on traite comme un
+     * dossier : le code liste les .sav et prend le plus récent (résout la
+     * rotation des slots AutoSave0/1/2 du serveur de jeu).
+     */
+    private static boolean isDirectory(String path) {
+        return path.endsWith("/") || !path.toLowerCase().endsWith(".sav");
+    }
+
     @Transactional
     public ImportResult importNow() throws IOException {
         AppConfig c = getOrCreateConfig();
         if (c.getFtpPath() == null || c.getFtpPath().isBlank()) {
             throw new IOException("Chemin du fichier manquant");
         }
+
         byte[] bytes;
-        if (useBridge(c)) {
-            bytes = httpBridgeService.download(c.getBridgeUrl(), c.getFtpHost(),
-                    c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
-        } else {
-            if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
-                throw new IOException("FTP non configuré (hôte manquant)");
+        String name;
+
+        if (isDirectory(c.getFtpPath())) {
+            // Mode dossier : lister et prendre le .sav le plus récent
+            if (useBridge(c)) {
+                var result = httpBridgeService.downloadMostRecent(c.getBridgeUrl(), c.getFtpHost(),
+                        c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+                bytes = result.bytes();
+                name = result.filename();
+            } else {
+                if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
+                    throw new IOException("FTP non configuré (hôte manquant)");
+                }
+                var result = ftpService.downloadMostRecent(c.getFtpHost(),
+                        c.getFtpPort() != null ? c.getFtpPort() : 21,
+                        c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+                bytes = result.bytes();
+                name = result.filename();
             }
-            bytes = ftpService.download(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
-                    c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+            log.info("Import dossier : slot le plus récent = {}", name);
+        } else {
+            // Mode fichier fixe (rétro-compatible)
+            if (useBridge(c)) {
+                bytes = httpBridgeService.download(c.getBridgeUrl(), c.getFtpHost(),
+                        c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+            } else {
+                if (c.getFtpHost() == null || c.getFtpHost().isBlank()) {
+                    throw new IOException("FTP non configuré (hôte manquant)");
+                }
+                bytes = ftpService.download(c.getFtpHost(), c.getFtpPort() != null ? c.getFtpPort() : 21,
+                        c.getFtpUser(), c.getFtpPassword(), c.getFtpPath());
+            }
+            name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
+            if (name.isEmpty()) name = "ftp.sav";
         }
 
         // Le wipe-and-replace (efface les sessions existantes) est fait dans
         // parseSavBytes, commun à l'upload manuel et à l'import FTP.
-        String name = c.getFtpPath().substring(c.getFtpPath().lastIndexOf('/') + 1);
-        SaveSession session = saveParserService.parseSavBytes(bytes, name.isEmpty() ? "ftp.sav" : name);
+        SaveSession session = saveParserService.parseSavBytes(bytes, name);
         c.setLastImportAt(LocalDateTime.now());
         c.setLastImportHash(null);
         c.setLastImportSessionId(session.getId());
         configRepository.save(c);
-        log.info("Import réussi (wipe + rechargement) : session {}", session.getId());
+        log.info("Import réussi (wipe + rechargement) : session {} / fichier {}", session.getId(), name);
         return new ImportResult(session, false);
     }
 
