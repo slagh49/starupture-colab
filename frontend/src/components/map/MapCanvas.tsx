@@ -6,6 +6,8 @@ import { createTerrainCanvas, drawTerrain, drawTerrainImage, drawOverlay } from 
 import { drawEntities, drawLabels, drawEntityHighlight, drawInfectionRings, drawOrphanRings } from './EntityLayer';
 import { drawDroneLinks, aggregateFlows } from './DroneLayer';
 import { drawRails } from './RailLayer';
+import { drawMarkers } from './MarkerLayer';
+import type { MapMarker } from '../../types/marker.types';
 import {
   world2screen,
   screen2world,
@@ -50,6 +52,7 @@ interface Props {
   zones: BaseZone[];
   /** Accent du thème courant (hex) : zone de base + walkway. */
   accent: string;
+  markers: MapMarker[];
   zoom: number;
   panX: number;
   panY: number;
@@ -75,6 +78,7 @@ export function MapCanvas({
   splines,
   zones,
   accent,
+  markers,
   zoom,
   panX,
   panY,
@@ -131,7 +135,7 @@ export function MapCanvas({
   const staticDirtyRef = useRef(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { staticDirtyRef.current = true; },
-    [zoom, panX, panY, entities, splines, zones, accent, layers, selectedEntity]);
+    [zoom, panX, panY, entities, splines, zones, accent, markers, layers, selectedEntity]);
 
   useEffect(() => {
     terrainRef.current = createTerrainCanvas();
@@ -394,6 +398,7 @@ export function MapCanvas({
           // Plain entities (no hover/selection glow — that goes on the live layer).
           drawEntities(sctx, entities, zoom, panX, panY, w, h, null, null);
           if (layers.labels) drawLabels(sctx, entities, zoom, panX, panY, w, h, selectedEntity);
+          if (layers.markers) drawMarkers(sctx, markers, zoom, panX, panY, w, h);
           staticDirtyRef.current = false;
         }
       }

@@ -41,6 +41,12 @@ public class EntityService {
                 .orElse(null);
     }
 
+    public String getImportDiff(UUID sessionId) {
+        return saveSessionRepository.findById(sessionId)
+                .map(SaveSession::getImportDiff)
+                .orElse(null);
+    }
+
     @Transactional
     public void deleteSession(UUID sessionId) {
         if (!saveSessionRepository.existsById(sessionId)) {

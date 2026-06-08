@@ -53,6 +53,12 @@ public class SaveController {
         return ResponseEntity.ok(progression != null ? progression : "{}");
     }
 
+    @GetMapping(value = "/{id}/diff", produces = "application/json")
+    public ResponseEntity<String> getDiff(@PathVariable UUID id) {
+        String diff = entityService.getImportDiff(id);
+        return ResponseEntity.ok(diff != null ? diff : "{}");
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSave(@PathVariable UUID id) {
         entityService.deleteSession(id);

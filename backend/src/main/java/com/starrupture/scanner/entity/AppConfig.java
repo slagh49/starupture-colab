@@ -59,4 +59,8 @@ public class AppConfig {
 
     @Column(name = "last_import_session_id")
     private UUID lastImportSessionId;
+
+    /** Snapshot JSON de l'état avant le dernier import (pour calculer le diff). */
+    @Column(name = "last_import_snapshot", columnDefinition = "text")
+    private String lastImportSnapshot;
 }

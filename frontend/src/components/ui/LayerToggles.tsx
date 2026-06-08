@@ -8,6 +8,7 @@ export interface LayerState {
   labels: boolean;
   infection: boolean;
   orphans: boolean;
+  markers: boolean;
 }
 
 interface LayerDef {
@@ -24,6 +25,7 @@ const LAYERS: LayerDef[] = [
   { key: 'labels',   label: 'LABELS',      icon: 'A' },
   { key: 'infection', label: 'INFECTION',  icon: '☣' },
   { key: 'orphans',  label: 'ORPHELINS', icon: '⚠' },
+  { key: 'markers',  label: 'MARQUEURS', icon: '📌' },
 ];
 
 interface Props {

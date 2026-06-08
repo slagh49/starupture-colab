@@ -113,6 +113,20 @@ L'application est protégée par une **mire de connexion**. Auth légère sans d
 - Toute route `/api/**` exige un jeton valide ; `/api/admin/**` exige le rôle ADMIN. L'onglet Administration est masqué pour les utilisateurs non‑admin
 - Secret de signature configurable via `APP_AUTH_SECRET` (à définir en prod)
 
+### Marqueurs collaboratifs
+
+**Clic droit** sur la carte pour poser un **marqueur annoté** (pin avec libellé). Les marqueurs sont visibles par tous les joueurs, stockés en base, et apparaissent sur un calque dédié (activable/désactivable). Liste avec suppression dans la barre latérale.
+
+### Journal de bord (diff d'import)
+
+Onglet **JOURNAL** : à chaque import, le backend compare automatiquement le nouvel état au snapshot du précédent et produit un **résumé des changements** :
+- Delta du **temps de jeu**, métriques (entités, machines éteintes, sorties pleines, infections…)
+- Variations **par catégorie** d'entité
+- **Nouvelles recettes** débloquées
+- **Types d'entités** apparus ou disparus
+
+Le diff est persisté sur la session (`import_diff`), consultable à tout moment.
+
 ### Tableau TODO (kanban)
 
 Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour organiser les chantiers de la base.

@@ -31,6 +31,7 @@ public class SaveParserService {
     private final DroneLinkRepository droneLinkRepository;
     private final RailSplineRepository railSplineRepository;
     private final BaseZoneRepository baseZoneRepository;
+    private final AppConfigRepository appConfigRepository;
 
     // Regex patterns for fragment extraction
     static final Pattern RECIPE = Pattern.compile("SelectedRecipe=\"[^']*'([^']+)'\"");
@@ -711,6 +712,139 @@ public class SaveParserService {
         log.info("Parsed save file '{}': {} entities, {} drone links, {} package links",
                 filename, entityMap.size(), pendingDroneLinks.size(), packageLinks);
 
+        // Diff d'import : comparer le snapshot sauvegardé lors du précédent import
+        // à l'état fraîchement parsé, et persister le résumé des changements.
+        try {
+            Map<String, Object> newSnap = buildSnapshot(session, entityMap.values());
+            AppConfig config = appConfigRepository.findAll().stream().findFirst().orElse(null);
+            if (config != null && config.getLastImportSnapshot() != null) {
+                Map<String, Object> oldSnap = objectMapper.readValue(
+                        config.getLastImportSnapshot(), new com.fasterxml.jackson.core.type.TypeReference<>() {});
+                String diffJson = computeDiff(oldSnap, newSnap);
+                session.setImportDiff(diffJson);
+                saveSessionRepository.save(session);
+            }
+            if (config != null) {
+                config.setLastImportSnapshot(objectMapper.writeValueAsString(newSnap));
+                appConfigRepository.save(config);
+            }
+        } catch (Exception e) {
+            log.warn("Diff d'import non calculé : {}", e.getMessage());
+        }
+
         return session;
+    }
+
+    // ---- Diff d'import ----
+
+    private Map<String, Object> buildSnapshot(SaveSession session, Collection<GameEntity> entities) {
+        Map<String, Object> snap = new LinkedHashMap<>();
+        snap.put("playtime", session.getPlaytime());
+        snap.put("worldTime", session.getWorldTime());
+        snap.put("timestamp", session.getTimestamp());
+
+        int total = 0, infected = 0, off = 0, outputFull = 0, missingItems = 0;
+        Map<String, Integer> byCategory = new TreeMap<>();
+        Set<String> entityNames = new TreeSet<>();
+
+        for (GameEntity e : entities) {
+            total++;
+            String cat = e.getCategory() != null ? e.getCategory() : "infra";
+            byCategory.merge(cat, 1, Integer::sum);
+            entityNames.add(e.getName());
+            if (e.getInfection() != null && e.getInfection() > 0) infected++;
+            if ("off".equals(e.getStatus())) off++;
+            if (Boolean.TRUE.equals(e.getOutputFull())) outputFull++;
+            if (Boolean.TRUE.equals(e.getMissingItems())) missingItems++;
+        }
+        snap.put("totalEntities", total);
+        snap.put("byCategory", byCategory);
+        snap.put("infectedCount", infected);
+        snap.put("offCount", off);
+        snap.put("outputFullCount", outputFull);
+        snap.put("missingItemsCount", missingItems);
+        snap.put("entityNames", entityNames);
+
+        try {
+            Map<String, Object> prog = session.getProgression() != null
+                    ? objectMapper.readValue(session.getProgression(), new com.fasterxml.jackson.core.type.TypeReference<>() {})
+                    : Map.of();
+            snap.put("recipesUnlocked", prog.getOrDefault("recipesUnlocked", 0));
+            snap.put("recipesLocked", prog.getOrDefault("recipesLocked", 0));
+            snap.put("unlockedRecipeNames", prog.getOrDefault("unlockedRecipeNames", List.of()));
+        } catch (Exception ignored) {}
+
+        return snap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String computeDiff(Map<String, Object> oldSnap, Map<String, Object> newSnap) {
+        Map<String, Object> diff = new LinkedHashMap<>();
+
+        // Deltas numériques
+        for (String key : List.of("totalEntities", "infectedCount", "offCount",
+                "outputFullCount", "missingItemsCount", "recipesUnlocked", "recipesLocked")) {
+            int o = toInt(oldSnap.get(key));
+            int n = toInt(newSnap.get(key));
+            if (o != n) {
+                diff.put(key, Map.of("before", o, "after", n, "delta", n - o));
+            }
+        }
+
+        // Playtime
+        double oldPt = toDouble(oldSnap.get("playtime"));
+        double newPt = toDouble(newSnap.get("playtime"));
+        if (Math.abs(newPt - oldPt) > 1) {
+            diff.put("playtime", Map.of("before", oldPt, "after", newPt, "delta", newPt - oldPt));
+        }
+
+        // Catégories
+        Map<String, Integer> oldCat = oldSnap.get("byCategory") instanceof Map
+                ? (Map<String, Integer>) oldSnap.get("byCategory") : Map.of();
+        Map<String, Integer> newCat = newSnap.get("byCategory") instanceof Map
+                ? (Map<String, Integer>) newSnap.get("byCategory") : Map.of();
+        Map<String, Object> catDiff = new LinkedHashMap<>();
+        Set<String> allCats = new TreeSet<>();
+        allCats.addAll(oldCat.keySet());
+        allCats.addAll(newCat.keySet());
+        for (String cat : allCats) {
+            int o = oldCat.getOrDefault(cat, 0);
+            int n = newCat.getOrDefault(cat, 0);
+            if (o != n) catDiff.put(cat, Map.of("before", o, "after", n, "delta", n - o));
+        }
+        if (!catDiff.isEmpty()) diff.put("byCategory", catDiff);
+
+        // Nouvelles recettes débloquées
+        Set<String> oldRecipes = new HashSet<>((List<String>) oldSnap.getOrDefault("unlockedRecipeNames", List.of()));
+        Set<String> newRecipes = new HashSet<>((List<String>) newSnap.getOrDefault("unlockedRecipeNames", List.of()));
+        Set<String> gained = new TreeSet<>(newRecipes);
+        gained.removeAll(oldRecipes);
+        if (!gained.isEmpty()) diff.put("newRecipesUnlocked", gained);
+
+        // Nouvelles entités (types apparus/disparus)
+        Set<String> oldNames = new HashSet<>((Collection<String>) oldSnap.getOrDefault("entityNames", Set.of()));
+        Set<String> newNames = new HashSet<>((Collection<String>) newSnap.getOrDefault("entityNames", Set.of()));
+        Set<String> addedTypes = new TreeSet<>(newNames);
+        addedTypes.removeAll(oldNames);
+        Set<String> removedTypes = new TreeSet<>(oldNames);
+        removedTypes.removeAll(newNames);
+        if (!addedTypes.isEmpty()) diff.put("newEntityTypes", addedTypes);
+        if (!removedTypes.isEmpty()) diff.put("removedEntityTypes", removedTypes);
+
+        try {
+            return objectMapper.writeValueAsString(diff);
+        } catch (Exception e) {
+            return "{}";
+        }
+    }
+
+    private static int toInt(Object o) {
+        if (o instanceof Number n) return n.intValue();
+        return 0;
+    }
+
+    private static double toDouble(Object o) {
+        if (o instanceof Number n) return n.doubleValue();
+        return 0.0;
     }
 }

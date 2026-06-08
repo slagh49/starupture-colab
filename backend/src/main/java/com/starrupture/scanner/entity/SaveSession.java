@@ -40,6 +40,10 @@ public class SaveSession {
     @Column(columnDefinition = "text")
     private String progression;
 
+    /** Diff JSON entre cet import et le précédent (résumé des changements). */
+    @Column(name = "import_diff", columnDefinition = "text")
+    private String importDiff;
+
     /**
      * Vrai lorsque le save importé est identique au précédent (même timestamp
      * interne et même playtime) : le jeu n'a écrit aucune nouvelle sauvegarde.

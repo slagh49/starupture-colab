@@ -11,8 +11,10 @@ import { CoordinateBar } from '../components/ui/CoordinateBar';
 import { FlowFilter } from '../components/ui/FlowFilter';
 import { flowItems } from '../components/map/DroneLayer';
 import { screen2world, WORLD_BOUNDS } from '../constants/mapConfig';
+import { markersApi } from '../services/api';
 import { isStructural, displayName } from '../utils/format';
 import type { GameEntity } from '../types/save.types';
+import type { MapMarker } from '../types/marker.types';
 import type { LayerState } from '../components/ui/LayerToggles';
 import type { EntityCategory } from '../types/save.types';
 import type { UseSaveDataReturn } from '../hooks/useSaveData';
@@ -108,6 +110,28 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
   const [activeFilters, setActiveFilters] = useState<Record<EntityCategory, boolean>>(createDefaultFilters);
   const [nameFilter, setNameFilter] = useState('');
   const [selectedFlowItem, setSelectedFlowItem] = useState<string | null>(null);
+  const [markers, setMarkers] = useState<MapMarker[]>([]);
+
+  const loadMarkers = useCallback(async () => {
+    try {
+      const res = await markersApi.list();
+      setMarkers(res.data);
+    } catch { /* silent */ }
+  }, []);
+
+  useEffect(() => { void loadMarkers(); }, [loadMarkers]);
+
+  const addMarker = useCallback(async (wx: number, wy: number) => {
+    const label = window.prompt('Libellé du marqueur ?');
+    if (!label?.trim()) return;
+    await markersApi.create({ x: wx, y: wy, label: label.trim(), color: accent });
+    await loadMarkers();
+  }, [accent, loadMarkers]);
+
+  const deleteMarker = useCallback(async (id: string) => {
+    await markersApi.delete(id);
+    await loadMarkers();
+  }, [loadMarkers]);
 
   const flowItemList = useMemo(() => flowItems(links), [links]);
   const entityById = useMemo(() => new Map(entities.map(e => [e.id, e])), [entities]);
@@ -131,6 +155,7 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
     labels: true,
     infection: true,
     orphans: false,
+    markers: true,
   });
 
   const toggleFilter = useCallback((cat: EntityCategory) => {
@@ -207,17 +232,46 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
             selectedEntity={selectedEntity}
             onSelect={setSelectedEntity}
           />
+          {layers.markers && markers.length > 0 && (
+            <div className={styles.markerSection}>
+              <div className={styles.markerTitle}>MARQUEURS ({markers.length})</div>
+              {markers.map(m => (
+                <div key={m.id} className={styles.markerRow}>
+                  <span className={styles.markerDot} style={{ backgroundColor: m.color }} />
+                  <span className={styles.markerLabel}>{m.label}</span>
+                  <button
+                    type="button"
+                    className={styles.markerDel}
+                    onClick={() => void deleteMarker(m.id)}
+                    title="Supprimer ce marqueur"
+                  >×</button>
+                </div>
+              ))}
+            </div>
+          )}
         </aside>
 
         {/* Map area */}
         <div className={styles.mapArea}>
-          <div className={styles.mapContainer} ref={mapContainerRef}>
+          <div
+            className={styles.mapContainer}
+            ref={mapContainerRef}
+            onContextMenu={e => {
+              e.preventDefault();
+              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              const sx = e.clientX - rect.left;
+              const sy = e.clientY - rect.top;
+              const w = screen2world(sx, sy, zoom, panX, panY);
+              void addMarker(w.x, w.y);
+            }}
+          >
             <MapCanvas
               entities={filteredEntities}
               links={links}
               splines={splines}
               zones={zones}
               accent={accent}
+              markers={markers}
               zoom={zoom}
               panX={panX}
               panY={panY}

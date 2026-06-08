@@ -10,6 +10,8 @@ import type {
   Progression,
   AppConfig,
 } from '../types/save.types';
+import type { MapMarker, MarkerInput } from '../types/marker.types';
+import type { ImportDiff } from '../types/diff.types';
 import type {
   KanbanBoard,
   KanbanColumn,
@@ -93,6 +95,13 @@ export const savesApi = {
   zones:    (id: string)   => api.get<BaseZone[]>(`/saves/${id}/zones`),
   summary:  (id: string)   => api.get<SessionSummary>(`/saves/${id}/summary`),
   progression: (id: string) => api.get<Progression>(`/saves/${id}/progression`),
+  diff:        (id: string) => api.get<ImportDiff>(`/saves/${id}/diff`),
+};
+
+export const markersApi = {
+  list:   ()                          => api.get<MapMarker[]>('/markers'),
+  create: (input: MarkerInput)        => api.post<MapMarker>('/markers', input),
+  delete: (id: string)                => api.delete(`/markers/${id}`),
 };
 
 export interface AppConfigInput {
