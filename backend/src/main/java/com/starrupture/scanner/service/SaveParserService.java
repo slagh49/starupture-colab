@@ -285,12 +285,23 @@ public class SaveParserService {
 
     private String cleanRecipePath(String path) {
         String s = path;
-        int dot = s.indexOf('.');
-        if (dot > 0) s = s.substring(0, dot);
+        // Les chemins UE contiennent le vrai nom entre quotes :
+        // /Script/Chimera.CrItemRecipeData'/Game/.../CR_Valve.CR_Valve'
+        // /Script/Engine.BlueprintGeneratedClass'/Game/.../I_DataPoint.I_DataPoint_C'
+        int q1 = s.indexOf('\'');
+        if (q1 >= 0) {
+            int q2 = s.indexOf('\'', q1 + 1);
+            s = q2 > q1 ? s.substring(q1 + 1, q2) : s.substring(q1 + 1);
+        }
+        // Prend le segment après le dernier '/' puis avant le '.'
         int slash = s.lastIndexOf('/');
         if (slash >= 0 && slash < s.length() - 1) s = s.substring(slash + 1);
+        int dot = s.indexOf('.');
+        if (dot > 0) s = s.substring(0, dot);
+        // Retire les préfixes UE
         if (s.startsWith("CR_")) s = s.substring(3);
         if (s.startsWith("I_")) s = s.substring(2);
+        if (s.endsWith("_C")) s = s.substring(0, s.length() - 2);
         return s.isEmpty() ? "Unknown" : s;
     }
 
