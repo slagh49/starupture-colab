@@ -266,6 +266,20 @@ public class SaveParserService {
         }
     }
 
+    /** SHA-256 hexadécimal du contenu brut d'un .sav, pour détecter un import identique. */
+    private String sha256(byte[] data) {
+        try {
+            byte[] digest = java.security.MessageDigest.getInstance("SHA-256").digest(data);
+            StringBuilder sb = new StringBuilder(digest.length * 2);
+            for (byte b : digest) sb.append(Character.forDigit((b >> 4) & 0xF, 16))
+                                    .append(Character.forDigit(b & 0xF, 16));
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            // SHA-256 fait partie de toute JRE standard ; ne devrait jamais arriver.
+            throw new IllegalStateException("SHA-256 indisponible", e);
+        }
+    }
+
     /** Reduce an ItemDataBase asset path to a readable item name (e.g. WolframOre). */
     private String cleanItemName(String path) {
         String s = path;
@@ -497,20 +511,26 @@ public class SaveParserService {
         // Create session from root metadata
         String filename = originalFilename != null ? originalFilename : "unknown";
         String timestamp = root.path("timestamp").asText(null);
+        String contentHash = sha256(raw);
         SaveSession session = SaveSession.builder()
                 .filename(filename)
                 .sessionName(root.has("sessionName") ? root.path("sessionName").asText(null) : null)
                 .playtime(playtime)
                 .timestamp(timestamp)
                 .worldTime(worldTime)
+                .contentHash(contentHash)
                 .progression(progressionJson)
                 .build();
 
         // Avant le wipe : mémoriser l'état précédent pour détecter un import
-        // identique (même save rechargé). Si le timestamp interne ET le playtime
-        // sont inchangés, le jeu n'a écrit aucune nouvelle sauvegarde — on prévient
-        // l'utilisateur plutôt que de lui laisser croire que ses données sont à jour.
+        // identique (même save rechargé). On compare l'empreinte SHA-256 du
+        // contenu brut : deux fichiers identiques au bit près = même save, le jeu
+        // n'a écrit aucune nouvelle sauvegarde. Bien plus fiable que l'ancienne
+        // comparaison timestamp + playtime, qui concluait « identique » à tort
+        // dès que ces deux champs coïncidaient (granularité grossière du jeu).
+        // Repli sur timestamp + playtime pour les sessions héritées sans hash.
         List<SaveSession> previous = saveSessionRepository.findAllByOrderByUploadAtDesc();
+        String prevHash = previous.isEmpty() ? null : previous.get(0).getContentHash();
         String prevTimestamp = previous.isEmpty() ? null : previous.get(0).getTimestamp();
         Double prevPlaytime = previous.isEmpty() ? null : previous.get(0).getPlaytime();
 
@@ -522,13 +542,13 @@ public class SaveParserService {
 
         session = saveSessionRepository.save(session);
 
-        boolean sameAsPrevious = !previous.isEmpty()
-                && Objects.equals(prevTimestamp, timestamp)
-                && Objects.equals(prevPlaytime, playtime);
+        boolean sameAsPrevious = !previous.isEmpty() && (prevHash != null
+                ? prevHash.equals(contentHash)
+                : Objects.equals(prevTimestamp, timestamp) && Objects.equals(prevPlaytime, playtime));
         session.setSameAsPrevious(sameAsPrevious);
         if (sameAsPrevious) {
-            log.warn("Import identique au précédent (timestamp={}, playtime={}) : "
-                    + "le jeu n'a pas produit de nouvelle sauvegarde.", timestamp, playtime);
+            log.warn("Import identique au précédent (hash={}) : "
+                    + "le jeu n'a pas produit de nouvelle sauvegarde.", contentHash);
         }
 
         // Navigate to entities

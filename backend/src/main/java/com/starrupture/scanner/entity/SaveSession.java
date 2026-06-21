@@ -37,6 +37,10 @@ public class SaveSession {
     @Column(name = "world_time")
     private Double worldTime;
 
+    /** Empreinte SHA-256 du .sav brut importé — base de la détection d'import identique. */
+    @Column(name = "content_hash")
+    private String contentHash;
+
     @Column(columnDefinition = "text")
     private String progression;
 
@@ -45,8 +49,8 @@ public class SaveSession {
     private String importDiff;
 
     /**
-     * Vrai lorsque le save importé est identique au précédent (même timestamp
-     * interne et même playtime) : le jeu n'a écrit aucune nouvelle sauvegarde.
+     * Vrai lorsque le save importé est identique au précédent (même empreinte
+     * SHA-256 du contenu) : le jeu n'a écrit aucune nouvelle sauvegarde.
      * Calculé à l'import, non persisté — sert uniquement à alerter l'utilisateur.
      */
     @Transient
