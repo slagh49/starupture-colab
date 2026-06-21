@@ -230,3 +230,9 @@ build (JAR backend + dist frontend)
 | S2 — Visualisation avancée (drones, rails, tableau, minimap, alertes) | 24 | Terminé |
 | S3 — Filtres et CI/CD | 11 | Terminé |
 | **Total** | **61** | Terminé |
+
+## Licence
+
+Distribué sous licence **MIT** — voir le fichier [LICENSE](LICENSE). Vous êtes libre
+d'utiliser, modifier et redistribuer ce code, y compris à des fins commerciales,
+sous réserve de conserver la mention de copyright.
