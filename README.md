@@ -24,6 +24,50 @@ Organisation collaborative des tâches en colonnes (construction, progression) a
 
 Import FTP automatique des sauvegardes (passerelle Web-FTP ou FTP direct) et gestion des utilisateurs.
 
+## Démarrage rapide
+
+> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.md)** —
+> pensé pour les personnes non initiées, il ne demande que Docker (aucune connaissance technique).
+
+### Installation simple (depuis les sources, Docker uniquement)
+
+```bash
+cd infra
+# Créez un fichier .env avec DB_PASSWORD et APP_AUTH_SECRET (voir le guide d'installation),
+# puis construisez et démarrez :
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+L'application est alors accessible sur **http://localhost:8888** (admin / admin au premier démarrage).
+
+### Prérequis (développement)
+- Docker et Docker Compose
+- Java 21 + Maven 3.9 (développement backend)
+- Node.js 20 (développement frontend)
+
+### Développement local
+
+```bash
+# Frontend
+cd frontend && npm install && npm run dev
+
+# Backend (nécessite PostgreSQL + Redis)
+cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### Production (Docker Compose)
+
+```bash
+cd infra
+DB_PASSWORD=motdepasse \
+APP_AUTH_SECRET="$(openssl rand -base64 48)" \
+DOCKER_IMAGE_BACKEND=registry.exemple.com/backend:latest \
+DOCKER_IMAGE_FRONTEND=registry.exemple.com/frontend:latest \
+docker compose up -d
+```
+
+L'application est accessible sur le port **8888**.
+
 ## Stack technique
 
 | Couche | Technologie |
@@ -210,50 +254,6 @@ Toute l'UI est traduite en **5 langues** : **anglais** (par défaut), **françai
 | POST / PUT / DELETE | `/api/kanban/columns[/{id}]` | Créer / renommer / supprimer une colonne |
 | POST / PUT / DELETE | `/api/kanban/tasks[/{id}]` | Créer / modifier / supprimer une tâche |
 | PUT | `/api/kanban/tasks/{id}/move` | Déplacer une tâche (colonne + position) |
-
-## Démarrage rapide
-
-> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.md)** —
-> pensé pour les personnes non initiées, il ne demande que Docker (aucune connaissance technique).
-
-### Installation simple (depuis les sources, Docker uniquement)
-
-```bash
-cd infra
-# Créez un fichier .env avec DB_PASSWORD et APP_AUTH_SECRET (voir le guide d'installation),
-# puis construisez et démarrez :
-docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
-```
-
-L'application est alors accessible sur **http://localhost:8888** (admin / admin au premier démarrage).
-
-### Prérequis (développement)
-- Docker et Docker Compose
-- Java 21 + Maven 3.9 (développement backend)
-- Node.js 20 (développement frontend)
-
-### Développement local
-
-```bash
-# Frontend
-cd frontend && npm install && npm run dev
-
-# Backend (nécessite PostgreSQL + Redis)
-cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-### Production (Docker Compose)
-
-```bash
-cd infra
-DB_PASSWORD=motdepasse \
-APP_AUTH_SECRET="$(openssl rand -base64 48)" \
-DOCKER_IMAGE_BACKEND=registry.exemple.com/backend:latest \
-DOCKER_IMAGE_FRONTEND=registry.exemple.com/frontend:latest \
-docker compose up -d
-```
-
-L'application est accessible sur le port **8888**.
 
 ## Pipeline CI/CD
 
