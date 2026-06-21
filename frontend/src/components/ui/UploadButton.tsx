@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './UploadButton.module.css';
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export function UploadButton({ onUpload, loading }: Props): JSX.Element {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = (): void => {
@@ -29,7 +31,7 @@ export function UploadButton({ onUpload, loading }: Props): JSX.Element {
         disabled={loading}
         type="button"
       >
-        {loading ? 'UPLOADING...' : 'UPLOAD .SAV / .JSON'}
+        {loading ? t('upload.loading') : t('upload.button')}
       </button>
       <input
         ref={inputRef}

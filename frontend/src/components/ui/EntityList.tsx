@@ -1,6 +1,7 @@
 import { memo, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { GameEntity, EntityCategory } from '../../types/save.types';
-import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { CAT_COLORS } from '../../constants/colors';
 import { cleanName, displayName } from '../../utils/format';
 import styles from './EntityList.module.css';
 
@@ -18,6 +19,7 @@ const ORDER: EntityCategory[] = [
 const PER_TYPE = 200;
 
 function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Element {
+  const { t } = useTranslation();
   // category -> (type -> entities), type = cleaned machine name (Smelter, ...)
   const groups = useMemo(() => {
     const cats = new Map<EntityCategory, Map<string, GameEntity[]>>();
@@ -45,7 +47,7 @@ function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Elem
   return (
     <div className={styles.container}>
       <div className={styles.title}>
-        ENTITES
+        {t('entityList.title')}
         <span className={styles.count}>{entities.length}</span>
       </div>
       <div className={styles.list}>
@@ -64,7 +66,7 @@ function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Elem
               >
                 <span className={styles.chevron}>{catOpen ? '▾' : '▸'}</span>
                 <span className={styles.dot} style={{ backgroundColor: CAT_COLORS[cat] }} />
-                <span className={styles.groupName}>{CAT_LABELS[cat]}</span>
+                <span className={styles.groupName}>{t('category.' + cat)}</span>
                 <span className={styles.count}>{catCount}</span>
               </button>
               {catOpen && (
@@ -107,7 +109,7 @@ function EntityListBase({ entities, selectedEntity, onSelect }: Props): JSX.Elem
                             })}
                             {items.length > PER_TYPE && (
                               <div className={styles.more}>
-                                +{(items.length - PER_TYPE).toLocaleString('fr-FR')}…
+                                {t('entityList.more', { count: items.length - PER_TYPE })}
                               </div>
                             )}
                           </div>

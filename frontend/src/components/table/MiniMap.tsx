@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { GameEntity, DroneLink } from '../../types/save.types';
 import { CAT_COLORS } from '../../constants/colors';
 import { createTerrainCanvas, drawTerrain, drawOverlay } from '../map/TerrainLayer';
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function MiniMap({ entities, links, selectedEntity }: Props): JSX.Element {
+  const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const terrainRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -39,7 +41,7 @@ export function MiniMap({ entities, links, selectedEntity }: Props): JSX.Element
       ctx.fillStyle = '#4a5568';
       ctx.font = '11px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Select an entity', w / 2, h / 2);
+      ctx.fillText(t('miniMap.selectEntity'), w / 2, h / 2);
       return;
     }
 
@@ -131,7 +133,7 @@ export function MiniMap({ entities, links, selectedEntity }: Props): JSX.Element
     ctx.moveTo(cx, cy + 4);
     ctx.lineTo(cx, cy + crossSize);
     ctx.stroke();
-  }, [entities, links, selectedEntity]);
+  }, [entities, links, selectedEntity, t]);
 
   useEffect(() => {
     draw();
@@ -139,7 +141,7 @@ export function MiniMap({ entities, links, selectedEntity }: Props): JSX.Element
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>MINIMAP</div>
+      <div className={styles.header}>{t('miniMap.header')}</div>
       <canvas
         ref={canvasRef}
         className={styles.canvas}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import styles from './LayerToggles.module.css';
 
 export interface LayerState {
@@ -13,19 +14,19 @@ export interface LayerState {
 
 interface LayerDef {
   key: keyof LayerState;
-  label: string;
+  labelKey: string;
   icon: string;
 }
 
 const LAYERS: LayerDef[] = [
-  { key: 'terrain',  label: 'TERRAIN',     icon: '▦' },
-  { key: 'drones',   label: 'FLUX DRONES', icon: '⇢' },
-  { key: 'rails',    label: 'RAILS',       icon: '═' },
-  { key: 'baseZone', label: 'ZONE BASE',   icon: '□' },
-  { key: 'labels',   label: 'LABELS',      icon: 'A' },
-  { key: 'infection', label: 'INFECTION',  icon: '☣' },
-  { key: 'orphans',  label: 'ORPHELINS', icon: '⚠' },
-  { key: 'markers',  label: 'MARQUEURS', icon: '📌' },
+  { key: 'terrain',  labelKey: 'layers.terrain',  icon: '▦' },
+  { key: 'drones',   labelKey: 'layers.drones',   icon: '⇢' },
+  { key: 'rails',    labelKey: 'layers.rails',    icon: '═' },
+  { key: 'baseZone', labelKey: 'layers.baseZone', icon: '□' },
+  { key: 'labels',   labelKey: 'layers.labels',   icon: 'A' },
+  { key: 'infection', labelKey: 'layers.infection', icon: '☣' },
+  { key: 'orphans',  labelKey: 'layers.orphans',  icon: '⚠' },
+  { key: 'markers',  labelKey: 'layers.markers',  icon: '📌' },
 ];
 
 interface Props {
@@ -34,20 +35,22 @@ interface Props {
 }
 
 export function LayerToggles({ layers, onToggle }: Props): JSX.Element {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       {LAYERS.map(layer => {
         const active = layers[layer.key];
+        const label = t(layer.labelKey);
         return (
           <button
             key={layer.key}
             type="button"
             className={`${styles.toggle} ${active ? styles.active : ''}`}
             onClick={() => onToggle(layer.key)}
-            title={layer.label}
+            title={label}
           >
             <span className={styles.icon}>{layer.icon}</span>
-            <span className={styles.label}>{layer.label}</span>
+            <span className={styles.label}>{label}</span>
           </button>
         );
       })}

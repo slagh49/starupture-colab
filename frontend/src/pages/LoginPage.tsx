@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '../components/ui/LanguageSwitcher';
 import styles from './LoginPage.module.css';
 
 interface Props {
@@ -6,6 +8,7 @@ interface Props {
 }
 
 export function LoginPage({ onLogin }: Props): JSX.Element {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +21,7 @@ export function LoginPage({ onLogin }: Props): JSX.Element {
     try {
       await onLogin(username, password);
     } catch {
-      setError('Identifiants invalides.');
+      setError(t('login.invalidCredentials'));
     } finally {
       setBusy(false);
     }
@@ -26,15 +29,18 @@ export function LoginPage({ onLogin }: Props): JSX.Element {
 
   return (
     <div className={styles.page}>
+      <div className={styles.topBar}>
+        <LanguageSwitcher authenticated={false} />
+      </div>
       <form className={styles.card} onSubmit={submit}>
         <div className={styles.brand}>
           <span className={styles.logo}>STARRUPTURE</span>
           <span className={styles.subtitle}>BASE SCANNER</span>
         </div>
-        <h2 className={styles.title}>Connexion</h2>
+        <h2 className={styles.title}>{t('login.title')}</h2>
 
         <label className={styles.field}>
-          <span>Utilisateur</span>
+          <span>{t('login.username')}</span>
           <input
             value={username}
             onChange={e => setUsername(e.target.value)}
@@ -43,7 +49,7 @@ export function LoginPage({ onLogin }: Props): JSX.Element {
           />
         </label>
         <label className={styles.field}>
-          <span>Mot de passe</span>
+          <span>{t('login.password')}</span>
           <input
             type="password"
             value={password}
@@ -55,7 +61,7 @@ export function LoginPage({ onLogin }: Props): JSX.Element {
         {error && <div className={styles.error}>{error}</div>}
 
         <button type="submit" className={styles.button} disabled={busy || !username || !password}>
-          {busy ? 'Connexion…' : 'Se connecter'}
+          {busy ? t('login.connecting') : t('login.submit')}
         </button>
       </form>
     </div>

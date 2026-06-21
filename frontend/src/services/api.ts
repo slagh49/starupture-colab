@@ -50,12 +50,15 @@ api.interceptors.response.use(
 export interface AuthUser {
   username: string;
   role: string;
+  language: string;
 }
 
 export const authApi = {
   login: (username: string, password: string) =>
-    api.post<{ token: string; username: string; role: string }>('/auth/login', { username, password }),
+    api.post<{ token: string; username: string; role: string; language: string }>(
+      '/auth/login', { username, password }),
   me: () => api.get<AuthUser>('/auth/me'),
+  setLanguage: (language: string) => api.put<{ language: string }>('/auth/me/language', { language }),
 };
 
 export interface CreateUserInput {

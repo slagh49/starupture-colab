@@ -1,5 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import type { GameEntity } from '../../types/save.types';
-import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { CAT_COLORS } from '../../constants/colors';
 import styles from './Tooltip.module.css';
 
 interface Props {
@@ -9,8 +10,9 @@ interface Props {
 }
 
 export function Tooltip({ entity, screenX, screenY }: Props): JSX.Element {
+  const { t } = useTranslation();
   const color = CAT_COLORS[entity.category];
-  const label = CAT_LABELS[entity.category];
+  const label = t('category.' + entity.category);
 
   return (
     <div
@@ -29,7 +31,7 @@ export function Tooltip({ entity, screenX, screenY }: Props): JSX.Element {
       )}
       {entity.infection > 0 && (
         <div className={styles.infection} style={{ color: CAT_COLORS.danger }}>
-          Infection: {entity.infection}%
+          {t('tooltip.infection', { count: entity.infection })}
         </div>
       )}
       {entity.status === 'off' && (

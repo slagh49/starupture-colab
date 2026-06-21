@@ -1,5 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import type { KanbanTask } from '../../types/kanban.types';
-import { PRIORITY_COLORS, PRIORITY_LABELS } from '../../constants/colors';
+import { PRIORITY_COLORS } from '../../constants/colors';
 import styles from './TaskCard.module.css';
 
 interface Props {
@@ -19,6 +20,7 @@ function isOverdue(dueDate: string | null): boolean {
 }
 
 export function TaskCard({ task, onEdit, onDelete, onDragStart, onDragEnd, dragging }: Props): JSX.Element {
+  const { t } = useTranslation();
   const overdue = isOverdue(task.dueDate);
   return (
     <article
@@ -34,7 +36,7 @@ export function TaskCard({ task, onEdit, onDelete, onDragStart, onDragEnd, dragg
         <button
           type="button"
           className={styles.delete}
-          title="Supprimer"
+          title={t('kanban.delete')}
           onClick={e => { e.stopPropagation(); onDelete(task); }}
         >×</button>
       </div>
@@ -46,7 +48,7 @@ export function TaskCard({ task, onEdit, onDelete, onDragStart, onDragEnd, dragg
           className={styles.priority}
           style={{ color: PRIORITY_COLORS[task.priority], borderColor: PRIORITY_COLORS[task.priority] }}
         >
-          {PRIORITY_LABELS[task.priority]}
+          {t('priority.' + task.priority.toLowerCase())}
         </span>
         {task.assignee && <span className={styles.assignee}>👤 {task.assignee}</span>}
         {task.dueDate && (

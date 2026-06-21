@@ -146,6 +146,15 @@ Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**id
 - L'accent s'étend à la **carte** : contour de la zone de base, walkways et grille suivent le thème (le rendu canvas lit `THEME_ACCENTS`, synchronisé avec les variables CSS)
 - Les **couleurs sémantiques des catégories d'entités** (carte) restent inchangées pour la lisibilité
 
+### Interface multilingue
+
+Toute l'UI est traduite en **5 langues** : **anglais** (par défaut), **français**, **allemand**, **espagnol**, **polonais**.
+
+- Sélecteur de langue (🌐) dans l'en-tête et sur la page de connexion
+- Implémenté avec **react-i18next** ; fichiers de traduction par langue dans `frontend/src/i18n/locales/`
+- La langue choisie est **enregistrée dans le profil de l'utilisateur** (côté serveur) et réappliquée à chaque connexion, en plus d'être mémorisée dans `localStorage`
+- Les **données de jeu** (noms d'entités, recettes) et les **noms propres** (corporations) ne sont pas traduits
+
 ### API REST
 
 > Toutes les routes `/api/**` (sauf `/api/auth/login`) exigent l'en-tête `Authorization: Bearer <jeton>`.
@@ -153,7 +162,8 @@ Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**id
 | Méthode | Point d'entrée | Description |
 |---------|----------------|-------------|
 | POST | `/api/auth/login` | Connexion → jeton signé (public) |
-| GET | `/api/auth/me` | Utilisateur courant (nom, rôle) |
+| GET | `/api/auth/me` | Utilisateur courant (nom, rôle, langue) |
+| PUT | `/api/auth/me/language` | Changer la langue de l'utilisateur courant |
 | GET / POST | `/api/admin/users` | Liste / création d'utilisateurs (ADMIN) |
 | PUT | `/api/admin/users/{id}/password` | Définir le mot de passe (ADMIN) |
 | DELETE | `/api/admin/users/{id}` | Suppression d'un utilisateur (ADMIN) |
@@ -183,7 +193,21 @@ Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**id
 
 ## Démarrage rapide
 
-### Prérequis
+> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.md)** —
+> pensé pour les personnes non initiées, il ne demande que Docker (aucune connaissance technique).
+
+### Installation simple (depuis les sources, Docker uniquement)
+
+```bash
+cd infra
+# Créez un fichier .env avec DB_PASSWORD et APP_AUTH_SECRET (voir le guide d'installation),
+# puis construisez et démarrez :
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+```
+
+L'application est alors accessible sur **http://localhost:8888** (admin / admin au premier démarrage).
+
+### Prérequis (développement)
 - Docker et Docker Compose
 - Java 21 + Maven 3.9 (développement backend)
 - Node.js 20 (développement frontend)

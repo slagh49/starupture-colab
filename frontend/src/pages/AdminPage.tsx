@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { SaveSession } from '../types/save.types';
 import { adminApi } from '../services/api';
 import { UserManagement } from '../components/admin/UserManagement';
@@ -14,6 +15,7 @@ interface Status {
 }
 
 export function AdminPage({ onImported }: Props): JSX.Element {
+  const { t } = useTranslation();
   const [host, setHost] = useState('');
   const [port, setPort] = useState(21);
   const [user, setUser] = useState('');
@@ -53,9 +55,9 @@ export function AdminPage({ onImported }: Props): JSX.Element {
       });
       setHasPassword(res.data.hasPassword);
       setPassword('');
-      setStatus({ kind: 'ok', text: 'Configuration enregistrée.' });
+      setStatus({ kind: 'ok', text: t('admin.configSaved') });
     } catch {
-      setStatus({ kind: 'err', text: 'Échec de l\'enregistrement.' });
+      setStatus({ kind: 'err', text: t('admin.saveFailed') });
     } finally {
       setBusy(false);
     }
@@ -63,14 +65,14 @@ export function AdminPage({ onImported }: Props): JSX.Element {
 
   const test = async (): Promise<void> => {
     setBusy(true);
-    setStatus({ kind: 'info', text: 'Test de connexion…' });
+    setStatus({ kind: 'info', text: t('admin.testing') });
     try {
       const res = await adminApi.test();
       setStatus(res.data.ok
-        ? { kind: 'ok', text: 'Connexion FTP réussie.' }
-        : { kind: 'err', text: 'Connexion FTP échouée : ' + (res.data.message ?? 'cause inconnue') });
+        ? { kind: 'ok', text: t('admin.ftpOk') }
+        : { kind: 'err', text: t('admin.ftpFailedReason', { reason: res.data.message ?? t('admin.unknownCause') }) });
     } catch {
-      setStatus({ kind: 'err', text: 'Connexion FTP échouée.' });
+      setStatus({ kind: 'err', text: t('admin.ftpFailed') });
     } finally {
       setBusy(false);
     }
@@ -78,14 +80,14 @@ export function AdminPage({ onImported }: Props): JSX.Element {
 
   const importNow = async (): Promise<void> => {
     setBusy(true);
-    setStatus({ kind: 'info', text: 'Import en cours…' });
+    setStatus({ kind: 'info', text: t('admin.importing') });
     try {
       const res = await adminApi.importNow();
-      setStatus({ kind: 'ok', text: 'Import réussi — données rechargées (wipe + rechargement).' });
+      setStatus({ kind: 'ok', text: t('admin.importOk') });
       onImported(res.data);
     } catch (e) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      setStatus({ kind: 'err', text: 'Import échoué : ' + (msg ?? 'erreur inconnue') });
+      setStatus({ kind: 'err', text: t('admin.importFailedReason', { reason: msg ?? t('admin.unknownError') }) });
     } finally {
       setBusy(false);
     }
@@ -93,59 +95,57 @@ export function AdminPage({ onImported }: Props): JSX.Element {
 
   return (
     <div className={styles.page}>
-      <h2 className={styles.title}>IMPORT FTP AUTOMATIQUE</h2>
+      <h2 className={styles.title}>{t('admin.title')}</h2>
 
       <div className={styles.form}>
         <label className={styles.field}>
-          <span>Hôte FTP</span>
+          <span>{t('admin.ftpHost')}</span>
           <input value={host} onChange={e => setHost(e.target.value)} placeholder="192.168.1.x" />
         </label>
         <label className={`${styles.field} ${styles.small}`}>
-          <span>Port</span>
+          <span>{t('admin.port')}</span>
           <input type="number" value={port} onChange={e => setPort(Number(e.target.value))} />
         </label>
         <label className={styles.field}>
-          <span>Utilisateur</span>
+          <span>{t('admin.user')}</span>
           <input value={user} onChange={e => setUser(e.target.value)} />
         </label>
         <label className={styles.field}>
-          <span>Mot de passe {hasPassword && <em>(enregistré)</em>}</span>
+          <span>{t('admin.password')} {hasPassword && <em>{t('admin.passwordSaved')}</em>}</span>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                 placeholder={hasPassword ? '•••••• (inchangé)' : ''} />
+                 placeholder={hasPassword ? t('admin.passwordUnchanged') : ''} />
         </label>
         <label className={`${styles.field} ${styles.full}`}>
-          <span>Chemin du fichier .sav</span>
+          <span>{t('admin.savPath')}</span>
           <input value={path} onChange={e => setPath(e.target.value)} placeholder="/saves/AutoSave0.sav" />
         </label>
         <label className={`${styles.field} ${styles.full}`}>
-          <span>URL passerelle HTTP (Web-FTP) <em>— recommandé, contourne le FTP passif</em></span>
+          <span>{t('admin.bridgeUrl')} <em>{t('admin.bridgeUrlHint')}</em></span>
           <input value={bridgeUrl} onChange={e => setBridgeUrl(e.target.value)}
                  placeholder="https://ftp.4np.4players.de/bridges/php/handler.php" />
         </label>
 
         <label className={styles.checkbox}>
           <input type="checkbox" checked={autoEnabled} onChange={e => setAutoEnabled(e.target.checked)} />
-          <span>Import automatique</span>
+          <span>{t('admin.autoImport')}</span>
         </label>
         <label className={`${styles.field} ${styles.small}`}>
-          <span>Toutes les (min)</span>
+          <span>{t('admin.everyMinutes')}</span>
           <input type="number" value={interval} min={1}
                  onChange={e => setIntervalMin(Number(e.target.value))} disabled={!autoEnabled} />
         </label>
       </div>
 
       <div className={styles.actions}>
-        <button type="button" onClick={save} disabled={busy} className={styles.btnPrimary}>Enregistrer</button>
-        <button type="button" onClick={test} disabled={busy} className={styles.btn}>Tester la connexion</button>
-        <button type="button" onClick={importNow} disabled={busy} className={styles.btn}>Importer maintenant</button>
+        <button type="button" onClick={save} disabled={busy} className={styles.btnPrimary}>{t('admin.save')}</button>
+        <button type="button" onClick={test} disabled={busy} className={styles.btn}>{t('admin.testConnection')}</button>
+        <button type="button" onClick={importNow} disabled={busy} className={styles.btn}>{t('admin.importNow')}</button>
       </div>
 
       {status && <div className={`${styles.status} ${styles[status.kind]}`}>{status.text}</div>}
-      {lastImport && <div className={styles.meta}>Dernier import auto : {new Date(lastImport).toLocaleString('fr-FR')}</div>}
+      {lastImport && <div className={styles.meta}>{t('admin.lastAutoImport', { date: new Date(lastImport).toLocaleString('fr-FR') })}</div>}
       <div className={styles.note}>
-        Les identifiants sont stockés sur le serveur (homelab). Le mot de passe n'est jamais renvoyé à l'interface.
-        Si une URL passerelle est renseignée, le téléchargement passe par le Web-FTP HTTP de l'hébergeur
-        (fonctionne serveur de jeu allumé) ; sinon il utilise le FTP direct. Laisse le champ vide pour forcer le FTP.
+        {t('admin.note')}
       </div>
 
       <UserManagement />

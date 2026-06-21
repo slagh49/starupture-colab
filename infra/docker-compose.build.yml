@@ -1,0 +1,17 @@
+# Surcouche pour CONSTRUIRE les images depuis les sources (installation locale,
+# sans registry Docker). À combiner avec docker-compose.yml :
+#
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+#
+# Seul Docker est nécessaire : la compilation (Java/Maven, Node) se fait dans Docker.
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.standalone
+    image: starrupture/backend:latest
+
+  nginx:
+    build:
+      context: ../frontend
+    image: starrupture/frontend:latest

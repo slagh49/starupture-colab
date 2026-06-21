@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { GameEntity, EntityCategory } from '../../types/save.types';
-import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { CAT_COLORS } from '../../constants/colors';
 import { displayName, cleanRecipe } from '../../utils/format';
 import { Badge } from '../ui/Badge';
 import styles from './ProductionTable.module.css';
@@ -18,6 +19,7 @@ interface Props {
 const PRODUCTION_CATEGORIES: Set<EntityCategory> = new Set(['machine', 'energy']);
 
 export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Props): JSX.Element {
+  const { t } = useTranslation();
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [search, setSearch] = useState('');
@@ -98,7 +100,7 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
         <input
           className={styles.search}
           type="text"
-          placeholder="Search name or recipe..."
+          placeholder={t('production.searchPlaceholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -107,20 +109,20 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value as StatusFilter)}
         >
-          <option value="all">All status</option>
-          <option value="on">ON</option>
-          <option value="off">OFF</option>
+          <option value="all">{t('production.statusAll')}</option>
+          <option value="on">{t('production.statusOn')}</option>
+          <option value="off">{t('production.statusOff')}</option>
         </select>
         <select
           className={styles.filter}
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value as EntityCategory | 'all')}
         >
-          <option value="all">All categories</option>
-          <option value="machine">Machines</option>
-          <option value="energy">Energy</option>
+          <option value="all">{t('production.categoryAll')}</option>
+          <option value="machine">{t('category.machine')}</option>
+          <option value="energy">{t('category.energy')}</option>
         </select>
-        <span className={styles.count}>{sorted.length} / {productionEntities.length}</span>
+        <span className={styles.count}>{t('production.count', { shown: sorted.length, total: productionEntities.length })}</span>
       </div>
 
       <div className={styles.tableWrapper}>
@@ -128,22 +130,22 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
           <thead>
             <tr>
               <th className={styles.th} onClick={() => handleSort('name')}>
-                Name{sortIndicator('name')}
+                {t('production.colName')}{sortIndicator('name')}
               </th>
               <th className={styles.th} onClick={() => handleSort('category')}>
-                Category{sortIndicator('category')}
+                {t('production.colCategory')}{sortIndicator('category')}
               </th>
               <th className={styles.th} onClick={() => handleSort('recipe')}>
-                Recipe{sortIndicator('recipe')}
+                {t('production.colRecipe')}{sortIndicator('recipe')}
               </th>
               <th className={styles.th} onClick={() => handleSort('status')}>
-                Status{sortIndicator('status')}
+                {t('production.colStatus')}{sortIndicator('status')}
               </th>
               <th className={styles.th} onClick={() => handleSort('infection')}>
-                Infection{sortIndicator('infection')}
+                {t('production.colInfection')}{sortIndicator('infection')}
               </th>
               <th className={styles.th} onClick={() => handleSort('position')}>
-                Position{sortIndicator('position')}
+                {t('production.colPosition')}{sortIndicator('position')}
               </th>
             </tr>
           </thead>
@@ -162,7 +164,7 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
                   <td className={styles.td}>{displayName(entity)}</td>
                   <td className={styles.td}>
                     <Badge
-                      label={CAT_LABELS[entity.category]}
+                      label={t('category.' + entity.category)}
                       color={CAT_COLORS[entity.category]}
                     />
                   </td>
@@ -197,7 +199,7 @@ export function ProductionTable({ entities, selectedEntity, onSelectEntity }: Pr
             {sorted.length === 0 && (
               <tr>
                 <td className={styles.tdEmpty} colSpan={6}>
-                  No matching entities
+                  {t('production.empty')}
                 </td>
               </tr>
             )}

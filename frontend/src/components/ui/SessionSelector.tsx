@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { SaveSession } from '../../types/save.types';
 import styles from './SessionSelector.module.css';
 
@@ -12,8 +13,9 @@ export function SessionSelector({
   activeSession,
   onSelect,
 }: Props): JSX.Element {
+  const { t } = useTranslation();
   if (sessions.length === 0) {
-    return <span className={styles.empty}>No sessions loaded</span>;
+    return <span className={styles.empty}>{t('sessionSelector.empty')}</span>;
   }
 
   return (
@@ -26,7 +28,7 @@ export function SessionSelector({
       }}
     >
       <option value="" disabled>
-        Select a session...
+        {t('sessionSelector.placeholder')}
       </option>
       {sessions.map(s => (
         <option key={s.id} value={s.id}>

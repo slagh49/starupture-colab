@@ -1,0 +1,281 @@
+{
+  "admin": {
+    "autoImport": "Automatic import",
+    "bridgeUrl": "HTTP gateway URL (Web-FTP)",
+    "bridgeUrlHint": "— recommended, bypasses passive FTP",
+    "configSaved": "Configuration saved.",
+    "everyMinutes": "Every (min)",
+    "ftpFailed": "FTP connection failed.",
+    "ftpFailedReason": "FTP connection failed: {{reason}}",
+    "ftpHost": "FTP host",
+    "ftpOk": "FTP connection successful.",
+    "importFailedReason": "Import failed: {{reason}}",
+    "importNow": "Import now",
+    "importOk": "Import successful — data reloaded (wipe + reload).",
+    "importing": "Import in progress…",
+    "lastAutoImport": "Last auto import: {{date}}",
+    "note": "Credentials are stored on the server (homelab). The password is never returned to the interface. If a gateway URL is provided, the download goes through the host's HTTP Web-FTP (works while the game server is on); otherwise it uses direct FTP. Leave the field empty to force FTP.",
+    "password": "Password",
+    "passwordSaved": "(saved)",
+    "passwordUnchanged": "•••••• (unchanged)",
+    "port": "Port",
+    "savPath": ".sav file path",
+    "save": "Save",
+    "saveFailed": "Save failed.",
+    "testConnection": "Test connection",
+    "testing": "Testing connection…",
+    "title": "AUTOMATIC FTP IMPORT",
+    "unknownCause": "unknown cause",
+    "unknownError": "unknown error",
+    "user": "User",
+    "users": {
+      "colNewPassword": "New password",
+      "colRole": "Role",
+      "colUser": "User",
+      "create": "Create",
+      "createFailed": "Creation failed.",
+      "created": "User \"{{name}}\" created.",
+      "delete": "Delete",
+      "deleteConfirm": "Delete user \"{{name}}\"?",
+      "deleteFailed": "Deletion failed.",
+      "deleted": "User \"{{name}}\" deleted.",
+      "passwordPlaceholder": "password",
+      "passwordUpdated": "Password for \"{{name}}\" updated.",
+      "roleAdmin": "Administrator",
+      "roleUser": "User",
+      "setPassword": "Set",
+      "title": "USERS",
+      "updateFailed": "Update failed.",
+      "usernamePlaceholder": "username"
+    }
+  },
+  "app": {
+    "loading": "Loading…"
+  },
+  "category": {
+    "antenna": "ANTENNAS",
+    "basecore": "BASE CORE",
+    "danger": "DANGER",
+    "energy": "ENERGY",
+    "infra": "INFRA",
+    "loot": "LOOTABLES",
+    "machine": "MACHINES"
+  },
+  "common": {
+    "add": "Add",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading…",
+    "no": "No",
+    "save": "Save",
+    "search": "Search",
+    "yes": "Yes"
+  },
+  "entityDetail": {
+    "closeAria": "Close detail panel",
+    "energy": "ENERGY",
+    "from": "FROM",
+    "full": "FULL",
+    "infection": "INFECT.",
+    "input": "INPUT",
+    "link": "LINK",
+    "missing": "MISSING",
+    "missingInputs": "INPUTS",
+    "notConfigured": "(not configured)",
+    "output": "OUTPUT",
+    "priority": "PRIORITY",
+    "production": "PRODUCTION",
+    "recipe": "RECIPE",
+    "status": "STATUS",
+    "to": "TO",
+    "type": "TYPE"
+  },
+  "entityDetailTable": {
+    "category": "Category",
+    "droneLinks": "Drone links",
+    "drones": "Drones",
+    "dronesValue": "{{count}} ({{links}} links)",
+    "empty": "Select an entity to view details",
+    "header": "DETAIL",
+    "infection": "Infection",
+    "position": "Position",
+    "recipe": "Recipe",
+    "recipeNone": "None",
+    "status": "Status"
+  },
+  "entityList": {
+    "more": "+{{count}} more…",
+    "title": "ENTITIES"
+  },
+  "filterBar": {
+    "title": "FILTERS"
+  },
+  "flowFilter": {
+    "all": "ALL",
+    "title": "FLOW / RESOURCE"
+  },
+  "header": {
+    "buildTitle": "Deployed build",
+    "drones": "DRONES",
+    "duplicateSave": "⚠️ Save identical to the previous one — the game wrote nothing new (save dated {{date}}). Your latest in-game changes are not in this file.",
+    "entities": "ENTITIES",
+    "language": "Language",
+    "logout": "Log out",
+    "machines": "MACHINES",
+    "playtime": "PLAYTIME",
+    "save": "SAVE",
+    "subtitle": "BASE SCANNER"
+  },
+  "kanban": {
+    "addColumn": "+ Column",
+    "addTask": "+ Add a task",
+    "assignee": "ASSIGNED TO",
+    "cancel": "CANCEL",
+    "create": "CREATE",
+    "delete": "Delete",
+    "deleteColumn": "Delete column",
+    "deleteColumnConfirm": "Delete column « {{title}} »?",
+    "deleteColumnWithTasksConfirm": "Delete « {{title}} » and its {{count}} task(s)?",
+    "deleteTaskConfirm": "Delete task « {{title}} »?",
+    "description": "DESCRIPTION",
+    "descriptionPlaceholder": "Details, steps, required resources…",
+    "dueDate": "DUE DATE",
+    "editTask": "EDIT TASK",
+    "loadError": "Unable to load the board.",
+    "loading": "Loading board…",
+    "newColumnPrompt": "Name of the new column?",
+    "newTask": "NEW TASK",
+    "noAssignee": "— Nobody —",
+    "noTasks": "No tasks",
+    "priority": "PRIORITY",
+    "rename": "Rename",
+    "renameColumnPrompt": "Rename column",
+    "reorderColumnHint": "Drag to reorder the column",
+    "save": "SAVE",
+    "taskTitle": "TITLE",
+    "taskTitlePlaceholder": "E.g. Build a helium refinery"
+  },
+  "layers": {
+    "baseZone": "BASE ZONE",
+    "drones": "DRONE FLOW",
+    "infection": "INFECTION",
+    "labels": "LABELS",
+    "markers": "MARKERS",
+    "orphans": "ORPHANS",
+    "rails": "RAILS",
+    "terrain": "TERRAIN"
+  },
+  "legend": {
+    "title": "CATEGORIES"
+  },
+  "log": {
+    "byCategory": "BY CATEGORY",
+    "loading": "Loading…",
+    "metric": {
+      "infectedCount": "Infected",
+      "missingItemsCount": "Missing inputs",
+      "offCount": "Machines off",
+      "outputFullCount": "Outputs full",
+      "recipesLocked": "Recipes locked",
+      "recipesUnlocked": "Recipes unlocked",
+      "totalEntities": "Total entities"
+    },
+    "metrics": "METRICS",
+    "newEntityTypes": "NEW ENTITY TYPES",
+    "newRecipesUnlocked": "NEWLY UNLOCKED RECIPES",
+    "noChanges": "No changes detected (first import, or no difference from the previous one).",
+    "playtime": "PLAYTIME",
+    "removedEntityTypes": "REMOVED ENTITY TYPES",
+    "selectSession": "Select a session.",
+    "subtitle": "Changes detected compared to the previous import",
+    "title": "LOGBOOK"
+  },
+  "login": {
+    "connecting": "Signing in…",
+    "invalidCredentials": "Invalid credentials.",
+    "password": "Password",
+    "submit": "Sign in",
+    "title": "Sign in",
+    "username": "Username"
+  },
+  "map": {
+    "clearFilter": "Clear filter",
+    "deleteMarker": "Delete this marker",
+    "fitAll": "Fit all",
+    "markerPrompt": "Marker label?",
+    "markersTitle": "MARKERS ({{count}})",
+    "nameFilterAria": "Filter entities by name",
+    "nameFilterHint_one": "{{count}} entity — the map only shows this filter",
+    "nameFilterHint_other": "{{count}} entities — the map only shows this filter",
+    "nameFilterPlaceholder": "Filter by name (e.g. sulfur-)",
+    "recenter": "Recenter",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
+  "miniMap": {
+    "header": "MINIMAP",
+    "selectEntity": "Select an entity"
+  },
+  "priority": {
+    "high": "HIGH",
+    "low": "LOW",
+    "normal": "NORMAL"
+  },
+  "production": {
+    "categoryAll": "All categories",
+    "colCategory": "Category",
+    "colInfection": "Infection",
+    "colName": "Name",
+    "colPosition": "Position",
+    "colRecipe": "Recipe",
+    "colStatus": "Status",
+    "count": "{{shown}} / {{total}}",
+    "empty": "No matching entities",
+    "searchPlaceholder": "Search name or recipe…",
+    "statusAll": "All status",
+    "statusOff": "OFF",
+    "statusOn": "ON"
+  },
+  "progression": {
+    "corporations": "CORPORATIONS",
+    "level": "Level {{level}}",
+    "locked": "locked",
+    "lockedRecipes": "LOCKED RECIPES ({{count}})",
+    "noData": "No progression data (re-upload the save).",
+    "plans": "BLUEPRINTS",
+    "reputation": "Reputation",
+    "selectSession": "Select a session.",
+    "unlocked": "unlocked",
+    "unlockedRecipes": "UNLOCKED RECIPES ({{count}})"
+  },
+  "sessionSelector": {
+    "empty": "No sessions loaded",
+    "placeholder": "Select a session..."
+  },
+  "tabs": {
+    "admin": "ADMINISTRATION",
+    "log": "LOG",
+    "map": "INTERACTIVE MAP",
+    "progression": "PROGRESSION",
+    "todo": "TODO"
+  },
+  "theme": {
+    "light": "Light",
+    "title": "Graphic theme"
+  },
+  "tooltip": {
+    "infection": "Infection: {{count}}%"
+  },
+  "units": {
+    "day": "d",
+    "hour": "h",
+    "minute": "min"
+  },
+  "upload": {
+    "button": "UPLOAD .SAV / .JSON",
+    "loading": "UPLOADING..."
+  }
+}

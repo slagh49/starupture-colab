@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usersApi } from '../../services/api';
 import type { ManagedUser } from '../../services/api';
 import styles from './UserManagement.module.css';
@@ -13,6 +14,7 @@ function errMsg(e: unknown, fallback: string): string {
 }
 
 export function UserManagement(): JSX.Element {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [newName, setNewName] = useState('');
   const [newPass, setNewPass] = useState('');
@@ -35,10 +37,10 @@ export function UserManagement(): JSX.Element {
       setNewName('');
       setNewPass('');
       setNewRole('USER');
-      setStatus({ kind: 'ok', text: `Utilisateur « ${newName} » créé.` });
+      setStatus({ kind: 'ok', text: t('admin.users.created', { name: newName }) });
       load();
     } catch (e) {
-      setStatus({ kind: 'err', text: errMsg(e, "Échec de la création.") });
+      setStatus({ kind: 'err', text: errMsg(e, t('admin.users.createFailed')) });
     } finally {
       setBusy(false);
     }
@@ -52,24 +54,24 @@ export function UserManagement(): JSX.Element {
     try {
       await usersApi.setPassword(u.id, pw);
       setPwEdits(prev => ({ ...prev, [u.id]: '' }));
-      setStatus({ kind: 'ok', text: `Mot de passe de « ${u.username} » mis à jour.` });
+      setStatus({ kind: 'ok', text: t('admin.users.passwordUpdated', { name: u.username }) });
     } catch (e) {
-      setStatus({ kind: 'err', text: errMsg(e, 'Échec de la mise à jour.') });
+      setStatus({ kind: 'err', text: errMsg(e, t('admin.users.updateFailed')) });
     } finally {
       setBusy(false);
     }
   };
 
   const remove = async (u: ManagedUser): Promise<void> => {
-    if (!window.confirm(`Supprimer l'utilisateur « ${u.username} » ?`)) return;
+    if (!window.confirm(t('admin.users.deleteConfirm', { name: u.username }))) return;
     setBusy(true);
     setStatus(null);
     try {
       await usersApi.remove(u.id);
-      setStatus({ kind: 'ok', text: `Utilisateur « ${u.username} » supprimé.` });
+      setStatus({ kind: 'ok', text: t('admin.users.deleted', { name: u.username }) });
       load();
     } catch (e) {
-      setStatus({ kind: 'err', text: errMsg(e, 'Échec de la suppression.') });
+      setStatus({ kind: 'err', text: errMsg(e, t('admin.users.deleteFailed')) });
     } finally {
       setBusy(false);
     }
@@ -77,24 +79,24 @@ export function UserManagement(): JSX.Element {
 
   return (
     <div className={styles.section}>
-      <h2 className={styles.title}>UTILISATEURS</h2>
+      <h2 className={styles.title}>{t('admin.users.title')}</h2>
 
       <div className={styles.createRow}>
-        <input className={styles.input} value={newName} placeholder="nom d'utilisateur"
+        <input className={styles.input} value={newName} placeholder={t('admin.users.usernamePlaceholder')}
                onChange={e => setNewName(e.target.value)} />
-        <input className={styles.input} type="password" value={newPass} placeholder="mot de passe"
+        <input className={styles.input} type="password" value={newPass} placeholder={t('admin.users.passwordPlaceholder')}
                onChange={e => setNewPass(e.target.value)} />
         <select className={styles.select} value={newRole} onChange={e => setNewRole(e.target.value)}>
-          <option value="USER">Utilisateur</option>
-          <option value="ADMIN">Administrateur</option>
+          <option value="USER">{t('admin.users.roleUser')}</option>
+          <option value="ADMIN">{t('admin.users.roleAdmin')}</option>
         </select>
         <button type="button" className={styles.btnPrimary} disabled={busy || !newName || !newPass}
-                onClick={create}>Créer</button>
+                onClick={create}>{t('admin.users.create')}</button>
       </div>
 
       <table className={styles.table}>
         <thead>
-          <tr><th>Utilisateur</th><th>Rôle</th><th>Nouveau mot de passe</th><th></th></tr>
+          <tr><th>{t('admin.users.colUser')}</th><th>{t('admin.users.colRole')}</th><th>{t('admin.users.colNewPassword')}</th><th></th></tr>
         </thead>
         <tbody>
           {users.map(u => (
@@ -111,12 +113,12 @@ export function UserManagement(): JSX.Element {
                          value={pwEdits[u.id] ?? ''}
                          onChange={e => setPwEdits(prev => ({ ...prev, [u.id]: e.target.value }))} />
                   <button type="button" className={styles.btn} disabled={busy || !pwEdits[u.id]?.trim()}
-                          onClick={() => setPassword(u)}>Définir</button>
+                          onClick={() => setPassword(u)}>{t('admin.users.setPassword')}</button>
                 </div>
               </td>
               <td>
                 <button type="button" className={styles.btnDanger} disabled={busy}
-                        onClick={() => remove(u)}>Suppr.</button>
+                        onClick={() => remove(u)}>{t('admin.users.delete')}</button>
               </td>
             </tr>
           ))}

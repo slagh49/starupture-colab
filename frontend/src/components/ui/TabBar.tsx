@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import styles from './TabBar.module.css';
 
 export type TabId = 'map' | 'progression' | 'log' | 'todo' | 'admin';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element {
+  const { t } = useTranslation();
   return (
     <nav className={styles.tabBar}>
       <button
@@ -23,7 +25,7 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
           <line x1="1" y1="5.5" x2="15" y2="5.5" />
           <line x1="1" y1="10.5" x2="15" y2="10.5" />
         </svg>
-        CARTE INTERACTIVE
+        {t('tabs.map')}
       </button>
       <button
         className={`${styles.tab} ${activeTab === 'progression' ? styles.active : ''}`}
@@ -36,7 +38,7 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
           <line x1="10" y1="14" x2="10" y2="3" />
           <line x1="14" y1="14" x2="14" y2="7" />
         </svg>
-        PROGRESSION
+        {t('tabs.progression')}
       </button>
       <button
         className={`${styles.tab} ${activeTab === 'todo' ? styles.active : ''}`}
@@ -48,7 +50,7 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
           <rect x="6.25" y="2" width="3.5" height="8" rx="0.5" />
           <rect x="11" y="2" width="3.5" height="5" rx="0.5" />
         </svg>
-        TODO
+        {t('tabs.todo')}
       </button>
       <button
         className={`${styles.tab} ${activeTab === 'log' ? styles.active : ''}`}
@@ -61,7 +63,7 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
           <line x1="5.5" y1="8" x2="10.5" y2="8" />
           <line x1="5.5" y1="11" x2="8.5" y2="11" />
         </svg>
-        JOURNAL
+        {t('tabs.log')}
       </button>
       {isAdmin && (
         <button
@@ -73,7 +75,7 @@ export function TabBar({ activeTab, onTabChange, isAdmin }: Props): JSX.Element 
             <circle cx="8" cy="8" r="2.5" />
             <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5L13 13M13 3l-1.5 1.5M4.5 11.5L3 13" />
           </svg>
-          ADMINISTRATION
+          {t('tabs.admin')}
         </button>
       )}
     </nav>

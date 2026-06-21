@@ -29,6 +29,10 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    /** UI language preference (ISO code: en, fr, de, es, pl). Defaults to English. */
+    @Column(nullable = false)
+    private String language;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

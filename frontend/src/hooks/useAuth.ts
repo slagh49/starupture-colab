@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { authApi, TOKEN_KEY } from '../services/api';
 import type { AuthUser } from '../services/api';
+import { applyLanguage } from '../i18n';
 
 export interface UseAuthReturn {
   user: AuthUser | null;
@@ -21,7 +22,10 @@ export function useAuth(): UseAuthReturn {
       return;
     }
     authApi.me()
-      .then(res => setUser(res.data))
+      .then(res => {
+        setUser(res.data);
+        applyLanguage(res.data.language);
+      })
       .catch(() => localStorage.removeItem(TOKEN_KEY))
       .finally(() => setReady(true));
   }, []);
@@ -36,7 +40,8 @@ export function useAuth(): UseAuthReturn {
   const login = useCallback(async (username: string, password: string) => {
     const res = await authApi.login(username, password);
     localStorage.setItem(TOKEN_KEY, res.data.token);
-    setUser({ username: res.data.username, role: res.data.role });
+    setUser({ username: res.data.username, role: res.data.role, language: res.data.language });
+    applyLanguage(res.data.language);
   }, []);
 
   const logout = useCallback(() => {

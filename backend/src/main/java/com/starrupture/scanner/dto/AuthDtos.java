@@ -9,7 +9,7 @@ public final class AuthDtos {
     public record LoginRequest(String username, String password) {
     }
 
-    public record LoginResponse(String token, String username, String role) {
+    public record LoginResponse(String token, String username, String role, String language) {
     }
 
     public record UserDto(String id, String username, String role, String createdAt) {
@@ -19,5 +19,8 @@ public final class AuthDtos {
     }
 
     public record SetPasswordRequest(String password) {
+    }
+
+    public record UpdateLanguageRequest(String language) {
     }
 }

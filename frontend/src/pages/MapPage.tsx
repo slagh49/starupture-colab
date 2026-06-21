@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapCanvas } from '../components/map/MapCanvas';
 import { Legend } from '../components/ui/Legend';
 import { Tooltip } from '../components/ui/Tooltip';
@@ -77,6 +78,7 @@ function entitiesInView(
 }
 
 export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Element {
+  const { t } = useTranslation();
   const {
     entities,
     links,
@@ -122,11 +124,11 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
   useEffect(() => { void loadMarkers(); }, [loadMarkers]);
 
   const addMarker = useCallback(async (wx: number, wy: number) => {
-    const label = window.prompt('Libellé du marqueur ?');
+    const label = window.prompt(t('map.markerPrompt'));
     if (!label?.trim()) return;
     await markersApi.create({ x: wx, y: wy, label: label.trim(), color: accent });
     await loadMarkers();
-  }, [accent, loadMarkers]);
+  }, [accent, loadMarkers, t]);
 
   const deleteMarker = useCallback(async (id: string) => {
     await markersApi.delete(id);
@@ -214,16 +216,16 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
               type="text"
               value={nameFilter}
               onChange={e => setNameFilter(e.target.value)}
-              placeholder="Filtrer par nom (ex. soufre-)"
-              aria-label="Filtrer les entités par nom"
+              placeholder={t('map.nameFilterPlaceholder')}
+              aria-label={t('map.nameFilterAria')}
             />
             {nameFilter && (
-              <button type="button" onClick={() => setNameFilter('')} aria-label="Effacer le filtre">×</button>
+              <button type="button" onClick={() => setNameFilter('')} aria-label={t('map.clearFilter')}>×</button>
             )}
           </div>
           {nameFilter.trim() && (
             <div className={styles.nameFilterHint}>
-              {filteredEntities.length} entité{filteredEntities.length > 1 ? 's' : ''} — la carte n'affiche que ce filtre
+              {t('map.nameFilterHint', { count: filteredEntities.length })}
             </div>
           )}
           <FilterBar activeFilters={activeFilters} onToggle={toggleFilter} />
@@ -234,7 +236,7 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
           />
           {layers.markers && markers.length > 0 && (
             <div className={styles.markerSection}>
-              <div className={styles.markerTitle}>MARQUEURS ({markers.length})</div>
+              <div className={styles.markerTitle}>{t('map.markersTitle', { count: markers.length })}</div>
               {markers.map(m => (
                 <div key={m.id} className={styles.markerRow}>
                   <span className={styles.markerDot} style={{ backgroundColor: m.color }} />
@@ -243,7 +245,7 @@ export function MapPage({ saveData, mapInteraction, accent }: Props): JSX.Elemen
                     type="button"
                     className={styles.markerDel}
                     onClick={() => void deleteMarker(m.id)}
-                    title="Supprimer ce marqueur"
+                    title={t('map.deleteMarker')}
                   >×</button>
                 </div>
               ))}

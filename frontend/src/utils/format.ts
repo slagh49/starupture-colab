@@ -1,4 +1,5 @@
 import type { GameEntity } from '../types/save.types';
+import i18n from '../i18n';
 
 // Pure structural tiles (platforms, rails, supports…) — base scaffolding the
 // player rarely wants to browse. Kept off the entity list unless the player
@@ -16,16 +17,16 @@ export function displayName(entity: GameEntity): string {
   return custom ? custom : cleanName(entity.name);
 }
 
-/** Format a duration in seconds as "Xj Yh Zmin". */
+/** Format a duration in seconds as a localized "Xd Yh Zmin". */
 export function formatPlaytime(seconds: number | null | undefined): string {
   if (!seconds || seconds < 0) return '—';
   const d = Math.floor(seconds / 86400);
   const h = Math.floor((seconds % 86400) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const parts: string[] = [];
-  if (d) parts.push(`${d}j`);
-  if (h || d) parts.push(`${h}h`);
-  parts.push(`${m}min`);
+  if (d) parts.push(`${d}${i18n.t('units.day')}`);
+  if (h || d) parts.push(`${h}${i18n.t('units.hour')}`);
+  parts.push(`${m}${i18n.t('units.minute')}`);
   return parts.join(' ');
 }
 

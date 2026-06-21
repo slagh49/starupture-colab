@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header } from './components/ui/Header';
 import { TabBar } from './components/ui/TabBar';
 import type { TabId } from './components/ui/TabBar';
@@ -17,11 +18,12 @@ import type { AuthUser } from './services/api';
 import styles from './App.module.css';
 
 export function App(): JSX.Element {
+  const { t } = useTranslation();
   const auth = useAuth();
   const { theme, setTheme } = useTheme();
 
   if (!auth.ready) {
-    return <div className={styles.loading}>Chargement…</div>;
+    return <div className={styles.loading}>{t('app.loading')}</div>;
   }
   if (!auth.user) {
     return <LoginPage onLogin={auth.login} />;

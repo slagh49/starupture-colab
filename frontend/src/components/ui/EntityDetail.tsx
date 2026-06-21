@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { GameEntity, GameEntityItem, DroneLink } from '../../types/save.types';
-import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { CAT_COLORS } from '../../constants/colors';
 import { displayName, cleanRecipe } from '../../utils/format';
 import { cleanItemName } from '../map/DroneLayer';
 import { savesApi } from '../../services/api';
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function EntityDetail({ entity, sessionId, links, entityById, onClose }: Props): JSX.Element {
+  const { t } = useTranslation();
   const color = CAT_COLORS[entity.category];
   const [items, setItems] = useState<GameEntityItem[]>([]);
 
@@ -85,57 +87,57 @@ export function EntityDetail({ entity, sessionId, links, entityById, onClose }: 
           className={styles.closeBtn}
           onClick={onClose}
           type="button"
-          aria-label="Close detail panel"
+          aria-label={t('entityDetail.closeAria')}
         >
           x
         </button>
       </div>
       <div className={styles.body}>
-        <DetailRow label="TYPE" value={CAT_LABELS[entity.category]} valueColor={color} />
+        <DetailRow label={t('entityDetail.type')} value={t('category.' + entity.category)} valueColor={color} />
         <DetailRow
           label="X / Y / Z"
           value={`${Math.round(entity.x)} / ${Math.round(entity.y)} / ${Math.round(entity.z)}`}
         />
         <DetailRow
-          label="INFECT."
+          label={t('entityDetail.infection')}
           value={`${entity.infection}%`}
           valueColor={entity.infection > 0 ? CAT_COLORS.danger : undefined}
         />
         {entity.recipe && (
-          <DetailRow label="RECETTE" value={cleanRecipe(entity.recipe) ?? entity.recipe} />
+          <DetailRow label={t('entityDetail.recipe')} value={cleanRecipe(entity.recipe) ?? entity.recipe} />
         )}
         <DetailRow
-          label="STATUT"
+          label={t('entityDetail.status')}
           value={entity.status.toUpperCase()}
           valueColor={entity.status === 'on' ? CAT_COLORS.machine : CAT_COLORS.danger}
         />
         {entity.electricityLevel != null && (
-          <DetailRow label="ÉNERGIE" value={`x${entity.electricityLevel}`} />
+          <DetailRow label={t('entityDetail.energy')} value={`x${entity.electricityLevel}`} />
         )}
         {entity.craftProgress != null && (
-          <DetailRow label="PRODUCTION" value={`${Math.round(entity.craftProgress * 100)}%`} />
+          <DetailRow label={t('entityDetail.production')} value={`${Math.round(entity.craftProgress * 100)}%`} />
         )}
         {entity.priority && (
-          <DetailRow label="PRIORITÉ" value={entity.priority} />
+          <DetailRow label={t('entityDetail.priority')} value={entity.priority} />
         )}
         {entity.outputFull === true && (
-          <DetailRow label="SORTIE" value="PLEINE" valueColor={CAT_COLORS.energy} />
+          <DetailRow label={t('entityDetail.output')} value={t('entityDetail.full')} valueColor={CAT_COLORS.energy} />
         )}
         {entity.missingItems === true && (
-          <DetailRow label="MANQUE" value="INTRANTS" valueColor={CAT_COLORS.danger} />
+          <DetailRow label={t('entityDetail.missing')} value={t('entityDetail.missingInputs')} valueColor={CAT_COLORS.danger} />
         )}
 
         {inputs.length > 0 && (
-          <ItemSection title="ENTRÉE" items={inputs} />
+          <ItemSection title={t('entityDetail.input')} items={inputs} />
         )}
         {outputs.length > 0 && (
-          <ItemSection title="SORTIE" items={outputs} />
+          <ItemSection title={t('entityDetail.output')} items={outputs} />
         )}
 
         {connections.out.map((c, i) => (
           <DetailRow
             key={`out-${i}`}
-            label={i === 0 ? 'VERS' : ''}
+            label={i === 0 ? t('entityDetail.to') : ''}
             value={`→ ${c.name} (${c.item} ×${c.count})`}
             valueColor={CAT_COLORS.machine}
           />
@@ -143,14 +145,14 @@ export function EntityDetail({ entity, sessionId, links, entityById, onClose }: 
         {connections.in.map((c, i) => (
           <DetailRow
             key={`in-${i}`}
-            label={i === 0 ? 'DEPUIS' : ''}
+            label={i === 0 ? t('entityDetail.from') : ''}
             value={`← ${c.name} (${c.item} ×${c.count})`}
           />
         ))}
         {entity.name.includes('Package') &&
           connections.out.length === 0 &&
           connections.in.length === 0 && (
-            <DetailRow label="LIAISON" value="(non configurée)" valueColor={CAT_COLORS.danger} />
+            <DetailRow label={t('entityDetail.link')} value={t('entityDetail.notConfigured')} valueColor={CAT_COLORS.danger} />
           )}
       </div>
     </div>

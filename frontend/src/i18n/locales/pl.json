@@ -1,0 +1,281 @@
+{
+  "admin": {
+    "autoImport": "Import automatyczny",
+    "bridgeUrl": "Adres bramy HTTP (Web-FTP)",
+    "bridgeUrlHint": "— zalecane, omija pasywny FTP",
+    "configSaved": "Konfiguracja zapisana.",
+    "everyMinutes": "Co (min)",
+    "ftpFailed": "Połączenie FTP nieudane.",
+    "ftpFailedReason": "Połączenie FTP nieudane: {{reason}}",
+    "ftpHost": "Host FTP",
+    "ftpOk": "Połączenie FTP udane.",
+    "importFailedReason": "Import nieudany: {{reason}}",
+    "importNow": "Importuj teraz",
+    "importOk": "Import udany — dane przeładowane (wyczyszczenie + przeładowanie).",
+    "importing": "Trwa import…",
+    "lastAutoImport": "Ostatni auto-import: {{date}}",
+    "note": "Dane logowania są przechowywane na serwerze (homelab). Hasło nigdy nie jest zwracane do interfejsu. Jeśli podano adres bramy, pobieranie odbywa się przez HTTP Web-FTP hostingu (działa przy włączonym serwerze gry); w przeciwnym razie używany jest bezpośredni FTP. Pozostaw pole puste, aby wymusić FTP.",
+    "password": "Hasło",
+    "passwordSaved": "(zapisane)",
+    "passwordUnchanged": "•••••• (bez zmian)",
+    "port": "Port",
+    "savPath": "Ścieżka pliku .sav",
+    "save": "Zapisz",
+    "saveFailed": "Zapis nie powiódł się.",
+    "testConnection": "Testuj połączenie",
+    "testing": "Testowanie połączenia…",
+    "title": "AUTOMATYCZNY IMPORT FTP",
+    "unknownCause": "nieznana przyczyna",
+    "unknownError": "nieznany błąd",
+    "user": "Użytkownik",
+    "users": {
+      "colNewPassword": "Nowe hasło",
+      "colRole": "Rola",
+      "colUser": "Użytkownik",
+      "create": "Utwórz",
+      "createFailed": "Tworzenie nie powiodło się.",
+      "created": "Użytkownik „{{name}}” utworzony.",
+      "delete": "Usuń",
+      "deleteConfirm": "Usunąć użytkownika „{{name}}”?",
+      "deleteFailed": "Usuwanie nie powiodło się.",
+      "deleted": "Użytkownik „{{name}}” usunięty.",
+      "passwordPlaceholder": "hasło",
+      "passwordUpdated": "Hasło użytkownika „{{name}}” zaktualizowane.",
+      "roleAdmin": "Administrator",
+      "roleUser": "Użytkownik",
+      "setPassword": "Ustaw",
+      "title": "UŻYTKOWNICY",
+      "updateFailed": "Aktualizacja nie powiodła się.",
+      "usernamePlaceholder": "nazwa użytkownika"
+    }
+  },
+  "app": {
+    "loading": "Ładowanie…"
+  },
+  "category": {
+    "antenna": "ANTENY",
+    "basecore": "RDZEŃ BAZY",
+    "danger": "ZAGROŻENIE",
+    "energy": "ENERGIA",
+    "infra": "INFRA",
+    "loot": "ŁUP",
+    "machine": "MASZYNY"
+  },
+  "common": {
+    "add": "Dodaj",
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "confirm": "Potwierdź",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "loading": "Ładowanie…",
+    "no": "Nie",
+    "save": "Zapisz",
+    "search": "Szukaj",
+    "yes": "Tak"
+  },
+  "entityDetail": {
+    "closeAria": "Zamknij panel szczegółów",
+    "energy": "ENERGIA",
+    "from": "OD",
+    "full": "PEŁNE",
+    "infection": "INFEK.",
+    "input": "WEJŚCIE",
+    "link": "POŁĄCZENIE",
+    "missing": "BRAK",
+    "missingInputs": "WSADY",
+    "notConfigured": "(nieskonfigurowane)",
+    "output": "WYJŚCIE",
+    "priority": "PRIORYTET",
+    "production": "PRODUKCJA",
+    "recipe": "RECEPTURA",
+    "status": "STATUS",
+    "to": "DO",
+    "type": "TYP"
+  },
+  "entityDetailTable": {
+    "category": "Kategoria",
+    "droneLinks": "Połączenia dronów",
+    "drones": "Drony",
+    "dronesValue": "{{count}} ({{links}} połączeń)",
+    "empty": "Wybierz obiekt, aby zobaczyć szczegóły",
+    "header": "SZCZEGÓŁY",
+    "infection": "Infekcja",
+    "position": "Pozycja",
+    "recipe": "Receptura",
+    "recipeNone": "Brak",
+    "status": "Stan"
+  },
+  "entityList": {
+    "more": "+{{count}} więcej…",
+    "title": "OBIEKTY"
+  },
+  "filterBar": {
+    "title": "FILTRY"
+  },
+  "flowFilter": {
+    "all": "WSZYSTKO",
+    "title": "PRZEPŁYW / ZASÓB"
+  },
+  "header": {
+    "buildTitle": "Wdrożona wersja",
+    "drones": "DRONY",
+    "duplicateSave": "⚠️ Zapis identyczny z poprzednim — gra nie zapisała nic nowego (zapis z dnia {{date}}). Twoje ostatnie zmiany w grze nie znajdują się w tym pliku.",
+    "entities": "OBIEKTY",
+    "language": "Język",
+    "logout": "Wyloguj",
+    "machines": "MASZYNY",
+    "playtime": "CZAS GRY",
+    "save": "ZAPIS",
+    "subtitle": "BASE SCANNER"
+  },
+  "kanban": {
+    "addColumn": "+ Kolumna",
+    "addTask": "+ Dodaj zadanie",
+    "assignee": "PRZYPISANE DO",
+    "cancel": "ANULUJ",
+    "create": "UTWÓRZ",
+    "delete": "Usuń",
+    "deleteColumn": "Usuń kolumnę",
+    "deleteColumnConfirm": "Usunąć kolumnę „{{title}}”?",
+    "deleteColumnWithTasksConfirm": "Usunąć „{{title}}” i jego {{count}} zadanie(a)?",
+    "deleteTaskConfirm": "Usunąć zadanie „{{title}}”?",
+    "description": "OPIS",
+    "descriptionPlaceholder": "Szczegóły, kroki, potrzebne zasoby…",
+    "dueDate": "TERMIN",
+    "editTask": "EDYTUJ ZADANIE",
+    "loadError": "Nie można załadować tablicy.",
+    "loading": "Ładowanie tablicy…",
+    "newColumnPrompt": "Nazwa nowej kolumny?",
+    "newTask": "NOWE ZADANIE",
+    "noAssignee": "— Nikt —",
+    "noTasks": "Brak zadań",
+    "priority": "PRIORYTET",
+    "rename": "Zmień nazwę",
+    "renameColumnPrompt": "Zmień nazwę kolumny",
+    "reorderColumnHint": "Przeciągnij, aby zmienić kolejność kolumny",
+    "save": "ZAPISZ",
+    "taskTitle": "TYTUŁ",
+    "taskTitlePlaceholder": "Np. Zbudować rafinerię helu"
+  },
+  "layers": {
+    "baseZone": "STREFA BAZY",
+    "drones": "PRZEPŁYW DRONÓW",
+    "infection": "INFEKCJA",
+    "labels": "ETYKIETY",
+    "markers": "ZNACZNIKI",
+    "orphans": "OSIEROCONE",
+    "rails": "SZYNY",
+    "terrain": "TEREN"
+  },
+  "legend": {
+    "title": "KATEGORIE"
+  },
+  "log": {
+    "byCategory": "WEDŁUG KATEGORII",
+    "loading": "Ładowanie…",
+    "metric": {
+      "infectedCount": "Zainfekowane",
+      "missingItemsCount": "Brakujące surowce",
+      "offCount": "Maszyny wyłączone",
+      "outputFullCount": "Wyjścia pełne",
+      "recipesLocked": "Zablokowane receptury",
+      "recipesUnlocked": "Odblokowane receptury",
+      "totalEntities": "Wszystkie obiekty"
+    },
+    "metrics": "METRYKI",
+    "newEntityTypes": "NOWE TYPY OBIEKTÓW",
+    "newRecipesUnlocked": "NOWO ODBLOKOWANE RECEPTURY",
+    "noChanges": "Nie wykryto zmian (pierwszy import lub brak różnic względem poprzedniego).",
+    "playtime": "CZAS GRY",
+    "removedEntityTypes": "USUNIĘTE TYPY OBIEKTÓW",
+    "selectSession": "Wybierz sesję.",
+    "subtitle": "Zmiany wykryte względem poprzedniego importu",
+    "title": "DZIENNIK"
+  },
+  "login": {
+    "connecting": "Logowanie…",
+    "invalidCredentials": "Nieprawidłowe dane logowania.",
+    "password": "Hasło",
+    "submit": "Zaloguj się",
+    "title": "Logowanie",
+    "username": "Użytkownik"
+  },
+  "map": {
+    "clearFilter": "Wyczyść filtr",
+    "deleteMarker": "Usuń ten znacznik",
+    "fitAll": "Widok całości",
+    "markerPrompt": "Etykieta znacznika?",
+    "markersTitle": "ZNACZNIKI ({{count}})",
+    "nameFilterAria": "Filtruj jednostki wg nazwy",
+    "nameFilterHint_one": "{{count}} jednostka — mapa pokazuje tylko ten filtr",
+    "nameFilterHint_other": "{{count}} jednostek — mapa pokazuje tylko ten filtr",
+    "nameFilterPlaceholder": "Filtruj wg nazwy (np. siarka-)",
+    "recenter": "Wyśrodkuj",
+    "zoomIn": "Przybliż",
+    "zoomOut": "Oddal"
+  },
+  "miniMap": {
+    "header": "MINIMAPA",
+    "selectEntity": "Wybierz obiekt"
+  },
+  "priority": {
+    "high": "WYSOKI",
+    "low": "NISKI",
+    "normal": "NORMALNY"
+  },
+  "production": {
+    "categoryAll": "Wszystkie kategorie",
+    "colCategory": "Kategoria",
+    "colInfection": "Infekcja",
+    "colName": "Nazwa",
+    "colPosition": "Pozycja",
+    "colRecipe": "Receptura",
+    "colStatus": "Stan",
+    "count": "{{shown}} / {{total}}",
+    "empty": "Brak pasujących obiektów",
+    "searchPlaceholder": "Szukaj nazwy lub receptury…",
+    "statusAll": "Wszystkie stany",
+    "statusOff": "WYŁ",
+    "statusOn": "WŁ"
+  },
+  "progression": {
+    "corporations": "KORPORACJE",
+    "level": "Poziom {{level}}",
+    "locked": "zablokowane",
+    "lockedRecipes": "ZABLOKOWANE RECEPTURY ({{count}})",
+    "noData": "Brak danych postępu (wgraj zapis ponownie).",
+    "plans": "PLANY",
+    "reputation": "Reputacja",
+    "selectSession": "Wybierz sesję.",
+    "unlocked": "odblokowane",
+    "unlockedRecipes": "ODBLOKOWANE RECEPTURY ({{count}})"
+  },
+  "sessionSelector": {
+    "empty": "Brak wczytanych sesji",
+    "placeholder": "Wybierz sesję..."
+  },
+  "tabs": {
+    "admin": "ADMINISTRACJA",
+    "log": "DZIENNIK",
+    "map": "MAPA INTERAKTYWNA",
+    "progression": "POSTĘP",
+    "todo": "ZADANIA"
+  },
+  "theme": {
+    "light": "Jasny",
+    "title": "Motyw graficzny"
+  },
+  "tooltip": {
+    "infection": "Infekcja: {{count}}%"
+  },
+  "units": {
+    "day": "d",
+    "hour": "h",
+    "minute": "min"
+  },
+  "upload": {
+    "button": "WCZYTAJ .SAV / .JSON",
+    "loading": "WYSYŁANIE..."
+  }
+}

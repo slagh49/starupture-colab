@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Progression, LockedRecipe } from '../types/save.types';
 import { savesApi } from '../services/api';
 import styles from './ProgressionPage.module.css';
@@ -17,6 +18,7 @@ const CORP_META: Record<string, { label: string; logo: string }> = {
 };
 
 export function ProgressionPage({ sessionId }: Props): JSX.Element {
+  const { t } = useTranslation();
   const [data, setData] = useState<Progression | null>(null);
 
   useEffect(() => {
@@ -39,10 +41,10 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
   }, [sessionId]);
 
   if (!sessionId) {
-    return <div className={styles.empty}>Sélectionnez une session.</div>;
+    return <div className={styles.empty}>{t('progression.selectSession')}</div>;
   }
   if (!data || !data.corporations || data.corporations.length === 0) {
-    return <div className={styles.empty}>Aucune donnée de progression (ré-uploadez la save).</div>;
+    return <div className={styles.empty}>{t('progression.noData')}</div>;
   }
 
   const corps = [...data.corporations].sort((a, b) => b.level - a.level || b.reputation - a.reputation);
@@ -52,7 +54,7 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
   return (
     <div className={styles.page}>
       <div className={styles.section}>
-        <h2 className={styles.title}>CORPORATIONS</h2>
+        <h2 className={styles.title}>{t('progression.corporations')}</h2>
         <div className={styles.grid}>
           {corps.map(c => {
             const meta = CORP_META[c.name] ?? { label: c.name, logo: '' };
@@ -61,9 +63,9 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
                 {meta.logo && <img src={meta.logo} alt={meta.label} className={styles.logo} />}
                 <div className={styles.cardBody}>
                   <div className={styles.corpName}>{meta.label}</div>
-                  <div className={styles.level}>Niveau {c.level}</div>
+                  <div className={styles.level}>{t('progression.level', { level: c.level })}</div>
                   <div className={styles.rep}>
-                    Réputation <b>{c.reputation.toLocaleString('fr-FR')}</b>
+                    {t('progression.reputation')} <b>{c.reputation.toLocaleString('fr-FR')}</b>
                   </div>
                   {(c.researchTier1 > 0 || c.researchTier2 > 0) && (
                     <div className={styles.rp}>
@@ -78,18 +80,18 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
       </div>
 
       <div className={styles.section}>
-        <h2 className={styles.title}>PLANS</h2>
+        <h2 className={styles.title}>{t('progression.plans')}</h2>
         <div className={styles.plans}>
           <div className={styles.planStat}>
             <span className={styles.planNum}>{data.recipesUnlocked}</span>
-            <span className={styles.planLbl}>débloqués</span>
+            <span className={styles.planLbl}>{t('progression.unlocked')}</span>
           </div>
           <div className={styles.bar}>
             <div className={styles.barFill} style={{ width: `${pct}%` }} />
           </div>
           <div className={styles.planStat}>
             <span className={styles.planNum}>{data.recipesLocked}</span>
-            <span className={styles.planLbl}>verrouillés</span>
+            <span className={styles.planLbl}>{t('progression.locked')}</span>
           </div>
           <div className={styles.planPct}>{pct}%</div>
         </div>
@@ -97,7 +99,7 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
 
       {data.unlockedRecipeNames && data.unlockedRecipeNames.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.title}>RECETTES DÉBLOQUÉES ({data.unlockedRecipeNames.length})</h2>
+          <h2 className={styles.title}>{t('progression.unlockedRecipes', { count: data.unlockedRecipeNames.length })}</h2>
           <div className={styles.recipeList}>
             {data.unlockedRecipeNames.map(name => (
               <span key={name} className={styles.recipeBadge}>{name}</span>
@@ -108,7 +110,7 @@ export function ProgressionPage({ sessionId }: Props): JSX.Element {
 
       {data.lockedRecipeDetails && data.lockedRecipeDetails.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.title}>RECETTES VERROUILLÉES ({data.lockedRecipeDetails.length})</h2>
+          <h2 className={styles.title}>{t('progression.lockedRecipes', { count: data.lockedRecipeDetails.length })}</h2>
           <div className={styles.lockedGrid}>
             {data.lockedRecipeDetails.map((r: LockedRecipe) => {
               const hasProgress = r.items.some(it => it.count > 0);

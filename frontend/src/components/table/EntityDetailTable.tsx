@@ -1,5 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import type { GameEntity, DroneLink } from '../../types/save.types';
-import { CAT_COLORS, CAT_LABELS } from '../../constants/colors';
+import { CAT_COLORS } from '../../constants/colors';
 import styles from './EntityDetailTable.module.css';
 
 interface Props {
@@ -8,11 +9,12 @@ interface Props {
 }
 
 export function EntityDetailTable({ entity, links }: Props): JSX.Element {
+  const { t } = useTranslation();
   if (!entity) {
     return (
       <div className={styles.container}>
-        <div className={styles.header}>DETAIL</div>
-        <div className={styles.empty}>Select an entity to view details</div>
+        <div className={styles.header}>{t('entityDetailTable.header')}</div>
+        <div className={styles.empty}>{t('entityDetailTable.empty')}</div>
       </div>
     );
   }
@@ -25,29 +27,29 @@ export function EntityDetailTable({ entity, links }: Props): JSX.Element {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>DETAIL</div>
+      <div className={styles.header}>{t('entityDetailTable.header')}</div>
       <div className={styles.body}>
         <div className={styles.entityName} style={{ color }}>
           {entity.name}
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Category</span>
+          <span className={styles.label}>{t('entityDetailTable.category')}</span>
           <span className={styles.value} style={{ color }}>
-            {CAT_LABELS[entity.category]}
+            {t('category.' + entity.category)}
           </span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Position</span>
+          <span className={styles.label}>{t('entityDetailTable.position')}</span>
           <span className={styles.valueMono}>
             X:{Math.round(entity.x)} Y:{Math.round(entity.y)} Z:{Math.round(entity.z)}
           </span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Recipe</span>
-          <span className={styles.value}>{entity.recipe ?? 'None'}</span>
+          <span className={styles.label}>{t('entityDetailTable.recipe')}</span>
+          <span className={styles.value}>{entity.recipe ?? t('entityDetailTable.recipeNone')}</span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Status</span>
+          <span className={styles.label}>{t('entityDetailTable.status')}</span>
           <span
             className={styles.value}
             style={{ color: entity.status === 'on' ? CAT_COLORS.machine : '#777777' }}
@@ -56,7 +58,7 @@ export function EntityDetailTable({ entity, links }: Props): JSX.Element {
           </span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Infection</span>
+          <span className={styles.label}>{t('entityDetailTable.infection')}</span>
           <span
             className={styles.value}
             style={{ color: entity.infection > 0 ? CAT_COLORS.danger : undefined }}
@@ -65,14 +67,14 @@ export function EntityDetailTable({ entity, links }: Props): JSX.Element {
           </span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>Drones</span>
+          <span className={styles.label}>{t('entityDetailTable.drones')}</span>
           <span className={styles.value}>
-            {totalDrones} ({relatedLinks.length} links)
+            {t('entityDetailTable.dronesValue', { count: totalDrones, links: relatedLinks.length })}
           </span>
         </div>
         {relatedLinks.length > 0 && (
           <div className={styles.linksSection}>
-            <div className={styles.linksTitle}>Drone links</div>
+            <div className={styles.linksTitle}>{t('entityDetailTable.droneLinks')}</div>
             {relatedLinks.map(link => (
               <div key={link.id} className={styles.linkRow}>
                 <span className={styles.linkItem}>{link.item}</span>

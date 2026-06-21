@@ -1,0 +1,281 @@
+{
+  "admin": {
+    "autoImport": "Import automatique",
+    "bridgeUrl": "URL passerelle HTTP (Web-FTP)",
+    "bridgeUrlHint": "— recommandé, contourne le FTP passif",
+    "configSaved": "Configuration enregistrée.",
+    "everyMinutes": "Toutes les (min)",
+    "ftpFailed": "Connexion FTP échouée.",
+    "ftpFailedReason": "Connexion FTP échouée : {{reason}}",
+    "ftpHost": "Hôte FTP",
+    "ftpOk": "Connexion FTP réussie.",
+    "importFailedReason": "Import échoué : {{reason}}",
+    "importNow": "Importer maintenant",
+    "importOk": "Import réussi — données rechargées (wipe + rechargement).",
+    "importing": "Import en cours…",
+    "lastAutoImport": "Dernier import auto : {{date}}",
+    "note": "Les identifiants sont stockés sur le serveur (homelab). Le mot de passe n'est jamais renvoyé à l'interface. Si une URL passerelle est renseignée, le téléchargement passe par le Web-FTP HTTP de l'hébergeur (fonctionne serveur de jeu allumé) ; sinon il utilise le FTP direct. Laisse le champ vide pour forcer le FTP.",
+    "password": "Mot de passe",
+    "passwordSaved": "(enregistré)",
+    "passwordUnchanged": "•••••• (inchangé)",
+    "port": "Port",
+    "savPath": "Chemin du fichier .sav",
+    "save": "Enregistrer",
+    "saveFailed": "Échec de l'enregistrement.",
+    "testConnection": "Tester la connexion",
+    "testing": "Test de connexion…",
+    "title": "IMPORT FTP AUTOMATIQUE",
+    "unknownCause": "cause inconnue",
+    "unknownError": "erreur inconnue",
+    "user": "Utilisateur",
+    "users": {
+      "colNewPassword": "Nouveau mot de passe",
+      "colRole": "Rôle",
+      "colUser": "Utilisateur",
+      "create": "Créer",
+      "createFailed": "Échec de la création.",
+      "created": "Utilisateur « {{name}} » créé.",
+      "delete": "Suppr.",
+      "deleteConfirm": "Supprimer l'utilisateur « {{name}} » ?",
+      "deleteFailed": "Échec de la suppression.",
+      "deleted": "Utilisateur « {{name}} » supprimé.",
+      "passwordPlaceholder": "mot de passe",
+      "passwordUpdated": "Mot de passe de « {{name}} » mis à jour.",
+      "roleAdmin": "Administrateur",
+      "roleUser": "Utilisateur",
+      "setPassword": "Définir",
+      "title": "UTILISATEURS",
+      "updateFailed": "Échec de la mise à jour.",
+      "usernamePlaceholder": "nom d'utilisateur"
+    }
+  },
+  "app": {
+    "loading": "Chargement…"
+  },
+  "category": {
+    "antenna": "ANTENNES",
+    "basecore": "BASE CORE",
+    "danger": "DANGER",
+    "energy": "ÉNERGIE",
+    "infra": "INFRA",
+    "loot": "LOOTABLES",
+    "machine": "MACHINES"
+  },
+  "common": {
+    "add": "Ajouter",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement…",
+    "no": "Non",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "yes": "Oui"
+  },
+  "entityDetail": {
+    "closeAria": "Fermer le panneau de détail",
+    "energy": "ÉNERGIE",
+    "from": "DEPUIS",
+    "full": "PLEINE",
+    "infection": "INFECT.",
+    "input": "ENTRÉE",
+    "link": "LIAISON",
+    "missing": "MANQUE",
+    "missingInputs": "INTRANTS",
+    "notConfigured": "(non configurée)",
+    "output": "SORTIE",
+    "priority": "PRIORITÉ",
+    "production": "PRODUCTION",
+    "recipe": "RECETTE",
+    "status": "STATUT",
+    "to": "VERS",
+    "type": "TYPE"
+  },
+  "entityDetailTable": {
+    "category": "Catégorie",
+    "droneLinks": "Liens drones",
+    "drones": "Drones",
+    "dronesValue": "{{count}} ({{links}} liens)",
+    "empty": "Sélectionne une entité pour voir les détails",
+    "header": "DÉTAIL",
+    "infection": "Infection",
+    "position": "Position",
+    "recipe": "Recette",
+    "recipeNone": "Aucune",
+    "status": "État"
+  },
+  "entityList": {
+    "more": "+{{count}}…",
+    "title": "ENTITES"
+  },
+  "filterBar": {
+    "title": "FILTRES"
+  },
+  "flowFilter": {
+    "all": "TOUT",
+    "title": "FLUX / RESSOURCE"
+  },
+  "header": {
+    "buildTitle": "Build déployé",
+    "drones": "DRONES",
+    "duplicateSave": "⚠️ Sauvegarde identique à la précédente — le jeu n'a rien écrit de neuf (save daté du {{date}}). Tes derniers changements en partie ne sont pas dans ce fichier.",
+    "entities": "ENTITÉS",
+    "language": "Langue",
+    "logout": "Déconnexion",
+    "machines": "MACHINES",
+    "playtime": "TEMPS JEU",
+    "save": "SAVE",
+    "subtitle": "BASE SCANNER"
+  },
+  "kanban": {
+    "addColumn": "+ Colonne",
+    "addTask": "+ Ajouter une tâche",
+    "assignee": "ASSIGNÉ À",
+    "cancel": "ANNULER",
+    "create": "CRÉER",
+    "delete": "Supprimer",
+    "deleteColumn": "Supprimer la colonne",
+    "deleteColumnConfirm": "Supprimer la colonne « {{title}} » ?",
+    "deleteColumnWithTasksConfirm": "Supprimer « {{title}} » et ses {{count}} tâche(s) ?",
+    "deleteTaskConfirm": "Supprimer la tâche « {{title}} » ?",
+    "description": "DESCRIPTION",
+    "descriptionPlaceholder": "Détails, étapes, ressources nécessaires…",
+    "dueDate": "ÉCHÉANCE",
+    "editTask": "MODIFIER LA TÂCHE",
+    "loadError": "Impossible de charger le tableau.",
+    "loading": "Chargement du tableau…",
+    "newColumnPrompt": "Nom de la nouvelle colonne ?",
+    "newTask": "NOUVELLE TÂCHE",
+    "noAssignee": "— Personne —",
+    "noTasks": "Aucune tâche",
+    "priority": "PRIORITÉ",
+    "rename": "Renommer",
+    "renameColumnPrompt": "Renommer la colonne",
+    "reorderColumnHint": "Glisser pour réordonner la colonne",
+    "save": "ENREGISTRER",
+    "taskTitle": "TITRE",
+    "taskTitlePlaceholder": "Ex : Construire une raffinerie d'hélium"
+  },
+  "layers": {
+    "baseZone": "ZONE BASE",
+    "drones": "FLUX DRONES",
+    "infection": "INFECTION",
+    "labels": "LABELS",
+    "markers": "MARQUEURS",
+    "orphans": "ORPHELINS",
+    "rails": "RAILS",
+    "terrain": "TERRAIN"
+  },
+  "legend": {
+    "title": "CATEGORIES"
+  },
+  "log": {
+    "byCategory": "PAR CATÉGORIE",
+    "loading": "Chargement…",
+    "metric": {
+      "infectedCount": "Infectées",
+      "missingItemsCount": "Intrants manquants",
+      "offCount": "Machines éteintes",
+      "outputFullCount": "Sorties pleines",
+      "recipesLocked": "Recettes verrouillées",
+      "recipesUnlocked": "Recettes débloquées",
+      "totalEntities": "Entités totales"
+    },
+    "metrics": "MÉTRIQUES",
+    "newEntityTypes": "NOUVEAUX TYPES D'ENTITÉS",
+    "newRecipesUnlocked": "NOUVELLES RECETTES DÉBLOQUÉES",
+    "noChanges": "Aucun changement détecté (premier import, ou pas de différence avec le précédent).",
+    "playtime": "TEMPS DE JEU",
+    "removedEntityTypes": "TYPES D'ENTITÉS DISPARUS",
+    "selectSession": "Sélectionnez une session.",
+    "subtitle": "Changements détectés par rapport à l'import précédent",
+    "title": "JOURNAL DE BORD"
+  },
+  "login": {
+    "connecting": "Connexion…",
+    "invalidCredentials": "Identifiants invalides.",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "title": "Connexion",
+    "username": "Utilisateur"
+  },
+  "map": {
+    "clearFilter": "Effacer le filtre",
+    "deleteMarker": "Supprimer ce marqueur",
+    "fitAll": "Vue globale",
+    "markerPrompt": "Libellé du marqueur ?",
+    "markersTitle": "MARQUEURS ({{count}})",
+    "nameFilterAria": "Filtrer les entités par nom",
+    "nameFilterHint_one": "{{count}} entité — la carte n'affiche que ce filtre",
+    "nameFilterHint_other": "{{count}} entités — la carte n'affiche que ce filtre",
+    "nameFilterPlaceholder": "Filtrer par nom (ex. soufre-)",
+    "recenter": "Recentrer",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière"
+  },
+  "miniMap": {
+    "header": "MINICARTE",
+    "selectEntity": "Sélectionne une entité"
+  },
+  "priority": {
+    "high": "HAUTE",
+    "low": "BASSE",
+    "normal": "NORMALE"
+  },
+  "production": {
+    "categoryAll": "Toutes les catégories",
+    "colCategory": "Catégorie",
+    "colInfection": "Infection",
+    "colName": "Nom",
+    "colPosition": "Position",
+    "colRecipe": "Recette",
+    "colStatus": "État",
+    "count": "{{shown}} / {{total}}",
+    "empty": "Aucune entité correspondante",
+    "searchPlaceholder": "Rechercher un nom ou une recette…",
+    "statusAll": "Tous les états",
+    "statusOff": "OFF",
+    "statusOn": "ON"
+  },
+  "progression": {
+    "corporations": "CORPORATIONS",
+    "level": "Niveau {{level}}",
+    "locked": "verrouillés",
+    "lockedRecipes": "RECETTES VERROUILLÉES ({{count}})",
+    "noData": "Aucune donnée de progression (ré-uploadez la save).",
+    "plans": "PLANS",
+    "reputation": "Réputation",
+    "selectSession": "Sélectionnez une session.",
+    "unlocked": "débloqués",
+    "unlockedRecipes": "RECETTES DÉBLOQUÉES ({{count}})"
+  },
+  "sessionSelector": {
+    "empty": "Aucune session chargée",
+    "placeholder": "Sélectionner une session..."
+  },
+  "tabs": {
+    "admin": "ADMINISTRATION",
+    "log": "JOURNAL",
+    "map": "CARTE INTERACTIVE",
+    "progression": "PROGRESSION",
+    "todo": "TODO"
+  },
+  "theme": {
+    "light": "Clair",
+    "title": "Thème graphique"
+  },
+  "tooltip": {
+    "infection": "Infection : {{count}} %"
+  },
+  "units": {
+    "day": "j",
+    "hour": "h",
+    "minute": "min"
+  },
+  "upload": {
+    "button": "IMPORTER .SAV / .JSON",
+    "loading": "ENVOI..."
+  }
+}

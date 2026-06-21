@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { KanbanBoard, KanbanColumn, KanbanTask, KanbanUser, TaskFields } from '../types/kanban.types';
 import { kanbanApi } from '../services/api';
 import { TaskCard } from '../components/kanban/TaskCard';
@@ -12,6 +13,7 @@ interface ModalState {
 }
 
 export function KanbanPage(): JSX.Element {
+  const { t } = useTranslation();
   const [board, setBoard] = useState<KanbanBoard | null>(null);
   const [users, setUsers] = useState<KanbanUser[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -27,23 +29,23 @@ export function KanbanPage(): JSX.Element {
       setUsers(usersRes.data);
       setError(null);
     } catch {
-      setError('Impossible de charger le tableau.');
+      setError(t('kanban.loadError'));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => { void load(); }, [load]);
 
   // ---- Colonnes ----
 
   const addColumn = async (): Promise<void> => {
-    const title = window.prompt('Nom de la nouvelle colonne ?');
+    const title = window.prompt(t('kanban.newColumnPrompt'));
     if (!title?.trim()) return;
     await kanbanApi.createColumn(title.trim());
     await load();
   };
 
   const renameColumn = async (col: KanbanColumn): Promise<void> => {
-    const title = window.prompt('Renommer la colonne', col.title);
+    const title = window.prompt(t('kanban.renameColumnPrompt'), col.title);
     if (!title?.trim() || title.trim() === col.title) return;
     await kanbanApi.renameColumn(col.id, title.trim());
     await load();
@@ -51,8 +53,8 @@ export function KanbanPage(): JSX.Element {
 
   const deleteColumn = async (col: KanbanColumn): Promise<void> => {
     const msg = col.tasks.length
-      ? `Supprimer « ${col.title} » et ses ${col.tasks.length} tâche(s) ?`
-      : `Supprimer la colonne « ${col.title} » ?`;
+      ? t('kanban.deleteColumnWithTasksConfirm', { title: col.title, count: col.tasks.length })
+      : t('kanban.deleteColumnConfirm', { title: col.title });
     if (!window.confirm(msg)) return;
     await kanbanApi.deleteColumn(col.id);
     await load();
@@ -72,7 +74,7 @@ export function KanbanPage(): JSX.Element {
   };
 
   const deleteTask = async (task: KanbanTask): Promise<void> => {
-    if (!window.confirm(`Supprimer la tâche « ${task.title} » ?`)) return;
+    if (!window.confirm(t('kanban.deleteTaskConfirm', { title: task.title }))) return;
     await kanbanApi.deleteTask(task.id);
     await load();
   };
@@ -111,7 +113,7 @@ export function KanbanPage(): JSX.Element {
     return <div className={styles.empty}>{error}</div>;
   }
   if (!board) {
-    return <div className={styles.empty}>Chargement du tableau…</div>;
+    return <div className={styles.empty}>{t('kanban.loading')}</div>;
   }
 
   return (
@@ -130,14 +132,14 @@ export function KanbanPage(): JSX.Element {
               draggable
               onDragStart={e => { e.stopPropagation(); setDragColId(col.id); }}
               onDragEnd={() => { setDragColId(null); setDragOverCol(null); }}
-              title="Glisser pour réordonner la colonne"
+              title={t('kanban.reorderColumnHint')}
             >
               <span className={styles.grip}>⠿</span>
               <span className={styles.colTitle}>{col.title}</span>
               <span className={styles.count}>{col.tasks.length}</span>
               <div className={styles.colActions}>
-                <button type="button" title="Renommer" onClick={() => void renameColumn(col)}>✎</button>
-                <button type="button" title="Supprimer la colonne" onClick={() => void deleteColumn(col)}>🗑</button>
+                <button type="button" title={t('kanban.rename')} onClick={() => void renameColumn(col)}>✎</button>
+                <button type="button" title={t('kanban.deleteColumn')} onClick={() => void deleteColumn(col)}>🗑</button>
               </div>
             </header>
 
@@ -159,7 +161,7 @@ export function KanbanPage(): JSX.Element {
                 </div>
               ))}
               {col.tasks.length === 0 && (
-                <p className={styles.colEmpty}>Aucune tâche</p>
+                <p className={styles.colEmpty}>{t('kanban.noTasks')}</p>
               )}
             </div>
 
@@ -168,13 +170,13 @@ export function KanbanPage(): JSX.Element {
               className={styles.addTask}
               onClick={() => setModal({ columnId: col.id, columnTitle: col.title, task: null })}
             >
-              + Ajouter une tâche
+              {t('kanban.addTask')}
             </button>
           </section>
         ))}
 
         <button type="button" className={styles.addColumn} onClick={() => void addColumn()}>
-          + Colonne
+          {t('kanban.addColumn')}
         </button>
       </div>
 
