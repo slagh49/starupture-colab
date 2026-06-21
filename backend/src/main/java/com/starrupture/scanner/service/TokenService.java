@@ -24,8 +24,13 @@ public class TokenService {
     private final long ttlMillis;
 
     public TokenService(
-            @Value("${app.auth.secret}") String secret,
+            @Value("${app.auth.secret:}") String secret,
             @Value("${app.auth.token-ttl-hours:168}") long ttlHours) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "APP_AUTH_SECRET n'est pas défini. Définissez un secret HMAC fort "
+                    + "(ex. `openssl rand -base64 48`) avant de démarrer l'application.");
+        }
         this.secret = secret.getBytes(StandardCharsets.UTF_8);
         this.ttlMillis = ttlHours * 3600_000L;
     }

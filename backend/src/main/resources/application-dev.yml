@@ -9,6 +9,11 @@ spring:
     host: localhost
     port: 6379
 
+app:
+  auth:
+    # Secret de DÉVELOPPEMENT uniquement (profil dev). En prod, APP_AUTH_SECRET est requis.
+    secret: dev-only-insecure-hmac-secret
+
 logging:
   level:
     com.starrupture: TRACE

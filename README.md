@@ -110,7 +110,7 @@ L'application est protégée par une **mire de connexion**. Auth légère sans d
 - Un **admin par défaut** (`admin` / `admin`) est créé au premier démarrage si aucun compte n'existe — **à changer immédiatement** via l'interface (configurable via `APP_ADMIN_USER`/`APP_ADMIN_PASSWORD`)
 - L'**administrateur** gère les comptes (création, définition de mot de passe, suppression, rôle ADMIN/USER) depuis l'onglet Administration
 - Toute route `/api/**` exige un jeton valide ; `/api/admin/**` exige le rôle ADMIN. L'onglet Administration est masqué pour les utilisateurs non‑admin
-- Secret de signature configurable via `APP_AUTH_SECRET` (à définir en prod)
+- Secret de signature **obligatoire** via `APP_AUTH_SECRET` : l'application **refuse de démarrer** s'il n'est pas défini (pas de valeur par défaut, pour éviter un secret partagé qui permettrait de forger des jetons). Générez-en un avec `openssl rand -base64 48`
 
 ### Marqueurs collaboratifs
 
@@ -203,6 +203,7 @@ cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```bash
 cd infra
 DB_PASSWORD=motdepasse \
+APP_AUTH_SECRET="$(openssl rand -base64 48)" \
 DOCKER_IMAGE_BACKEND=registry.exemple.com/backend:latest \
 DOCKER_IMAGE_FRONTEND=registry.exemple.com/frontend:latest \
 docker compose up -d

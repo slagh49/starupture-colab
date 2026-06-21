@@ -23,8 +23,10 @@ spring:
 
 app:
   auth:
-    # HMAC signing secret for auth tokens. Override in prod via APP_AUTH_SECRET.
-    secret: ${APP_AUTH_SECRET:starrupture-homelab-default-hmac-secret-change-me-9f3a2b7c1d}
+    # HMAC signing secret for auth tokens. REQUIRED — must be provided via APP_AUTH_SECRET.
+    # No default on purpose: a shared default would let anyone forge valid tokens.
+    # Generate one with e.g. `openssl rand -base64 48`.
+    secret: ${APP_AUTH_SECRET:}
     token-ttl-hours: 168
     # Default admin seeded on first start if no users exist.
     default-admin-user: ${APP_ADMIN_USER:admin}

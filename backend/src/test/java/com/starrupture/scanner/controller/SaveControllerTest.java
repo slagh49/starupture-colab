@@ -1,6 +1,7 @@
 package com.starrupture.scanner.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.starrupture.scanner.config.AuthFilter;
 import com.starrupture.scanner.dto.SaveSessionDto;
 import com.starrupture.scanner.entity.SaveSession;
 import com.starrupture.scanner.service.EntityService;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +27,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SaveController.class)
+// AuthFilter (un @Component Filter) est exclu du slice : ce test cible le contrôleur,
+// pas l'authentification, et le filtre tirerait TokenService (un @Service hors slice).
+@WebMvcTest(controllers = SaveController.class,
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE, classes = AuthFilter.class))
 class SaveControllerTest {
 
     @Autowired

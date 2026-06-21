@@ -111,11 +111,13 @@ deploy-prod:
         DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND \
         DOCKER_IMAGE_FRONTEND=$DOCKER_IMAGE_FRONTEND \
         DB_PASSWORD=$DB_PASSWORD \
+        APP_AUTH_SECRET=$APP_AUTH_SECRET \
         docker compose up -d --remove-orphans &&
         docker compose restart nginx
       "
   environment:
     name: production
-    url: http://192.168.1.50:8888
+    # URL de l'instance déployée, à définir via la variable CI DEPLOY_URL.
+    url: $DEPLOY_URL
   only:
     - main

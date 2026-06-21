@@ -16,6 +16,8 @@ services:
       DB_USER: scanner
       DB_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: redis
+      # Secret HMAC obligatoire (le backend refuse de démarrer s'il est absent).
+      APP_AUTH_SECRET: ${APP_AUTH_SECRET}
       # Parser un .sav volumineux (JSON ~240 Mo → arbre Jackson ~2 Go) dépasse la
       # heap par défaut (25% de la RAM). On la fixe pour éviter le thrash GC.
       JAVA_TOOL_OPTIONS: "-Xmx4g"

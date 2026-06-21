@@ -33,6 +33,8 @@ class SaveParserServiceTest {
     private RailSplineRepository railSplineRepository;
     @Mock
     private BaseZoneRepository baseZoneRepository;
+    @Mock
+    private AppConfigRepository appConfigRepository;
 
     private SaveParserService service;
 
@@ -45,7 +47,8 @@ class SaveParserServiceTest {
                 gameEntityItemRepository,
                 droneLinkRepository,
                 railSplineRepository,
-                baseZoneRepository
+                baseZoneRepository,
+                appConfigRepository
         );
     }
 
