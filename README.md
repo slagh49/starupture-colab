@@ -65,7 +65,6 @@ starrupture-web/
 │       └── types/          # Types DTO TypeScript
 ├── infra/
 │   ├── docker-compose.yml  # Services : nginx, backend, postgres, redis
-│   ├── docker-compose.staging.yml
 │   └── nginx/nginx.conf
 └── docs/
     ├── stories/            # User Stories (SR-001 à SR-012)
@@ -216,11 +215,11 @@ L'application est accessible sur le port **8888**.
 ```
 build (JAR backend + dist frontend)
   → package (images Docker → GitLab Container Registry)
-    → deploy (git clone/pull + docker compose up sur le serveur)
+    → deploy (scp compose/nginx + docker compose pull/up sur le serveur)
 ```
 
-- **main** → déploiement production automatique
-- **develop** → déploiement staging automatique
+- **main** → déploiement **production automatique** (livraison directe, sans approval)
+- Flux unique `main → prod` : pas de branche `develop`/staging
 
 ## Avancement
 
@@ -228,5 +227,5 @@ build (JAR backend + dist frontend)
 |--------|--------|--------|
 | S1 — Fondations (upload, parseur, carte, zoom) | 26 | Terminé |
 | S2 — Visualisation avancée (drones, rails, tableau, minimap, alertes) | 24 | Terminé |
-| S3 — Filtres et CI/CD | 11 | En cours |
-| **Total** | **61** | |
+| S3 — Filtres et CI/CD | 11 | Terminé |
+| **Total** | **61** | Terminé |

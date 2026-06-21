@@ -1,6 +1,6 @@
 # Avancement projet — StarRupture Base Scanner
 
-> Tenu à jour par ALEX · Dernière mise à jour : Mars 2026
+> Tenu à jour par ALEX · Dernière mise à jour : Juin 2026
 
 ---
 
@@ -35,11 +35,16 @@
 
 | ID | Story | Agent | Points | Statut |
 |---|---|---|---|---|
-| SR-010 | Filtres par catégorie | RILEY | 3 | TODO |
-| SR-011 | Pipeline CI/CD staging | ALEX | 5 | TODO |
-| SR-012 | Déploiement prod avec approval | ALEX | 3 | TODO |
+| SR-010 | Filtres par catégorie | RILEY | 3 | DONE |
+| SR-011 | Pipeline CI/CD | ALEX | 5 | DONE |
+| SR-012 | Déploiement prod | ALEX | 3 | DONE |
 
-**Total S3 : 11 pts**
+**Total S3 : 11 pts · Complétés : 11 · Restants : 0**
+
+> **Note SR-012** — la story initiale prévoyait un déploiement prod « avec approval manuel ».
+> Choix produit retenu : **livraison directe en prod** sur `push main` (pas d'approval).
+> Le flux dev/staging a été abandonné : le job `deploy-staging` (branche `develop`) et
+> `docker-compose.staging.yml` ont été supprimés de la CI. Pipeline désormais 100 % `main → prod`.
 
 ---
 
@@ -55,5 +60,5 @@ _Aucun blocage pour l'instant._
 |---|---|---|
 | S1 | 26 | ✅ Terminé |
 | S2 | 24 | ✅ Terminé |
-| S3 | 11 | ⚪ À venir |
-| **Total** | **61** | |
+| S3 | 11 | ✅ Terminé |
+| **Total** | **61** | ✅ Terminé |

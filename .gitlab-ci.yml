@@ -26,7 +26,6 @@ build-backend:
   only:
     refs:
       - main
-      - develop
 
 build-frontend:
   stage: build
@@ -42,7 +41,6 @@ build-frontend:
   only:
     refs:
       - main
-      - develop
 
 # ---------- PACKAGE ----------
 
@@ -62,7 +60,6 @@ package-backend:
   only:
     refs:
       - main
-      - develop
 
 package-frontend:
   stage: package
@@ -80,7 +77,6 @@ package-frontend:
   only:
     refs:
       - main
-      - develop
 
 # ---------- DEPLOY ----------
 
@@ -94,35 +90,6 @@ package-frontend:
     - echo "$SSH_PRIVATE_KEY" | base64 -d | ssh-add -
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-
-deploy-staging:
-  extends: .deploy-base
-  needs:
-    - package-backend
-    - package-frontend
-  script:
-    - ssh $DEPLOY_USER@$DEPLOY_HOST "mkdir -p $DEPLOY_PATH/nginx"
-    - scp infra/docker-compose.yml infra/docker-compose.staging.yml $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/
-    - scp infra/nginx/nginx.conf $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/nginx/
-    - |
-      ssh $DEPLOY_USER@$DEPLOY_HOST "
-        cd $DEPLOY_PATH &&
-        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
-        DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND \
-        DOCKER_IMAGE_FRONTEND=$DOCKER_IMAGE_FRONTEND \
-        DB_PASSWORD=$DB_PASSWORD \
-        docker compose -f docker-compose.yml -f docker-compose.staging.yml pull &&
-        DOCKER_IMAGE_BACKEND=$DOCKER_IMAGE_BACKEND \
-        DOCKER_IMAGE_FRONTEND=$DOCKER_IMAGE_FRONTEND \
-        DB_PASSWORD=$DB_PASSWORD \
-        docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --remove-orphans &&
-        docker compose -f docker-compose.yml -f docker-compose.staging.yml restart nginx
-      "
-  environment:
-    name: staging
-    url: http://192.168.1.50:8081
-  only:
-    - develop
 
 deploy-prod:
   extends: .deploy-base
