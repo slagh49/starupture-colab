@@ -4,6 +4,26 @@ Application web full-stack pour visualiser et analyser les sauvegardes du jeu **
 
 Uploadez un fichier `.sav` et explorez votre base industrielle sur Arcadia-7 : carte interactive 2D, flux de drones animés, tableau de production, alertes d'infection.
 
+## Aperçu
+
+### Carte interactive
+
+![Carte interactive](docs/screenshots/carte-interactive.png)
+
+Visualisation 2D de la base : terrain procédural, machines, flux de drones, rails, zones d'infection et marqueurs. Filtrage par catégorie et par flux de ressource.
+
+### Tableau TODO (kanban)
+
+![Tableau TODO](docs/screenshots/todo-kanban.png)
+
+Organisation collaborative des tâches en colonnes (construction, progression) avec priorités et assignation.
+
+### Administration
+
+![Administration](docs/screenshots/administration.png)
+
+Import FTP automatique des sauvegardes (passerelle Web-FTP ou FTP direct) et gestion des utilisateurs.
+
 ## Stack technique
 
 | Couche | Technologie |
