@@ -28,7 +28,7 @@ Import FTP automatique des sauvegardes (passerelle Web-FTP ou FTP direct) et ges
 
 ## Démarrage rapide
 
-> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.md)** —
+> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.fr.md)** —
 > pensé pour les personnes non initiées, il ne demande que Docker (aucune connaissance technique).
 
 ### Installation simple (depuis les sources, Docker uniquement)

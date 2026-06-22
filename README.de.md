@@ -28,7 +28,7 @@ Automatischer FTP-Import von Speicherständen (Web-FTP-Gateway oder direktes FTP
 
 ## Schnellstart
 
-> 🧑‍🏫 **Neu hier?** Folge der **[Schritt-für-Schritt-Installationsanleitung](docs/INSTALLATION.md)** —
+> 🧑‍🏫 **Neu hier?** Folge der **[Schritt-für-Schritt-Installationsanleitung](docs/INSTALLATION.de.md)** —
 > sie richtet sich an nicht-technische Nutzer und erfordert nur Docker (keine technischen Vorkenntnisse nötig).
 
 ### Einfache Installation (aus dem Quellcode, nur Docker)

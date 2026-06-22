@@ -28,7 +28,7 @@ Automatyczny import plików zapisu przez FTP (brama Web-FTP lub bezpośredni FTP
 
 ## Szybki start
 
-> 🧑‍🏫 **Dopiero zaczynasz?** Skorzystaj z **[przewodnika instalacji krok po kroku](docs/INSTALLATION.md)** —
+> 🧑‍🏫 **Dopiero zaczynasz?** Skorzystaj z **[przewodnika instalacji krok po kroku](docs/INSTALLATION.pl.md)** —
 > przeznaczony dla osób nietechnicznych, wymaga jedynie Dockera (bez wiedzy technicznej).
 
 ### Prosta instalacja (ze źródeł, tylko Docker)

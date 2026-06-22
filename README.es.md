@@ -28,7 +28,7 @@ Importación FTP automática de archivos de guardado (pasarela Web-FTP o FTP dir
 
 ## Inicio rápido
 
-> 🧑‍🏫 **¿Es la primera vez?** Sigue la **[guía de instalación paso a paso](docs/INSTALLATION.md)** —
+> 🧑‍🏫 **¿Es la primera vez?** Sigue la **[guía de instalación paso a paso](docs/INSTALLATION.es.md)** —
 > diseñada para usuarios no técnicos, solo requiere Docker (no se necesitan conocimientos técnicos).
 
 ### Instalación sencilla (desde el código fuente, solo con Docker)

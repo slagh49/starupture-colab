@@ -1,88 +1,90 @@
-# 🚀 Guide d'installation — StarRupture Base Scanner
+# 🚀 Installation guide — StarRupture Base Scanner
 
-> **Pour qui ?** Ce guide s'adresse aux personnes **qui n'ont jamais installé d'application de ce type**.
-> Aucune connaissance technique préalable n'est nécessaire. On explique **chaque étape** et **chaque commande**.
+🌍 **English** · [Français](INSTALLATION.fr.md) · [Deutsch](INSTALLATION.de.md) · [Español](INSTALLATION.es.md) · [Polski](INSTALLATION.pl.md)
+
+> **Who is this for?** This guide is for people **who have never installed an application of this kind**.
+> No prior technical knowledge is required. We explain **every step** and **every command**.
 >
-> **Temps estimé :** 20 à 40 minutes (selon la vitesse de votre connexion).
+> **Estimated time:** 20 to 40 minutes (depending on your connection speed).
 
 ---
 
-## 📋 Ce que vous allez obtenir
+## 📋 What you will get
 
-À la fin de ce guide, vous aurez l'application **StarRupture Base Scanner** qui tourne sur votre
-ordinateur (ou un serveur), accessible depuis un navigateur web. Vous pourrez y importer vos
-sauvegardes du jeu et visualiser votre base.
+By the end of this guide, you will have the **StarRupture Base Scanner** application running on your
+computer (or a server), accessible from a web browser. You will be able to import your game
+saves and visualize your base.
 
 ---
 
-## 🧰 Étape 0 — Ce dont vous avez besoin
+## 🧰 Step 0 — What you need
 
-| | Détail |
+| | Detail |
 |---|---|
-| 💻 Un ordinateur | Windows 10/11, macOS, ou Linux |
-| 💾 Espace libre | Environ **5 Go** |
-| 🌐 Une connexion Internet | Pour télécharger l'application la première fois |
-| 🐳 Le logiciel **Docker** | On l'installe à l'étape 1 (c'est gratuit) |
+| 💻 A computer | Windows 10/11, macOS, or Linux |
+| 💾 Free space | About **5 GB** |
+| 🌐 An Internet connection | To download the application the first time |
+| 🐳 The **Docker** software | We install it in Step 1 (it's free) |
 
-> **C'est quoi Docker ?** Imaginez une « boîte » qui contient déjà tout ce dont l'application a
-> besoin pour fonctionner (le serveur, la base de données…). Vous n'avez **rien d'autre à installer** :
-> Docker s'occupe de tout. C'est la méthode la plus simple et la plus fiable.
+> **What is Docker?** Picture a "box" that already contains everything the application needs to
+> run (the server, the database…). You have **nothing else to install**: Docker handles everything.
+> It's the simplest and most reliable method.
 
 ---
 
-## 🐳 Étape 1 — Installer Docker
+## 🐳 Step 1 — Install Docker
 
-### Sur Windows ou macOS
+### On Windows or macOS
 
-1. Rendez-vous sur **https://www.docker.com/products/docker-desktop/**
-2. Cliquez sur **Download** et choisissez votre système (Windows ou Mac).
-3. Ouvrez le fichier téléchargé et suivez l'installation (cliquez « Suivant » / « Installer »).
-4. **Redémarrez votre ordinateur** si on vous le demande.
-5. Lancez **Docker Desktop** (icône de baleine 🐳). Attendez que l'icône en bas indique
-   « Docker Desktop is running » (Docker est démarré).
+1. Go to **https://www.docker.com/products/docker-desktop/**
+2. Click **Download** and choose your system (Windows or Mac).
+3. Open the downloaded file and follow the installation (click "Next" / "Install").
+4. **Restart your computer** if prompted.
+5. Launch **Docker Desktop** (whale icon 🐳). Wait until the icon at the bottom shows
+   "Docker Desktop is running".
 
-> 💡 Sur Windows, si un message parle de « WSL 2 », laissez Docker l'installer automatiquement
-> (cliquez sur le lien proposé puis recommencez).
+> 💡 On Windows, if a message mentions "WSL 2", let Docker install it automatically
+> (click the suggested link, then try again).
 
-### Sur Linux (Ubuntu/Debian)
+### On Linux (Ubuntu/Debian)
 
-Ouvrez un terminal et copiez-collez ces commandes une par une :
+Open a terminal and copy-paste these commands one by one:
 
 ```bash
 curl -fsSL https://get.docker.com | sudo sh
 sudo usermod -aG docker $USER
 ```
 
-Puis **déconnectez-vous et reconnectez-vous** (ou redémarrez) pour que le second changement prenne effet.
+Then **log out and back in** (or reboot) for the second change to take effect.
 
-### Vérifier que Docker fonctionne
+### Check that Docker works
 
-Ouvrez un **terminal** :
-- **Windows** : menu Démarrer → tapez `PowerShell` → Entrée.
-- **macOS** : Applications → Utilitaires → **Terminal**.
-- **Linux** : votre terminal habituel.
+Open a **terminal**:
+- **Windows**: Start menu → type `PowerShell` → Enter.
+- **macOS**: Applications → Utilities → **Terminal**.
+- **Linux**: your usual terminal.
 
-Tapez cette commande puis Entrée :
+Type this command then Enter:
 
 ```bash
 docker --version
 ```
 
-Si vous voyez une ligne comme `Docker version 27.x.x`, c'est bon ✅. Sinon, reprenez l'étape 1.
+If you see a line like `Docker version 27.x.x`, you're good ✅. Otherwise, redo Step 1.
 
 ---
 
-## 📥 Étape 2 — Télécharger l'application
+## 📥 Step 2 — Download the application
 
-### Méthode simple (sans rien installer de plus)
+### Simple method (without installing anything else)
 
-1. Allez sur la page du projet : **https://github.com/slagh49/starupture-colab**
-2. Cliquez sur le bouton vert **`< > Code`**, puis **Download ZIP**.
-3. Une fois le `.zip` téléchargé, **décompressez-le** (clic droit → « Extraire tout »).
-4. Vous obtenez un dossier nommé `starupture-colab` (ou similaire). **Retenez où il se trouve**
-   (par exemple dans `Téléchargements`).
+1. Go to the project page: **https://github.com/slagh49/starupture-colab**
+2. Click the green **`< > Code`** button, then **Download ZIP**.
+3. Once the `.zip` is downloaded, **extract it** (right-click → "Extract all").
+4. You get a folder named `starupture-colab` (or similar). **Remember where it is**
+   (for example in `Downloads`).
 
-### Méthode alternative (si vous connaissez `git`)
+### Alternative method (if you know `git`)
 
 ```bash
 git clone https://github.com/slagh49/starupture-colab.git
@@ -90,177 +92,177 @@ git clone https://github.com/slagh49/starupture-colab.git
 
 ---
 
-## 🔑 Étape 3 — Configurer les deux secrets
+## 🔑 Step 3 — Configure the two secrets
 
-L'application a besoin de **deux mots de passe secrets** que vous choisissez vous-même :
-- un pour la **base de données** (`DB_PASSWORD`),
-- un pour **sécuriser les connexions** (`APP_AUTH_SECRET`).
+The application needs **two secret passwords** that you choose yourself:
+- one for the **database** (`DB_PASSWORD`),
+- one to **secure the connections** (`APP_AUTH_SECRET`).
 
-> ⚠️ **Important** : l'application **refuse de démarrer** si `APP_AUTH_SECRET` n'est pas défini.
-> C'est volontaire, pour votre sécurité.
+> ⚠️ **Important**: the application **refuses to start** if `APP_AUTH_SECRET` is not set.
+> This is intentional, for your security.
 
-### 3.1 — Ouvrir le bon dossier
+### 3.1 — Open the right folder
 
-Dans votre terminal, rendez-vous dans le sous-dossier `infra` de l'application.
-Adaptez le chemin à l'endroit où vous avez décompressé le projet :
+In your terminal, go into the application's `infra` subfolder.
+Adapt the path to wherever you extracted the project:
 
 ```bash
-cd Téléchargements/starupture-colab/infra
+cd Downloads/starupture-colab/infra
 ```
 
-> 💡 `cd` veut dire « changer de dossier » (*change directory*). Sur Windows, vous pouvez aussi
-> ouvrir le dossier `infra` dans l'explorateur, cliquer dans la barre d'adresse, taper `powershell`
-> et Entrée : un terminal s'ouvrira directement au bon endroit.
+> 💡 `cd` means "change directory". On Windows, you can also open the `infra` folder in
+> the file explorer, click in the address bar, type `powershell` and Enter: a terminal
+> will open directly in the right place.
 
-### 3.2 — Créer le fichier de configuration
+### 3.2 — Create the configuration file
 
-Nous allons créer un petit fichier nommé `.env` qui contient les deux secrets.
+We are going to create a small file named `.env` that holds the two secrets.
 
-**Sur macOS / Linux**, copiez-collez ce bloc d'un coup (il génère un secret aléatoire tout seul) :
+**On macOS / Linux**, copy-paste this block all at once (it generates a random secret by itself):
 
 ```bash
 cat > .env <<EOF
-DB_PASSWORD=changez-ce-mot-de-passe
+DB_PASSWORD=change-this-password
 APP_AUTH_SECRET=$(openssl rand -base64 48)
 EOF
 ```
 
-**Sur Windows (PowerShell)**, copiez-collez ce bloc :
+**On Windows (PowerShell)**, copy-paste this block:
 
 ```powershell
 $secret = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 48 | ForEach-Object {[char]$_})
-"DB_PASSWORD=changez-ce-mot-de-passe`nAPP_AUTH_SECRET=$secret" | Out-File -Encoding ascii .env
+"DB_PASSWORD=change-this-password`nAPP_AUTH_SECRET=$secret" | Out-File -Encoding ascii .env
 ```
 
-> Remplacez `changez-ce-mot-de-passe` par le mot de passe de votre choix pour la base de données
-> (n'importe quelle suite de lettres/chiffres, sans espaces). Vous n'aurez pas à le retenir au quotidien.
+> Replace `change-this-password` with a password of your choice for the database
+> (any sequence of letters/digits, no spaces). You won't need to remember it day to day.
 
-### 3.3 — Vérifier (facultatif)
+### 3.3 — Verify (optional)
 
-Pour vérifier que le fichier est correct :
+To check that the file is correct:
 
 ```bash
 cat .env
 ```
 
-Vous devez voir **deux lignes** : `DB_PASSWORD=...` et `APP_AUTH_SECRET=...` (avec une longue
-suite de caractères après le `=`).
+You should see **two lines**: `DB_PASSWORD=...` and `APP_AUTH_SECRET=...` (with a long
+sequence of characters after the `=`).
 
 ---
 
-## ▶️ Étape 4 — Démarrer l'application
+## ▶️ Step 4 — Start the application
 
-Toujours dans le dossier `infra`, lancez **cette seule commande** :
+Still in the `infra` folder, run **this single command**:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 ```
 
-> **Que fait cette commande ?**
-> - `up` : démarre l'application.
-> - `--build` : construit l'application à partir du code (la **première fois uniquement**, cela
->   peut prendre **5 à 15 minutes** — c'est normal, Docker télécharge et compile tout).
-> - `-d` : laisse l'application tourner en arrière-plan.
+> **What does this command do?**
+> - `up`: starts the application.
+> - `--build`: builds the application from the source code (the **first time only**, this
+>   can take **5 to 15 minutes** — that's normal, Docker downloads and compiles everything).
+> - `-d`: leaves the application running in the background.
 
-Patientez jusqu'à ce que la commande se termine et rende la main. Vous verrez défiler beaucoup de
-texte : c'est normal.
-
----
-
-## 🌍 Étape 5 — Ouvrir l'application
-
-1. Ouvrez votre navigateur web (Chrome, Firefox, Edge…).
-2. Allez à l'adresse : **http://localhost:8888**
-
-   > Si vous avez installé l'application sur un **autre ordinateur/serveur**, remplacez `localhost`
-   > par l'adresse de cette machine (ex. `http://192.168.1.50:8888`).
-
-3. Une page de **connexion** apparaît. 🌐 Vous pouvez **changer la langue** en haut à droite
-   (anglais, français, allemand, espagnol, polonais).
-
-### Première connexion
-
-- **Identifiant :** `admin`
-- **Mot de passe :** `admin`
-
-> 🔒 **À FAIRE IMMÉDIATEMENT** : une fois connecté, allez dans l'onglet **Administration**,
-> section **Utilisateurs**, et **changez le mot de passe du compte `admin`**. Le mot de passe
-> par défaut `admin`/`admin` n'est pas sécurisé.
-
-🎉 **C'est installé !** Vous pouvez maintenant importer une sauvegarde `.sav` via le bouton
-d'import, ou configurer l'import automatique (voir ci-dessous).
+Wait until the command finishes and returns control to you. You'll see a lot of text scroll by:
+that's normal.
 
 ---
 
-## 📂 Étape 6 (facultatif) — Import automatique depuis votre serveur de jeu
+## 🌍 Step 5 — Open the application
 
-Si votre serveur StarRupture est hébergé (ex. chez un hébergeur de serveurs de jeu),
-l'application peut récupérer la sauvegarde toute seule :
+1. Open your web browser (Chrome, Firefox, Edge…).
+2. Go to the address: **http://localhost:8888**
 
-1. Connectez-vous, allez dans l'onglet **Administration**.
-2. Renseignez les informations FTP de votre hébergeur (hôte, identifiant, mot de passe, chemin).
-3. Cliquez sur **Tester la connexion**, puis **Importer maintenant**.
-4. Activez l'**import automatique** pour qu'il se répète à l'intervalle voulu.
+   > If you installed the application on **another computer/server**, replace `localhost`
+   > with that machine's address (e.g. `http://192.168.1.50:8888`).
 
-> Le détail de ces options est expliqué directement dans l'interface.
+3. A **login** page appears. 🌐 You can **change the language** in the top right
+   (English, French, German, Spanish, Polish).
+
+### First login
+
+- **Username:** `admin`
+- **Password:** `admin`
+
+> 🔒 **DO THIS IMMEDIATELY**: once logged in, go to the **Administration** tab,
+> **Users** section, and **change the `admin` account's password**. The default
+> `admin`/`admin` password is not secure.
+
+🎉 **It's installed!** You can now import a `.sav` save via the import button,
+or configure automatic import (see below).
 
 ---
 
-## 🔄 Mettre à jour l'application (plus tard)
+## 📂 Step 6 (optional) — Automatic import from your game server
 
-Quand une nouvelle version est disponible :
+If your StarRupture server is hosted (e.g. with a game server host),
+the application can fetch the save by itself:
 
-1. Re-téléchargez le projet (Étape 2) **par-dessus** l'ancien dossier, ou faites `git pull` si
-   vous avez utilisé `git`.
-2. Dans le dossier `infra`, relancez :
+1. Log in, go to the **Administration** tab.
+2. Fill in your host's FTP details (host, username, password, path).
+3. Click **Test the connection**, then **Import now**.
+4. Enable **automatic import** so it repeats at the desired interval.
+
+> The details of these options are explained directly in the interface.
+
+---
+
+## 🔄 Update the application (later)
+
+When a new version is available:
+
+1. Re-download the project (Step 2) **over** the old folder, or run `git pull` if
+   you used `git`.
+2. In the `infra` folder, run again:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 ```
 
-Vos données (sauvegardes importées, comptes, tableau TODO) sont **conservées**.
+Your data (imported saves, accounts, TODO board) is **preserved**.
 
 ---
 
-## ⏹️ Arrêter / redémarrer l'application
+## ⏹️ Stop / restart the application
 
-Dans le dossier `infra` :
+In the `infra` folder:
 
 ```bash
-# Arrêter (les données sont conservées)
+# Stop (data is preserved)
 docker compose down
 
-# Redémarrer (après un premier démarrage déjà construit)
+# Restart (after an already-built first start)
 docker compose -f docker-compose.yml -f docker-compose.build.yml up -d
 ```
 
-> ⚠️ **N'utilisez jamais** `docker compose down -v` : l'option `-v` **efface la base de données**
-> (toutes vos données seraient perdues).
+> ⚠️ **Never use** `docker compose down -v`: the `-v` option **erases the database**
+> (all your data would be lost).
 
 ---
 
-## 🆘 En cas de problème
+## 🆘 Troubleshooting
 
-| Symptôme | Solution |
+| Symptom | Solution |
 |---|---|
-| `docker : command not found` / « commande introuvable » | Docker n'est pas installé ou pas démarré. Reprenez l'**Étape 1** et lancez Docker Desktop. |
-| La page `http://localhost:8888` ne s'ouvre pas | Attendez 1-2 minutes après le démarrage (le serveur met un peu de temps à se lancer). Vérifiez que Docker Desktop est bien démarré. |
-| « port is already allocated » (port déjà utilisé) | Un autre programme utilise le port 8888. Fermez-le, ou demandez de l'aide pour changer le port. |
-| Le backend redémarre en boucle | Vérifiez que le fichier `.env` contient bien **`APP_AUTH_SECRET=`** suivi d'une longue valeur (Étape 3). |
-| Voir ce qui se passe (messages d'erreur) | Dans `infra`, tapez : `docker compose logs -f` (Ctrl+C pour quitter l'affichage). |
-| Tout réinitialiser (⚠️ efface les données) | `docker compose down -v` puis recommencez l'Étape 4. |
+| `docker: command not found` | Docker is not installed or not started. Redo **Step 1** and launch Docker Desktop. |
+| The page `http://localhost:8888` won't open | Wait 1-2 minutes after startup (the server takes a little time to launch). Make sure Docker Desktop is running. |
+| "port is already allocated" | Another program is using port 8888. Close it, or ask for help to change the port. |
+| The backend restarts in a loop | Check that the `.env` file does contain **`APP_AUTH_SECRET=`** followed by a long value (Step 3). |
+| See what's happening (error messages) | In `infra`, type: `docker compose logs -f` (Ctrl+C to quit the display). |
+| Reset everything (⚠️ erases data) | `docker compose down -v` then redo Step 4. |
 
 ---
 
-## 📖 Petit glossaire
+## 📖 Quick glossary
 
-- **Terminal / PowerShell** : une fenêtre où l'on tape des commandes au clavier.
-- **Docker** : le logiciel qui fait tourner l'application dans une « boîte » prête à l'emploi.
-- **`.env`** : un fichier texte qui contient vos secrets (mots de passe).
-- **`localhost`** : un mot qui désigne « cet ordinateur-ci ».
-- **Port `8888`** : la « porte d'entrée » par laquelle on accède à l'application dans le navigateur.
+- **Terminal / PowerShell**: a window where you type commands on the keyboard.
+- **Docker**: the software that runs the application in a ready-to-use "box".
+- **`.env`**: a text file that holds your secrets (passwords).
+- **`localhost`**: a word that means "this very computer".
+- **Port `8888`**: the "front door" through which you reach the application in the browser.
 
 ---
 
-Besoin d'aide ? Ouvrez une *issue* sur la page GitHub du projet :
+Need help? Open an *issue* on the project's GitHub page:
 **https://github.com/slagh49/starupture-colab/issues**
