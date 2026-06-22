@@ -1,57 +1,59 @@
 # StarRupture Base Scanner
 
-Application web full-stack pour visualiser et analyser les sauvegardes du jeu **StarRupture** (Early Access, Creepy Jar).
+🌍 **English** · [Français](README.fr.md) · [Deutsch](README.de.md) · [Español](README.es.md) · [Polski](README.pl.md)
 
-Uploadez un fichier `.sav` et explorez votre base industrielle sur Arcadia-7 : carte interactive 2D, flux de drones animés, tableau de production, alertes d'infection.
+A full-stack web application to visualize and analyze save files from the game **StarRupture** (Early Access, Creepy Jar).
 
-## Aperçu
+Upload a `.sav` file and explore your industrial base on Arcadia-7: interactive 2D map, animated drone flows, production table, infection alerts.
 
-### Carte interactive
+## Overview
 
-![Carte interactive](docs/screenshots/carte-interactive.png)
+### Interactive map
 
-Visualisation 2D de la base : terrain procédural, machines, flux de drones, rails, zones d'infection et marqueurs. Filtrage par catégorie et par flux de ressource.
+![Interactive map](docs/screenshots/carte-interactive.png)
 
-### Tableau TODO (kanban)
+2D visualization of the base: procedural terrain, machines, drone flows, rails, infection zones and markers. Filter by category and by resource flow.
 
-![Tableau TODO](docs/screenshots/todo-kanban.png)
+### TODO board (kanban)
 
-Organisation collaborative des tâches en colonnes (construction, progression) avec priorités et assignation.
+![TODO board](docs/screenshots/todo-kanban.png)
+
+Collaborative task organization in columns (construction, progression) with priorities and assignees.
 
 ### Administration
 
 ![Administration](docs/screenshots/administration.png)
 
-Import FTP automatique des sauvegardes (passerelle Web-FTP ou FTP direct) et gestion des utilisateurs.
+Automatic FTP import of save files (Web-FTP gateway or direct FTP) and user management.
 
-## Démarrage rapide
+## Quick start
 
-> 🧑‍🏫 **Vous débutez ?** Suivez le **[guide d'installation pas à pas](docs/INSTALLATION.md)** —
-> pensé pour les personnes non initiées, il ne demande que Docker (aucune connaissance technique).
+> 🧑‍🏫 **New to this?** Follow the **[step-by-step installation guide](docs/INSTALLATION.md)** —
+> designed for non-technical users, it only requires Docker (no technical knowledge needed).
 
-### Installation simple (depuis les sources, Docker uniquement)
+### Simple install (from source, Docker only)
 
 ```bash
 cd infra
-# Créez un fichier .env avec DB_PASSWORD et APP_AUTH_SECRET (voir le guide d'installation),
-# puis construisez et démarrez :
+# Create a .env file with DB_PASSWORD and APP_AUTH_SECRET (see the installation guide),
+# then build and start:
 docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 ```
 
-L'application est alors accessible sur **http://localhost:8888** (admin / admin au premier démarrage).
+The application is then available at **http://localhost:8888** (admin / admin on first launch).
 
-### Prérequis (développement)
-- Docker et Docker Compose
-- Java 21 + Maven 3.9 (développement backend)
-- Node.js 20 (développement frontend)
+### Prerequisites (development)
+- Docker and Docker Compose
+- Java 21 + Maven 3.9 (backend development)
+- Node.js 20 (frontend development)
 
-### Développement local
+### Local development
 
 ```bash
 # Frontend
 cd frontend && npm install && npm run dev
 
-# Backend (nécessite PostgreSQL + Redis)
+# Backend (requires PostgreSQL + Redis)
 cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -59,27 +61,27 @@ cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ```bash
 cd infra
-DB_PASSWORD=motdepasse \
+DB_PASSWORD=password \
 APP_AUTH_SECRET="$(openssl rand -base64 48)" \
-DOCKER_IMAGE_BACKEND=registry.exemple.com/backend:latest \
-DOCKER_IMAGE_FRONTEND=registry.exemple.com/frontend:latest \
+DOCKER_IMAGE_BACKEND=registry.example.com/backend:latest \
+DOCKER_IMAGE_FRONTEND=registry.example.com/frontend:latest \
 docker compose up -d
 ```
 
-L'application est accessible sur le port **8888**.
+The application is available on port **8888**.
 
-## Stack technique
+## Tech stack
 
-| Couche | Technologie |
+| Layer | Technology |
 |--------|-------------|
-| API Backend | Spring Boot 3.4 / Java 21 |
+| Backend API | Spring Boot 3.4 / Java 21 |
 | Frontend | React 18 / TypeScript 5 / Vite 5 |
-| Carte | Canvas 2D natif (terrain procédural fbm) |
-| Base de données | PostgreSQL 16 |
+| Map | Native 2D Canvas (procedural fbm terrain) |
+| Database | PostgreSQL 16 |
 | Cache | Redis 7 |
 | Reverse proxy | Nginx |
-| Conteneurisation | Docker Compose |
-| CI/CD | GitLab CE auto-hébergé |
+| Containerization | Docker Compose |
+| CI/CD | Self-hosted GitLab CE |
 
 ## Architecture
 
@@ -100,23 +102,23 @@ L'application est accessible sur le port **8888**.
               └──────────┘  └────────┘
 ```
 
-## Structure du monorepo
+## Monorepo structure
 
 ```
 starrupture-web/
-├── .gitlab-ci.yml          # Pipeline CI/CD (build → package → deploy)
-├── backend/                # API REST Spring Boot
+├── .gitlab-ci.yml          # CI/CD pipeline (build → package → deploy)
+├── backend/                # Spring Boot REST API
 │   ├── src/main/java/com/starrupture/scanner/
-│   │   ├── controller/     # Points d'entrée REST (saves, entities, links, summary)
-│   │   ├── service/        # Parseur .sav (zlib + JSON + regex), EntityService
-│   │   ├── entity/         # Entités JPA (clé primaire UUID)
-│   │   ├── dto/            # Objets de transfert de données
+│   │   ├── controller/     # REST endpoints (saves, entities, links, summary)
+│   │   ├── service/        # .sav parser (zlib + JSON + regex), EntityService
+│   │   ├── entity/         # JPA entities (UUID primary key)
+│   │   ├── dto/            # Data transfer objects
 │   │   ├── repository/     # Spring Data JPA
-│   │   ├── config/         # CORS, cache Redis
-│   │   └── exception/      # Gestion globale des erreurs
+│   │   ├── config/         # CORS, Redis cache
+│   │   └── exception/      # Global error handling
 │   └── src/main/resources/
-│       └── db/migration/   # Flyway V1 (schéma) → V11 (kanban TODO)
-├── frontend/               # Application React + TypeScript
+│       └── db/migration/   # Flyway V1 (schema) → V11 (kanban TODO)
+├── frontend/               # React + TypeScript application
 │   └── src/
 │       ├── components/
 │       │   ├── map/        # MapCanvas, TerrainLayer, EntityLayer, DroneLayer, RailLayer
@@ -124,159 +126,159 @@ starrupture-web/
 │       │   └── ui/         # TabBar, Legend, Tooltip, Badge, UploadButton
 │       ├── hooks/          # useSaveData, useMapInteraction, useAnimation
 │       ├── pages/          # MapPage, ProgressionPage, AdminPage
-│       ├── services/       # API Axios typé
-│       ├── constants/      # Couleurs, configuration carte
-│       └── types/          # Types DTO TypeScript
+│       ├── services/       # Typed Axios API
+│       ├── constants/      # Colors, map configuration
+│       └── types/          # TypeScript DTO types
 ├── infra/
-│   ├── docker-compose.yml  # Services : nginx, backend, postgres, redis
+│   ├── docker-compose.yml  # Services: nginx, backend, postgres, redis
 │   └── nginx/nginx.conf
 └── docs/
-    ├── stories/            # User Stories (SR-001 à SR-012)
-    └── PROGRESS.md         # Suivi d'avancement
+    ├── stories/            # User Stories (SR-001 to SR-012)
+    └── PROGRESS.md         # Progress tracking
 ```
 
-## Fonctionnalités
+## Features
 
-### Carte interactive (MapPage)
-- Terrain procédural 2D (fbm, biomes alien)
-- Entités positionnées avec couleurs par catégorie (machine, énergie, infra, antenne, danger, loot)
-- Zoom molette centré sur le curseur, déplacement par clic-glisser
-- Retour visuel du curseur (main ouverte au survol de la carte, fermée pendant le déplacement, pointeur sur une entité)
-- Survol avec surbrillance + infobulle, sélection avec panneau détail
-- **Flux logistiques** en arcs courbes colorés par ressource, avec **flèches directionnelles animées** (sens producteur → consommateur)
-- Rails DroneRail (orange) et Walkway (cyan pointillé)
-- Alertes visuelles : anneau rouge pulsant pour l'infection, badge OFF
-- **Filtre par nom** : n'affiche que les entités dont le nom correspond (ex. `soufre-`), toutes catégories confondues
-- **Calque infection** : anneau rouge pulsant sur chaque bâtiment infecté, toujours visible (même si sa catégorie est masquée), activable/désactivable comme les autres calques
-- **Calque orphelins** : anneau magenta pulsant sur les PackageSender/Receiver sans aucune liaison (ni source ni destination), pour repérer les transmetteurs non configurés
-- Calques activables : terrain, flux drones, rails, zones de base, labels, infection, orphelins
-- Filtres par catégorie + liste latérale groupée (catégorie → type), restreinte au viewport
-- La sauvegarde la plus récente est chargée automatiquement au démarrage
+### Interactive map (MapPage)
+- Procedural 2D terrain (fbm, alien biomes)
+- Entities positioned with per-category colors (machine, energy, infra, antenna, danger, loot)
+- Mouse-wheel zoom centered on the cursor, click-and-drag panning
+- Visual cursor feedback (open hand when hovering the map, closed while panning, pointer over an entity)
+- Hover highlight + tooltip, selection with a detail panel
+- **Logistics flows** as curved arcs colored by resource, with **animated directional arrows** (producer → consumer direction)
+- DroneRail rails (orange) and Walkway (dashed cyan)
+- Visual alerts: pulsing red ring for infection, OFF badge
+- **Filter by name**: shows only entities whose name matches (e.g. `sulfur-`), across all categories
+- **Infection layer**: pulsing red ring on every infected building, always visible (even if its category is hidden), toggleable like the other layers
+- **Orphans layer**: pulsing magenta ring on PackageSender/Receiver with no link at all (neither source nor destination), to spot unconfigured transmitters
+- Toggleable layers: terrain, drone flows, rails, base zones, labels, infection, orphans
+- Category filters + grouped side list (category → type), restricted to the viewport
+- The most recent save is loaded automatically on startup
 
-### Import automatique (Administration)
+### Automatic import (Administration)
 
-Onglet **Administration** pour importer le `.sav` directement depuis le FTP de l'hébergeur du serveur de jeu, sans upload manuel.
+**Administration** tab to import the `.sav` directly from the game server host's FTP, without manual upload.
 
-- Configuration FTP stockée côté serveur (hôte, port, utilisateur, mot de passe, chemin) ; le mot de passe n'est jamais renvoyé à l'interface
-- **Passerelle HTTP Web-FTP** (recommandé) : le `.sav` est téléchargé via le bridge HTTP de l'hébergeur (ex. 4Netplayers `handler.php`), qui réalise le FTP côté LAN et renvoie le fichier en HTTPS. Cela contourne le **canal de données FTP passif** souvent bloqué côté client, et fonctionne **serveur de jeu allumé**
-- Repli automatique sur FTP direct (FTP puis FTPS) si l'URL passerelle est laissée vide
-- Import manuel (« Importer maintenant ») ou **automatique** à intervalle configurable (`@Scheduled`)
-- **Import du slot le plus récent** : si le chemin FTP pointe sur un **dossier** (finit par `/` ou ne finit pas par `.sav`), l'import liste les fichiers `.sav` du dossier et télécharge le plus récent par date de modification. Résout le problème de rotation des slots `AutoSave0`/`1`/`2` du serveur de jeu (un chemin pointant sur un fichier fixe reste rétro-compatible)
-- **Wipe-and-replace** : tout chargement de sauvegarde (upload manuel **ou** import FTP) efface d'abord les sessions existantes puis recharge le `.sav` à neuf — l'application ne conserve donc qu'un seul état (le dernier chargé). Logique commune dans `parseSavBytes`, atomique (`@Transactional`) : en cas d'échec du parsing, le wipe est annulé
-- **Insertions par lot** : parsing accéléré via le batch JDBC Hibernate (`batch_size`, `order_inserts`, `reWriteBatchedInserts`) — indispensable pour les sauvegardes à plusieurs dizaines de milliers d'entités
-- **Garde-fou « sauvegarde identique »** : à l'import, le backend compare l'**empreinte SHA-256 du contenu brut** du nouveau `.sav` à celle du précédent. Si elle est inchangée, le fichier est identique au bit près — le jeu n'a écrit aucune nouvelle sauvegarde (fichier gelé) : un **bandeau d'alerte** s'affiche dans l'en-tête. Le hash de contenu est fiable là où l'ancienne comparaison `timestamp` + `playtime` concluait « identique » à tort dès que ces deux champs coïncidaient (repli sur cette comparaison pour les sessions héritées sans hash). La date affichée dans l'en-tête est la **date interne du save** (moment où le jeu a écrit), et non la date d'upload — ce qui révèle un fichier périmé même si sa date de téléchargement paraît récente
+- FTP configuration stored server-side (host, port, user, password, path); the password is never sent back to the interface
+- **Web-FTP HTTP gateway** (recommended): the `.sav` is downloaded via the host's HTTP bridge (e.g. 4Netplayers `handler.php`), which performs the FTP on the LAN side and returns the file over HTTPS. This bypasses the **passive FTP data channel** that is often blocked client-side, and works **with the game server running**
+- Automatic fallback to direct FTP (FTP then FTPS) if the gateway URL is left empty
+- Manual import ("Import now") or **automatic** at a configurable interval (`@Scheduled`)
+- **Import the most recent slot**: if the FTP path points to a **folder** (ends with `/` or doesn't end with `.sav`), the import lists the `.sav` files in the folder and downloads the most recent one by modification date. This solves the `AutoSave0`/`1`/`2` slot rotation issue on the game server (a path pointing to a fixed file remains backward-compatible)
+- **Wipe-and-replace**: any save load (manual upload **or** FTP import) first wipes existing sessions, then reloads the `.sav` fresh — so the application only ever keeps a single state (the last one loaded). Shared logic in `parseSavBytes`, atomic (`@Transactional`): if parsing fails, the wipe is rolled back
+- **Batch inserts**: parsing accelerated via Hibernate JDBC batching (`batch_size`, `order_inserts`, `reWriteBatchedInserts`) — essential for saves with tens of thousands of entities
+- **"Identical save" safeguard**: on import, the backend compares the **SHA-256 hash of the raw content** of the new `.sav` to the previous one. If unchanged, the file is identical down to the bit — the game wrote no new save (frozen file): a **warning banner** appears in the header. The content hash is reliable where the old `timestamp` + `playtime` comparison wrongly concluded "identical" whenever those two fields happened to match (falls back to that comparison for legacy sessions without a hash). The date shown in the header is the **save's internal date** (when the game wrote it), not the upload date — which reveals a stale file even if its download date looks recent
 
-### Authentification
+### Authentication
 
-L'application est protégée par une **mire de connexion**. Auth légère sans dépendance externe :
+The application is protected by a **login screen**. Lightweight auth with no external dependency:
 
-- Mots de passe hachés en **PBKDF2-HMAC-SHA256**, jetons d'API **signés HMAC** (sans état, stockés côté client dans `localStorage`)
-- Un **admin par défaut** (`admin` / `admin`) est créé au premier démarrage si aucun compte n'existe — **à changer immédiatement** via l'interface (configurable via `APP_ADMIN_USER`/`APP_ADMIN_PASSWORD`)
-- L'**administrateur** gère les comptes (création, définition de mot de passe, suppression, rôle ADMIN/USER) depuis l'onglet Administration
-- Toute route `/api/**` exige un jeton valide ; `/api/admin/**` exige le rôle ADMIN. L'onglet Administration est masqué pour les utilisateurs non‑admin
-- Secret de signature **obligatoire** via `APP_AUTH_SECRET` : l'application **refuse de démarrer** s'il n'est pas défini (pas de valeur par défaut, pour éviter un secret partagé qui permettrait de forger des jetons). Générez-en un avec `openssl rand -base64 48`
+- Passwords hashed with **PBKDF2-HMAC-SHA256**, API tokens **HMAC-signed** (stateless, stored client-side in `localStorage`)
+- A **default admin** (`admin` / `admin`) is created on first launch if no account exists — **change it immediately** via the interface (configurable via `APP_ADMIN_USER`/`APP_ADMIN_PASSWORD`)
+- The **administrator** manages accounts (creation, password setting, deletion, ADMIN/USER role) from the Administration tab
+- Every `/api/**` route requires a valid token; `/api/admin/**` requires the ADMIN role. The Administration tab is hidden for non-admin users
+- Signing secret **required** via `APP_AUTH_SECRET`: the application **refuses to start** if it is not set (no default value, to avoid a shared secret that would allow forging tokens). Generate one with `openssl rand -base64 48`
 
-### Marqueurs collaboratifs
+### Collaborative markers
 
-**Clic droit** sur la carte pour poser un **marqueur annoté** (pin avec libellé). Les marqueurs sont visibles par tous les joueurs, stockés en base, et apparaissent sur un calque dédié (activable/désactivable). Liste avec suppression dans la barre latérale.
+**Right-click** on the map to drop an **annotated marker** (pin with a label). Markers are visible to all players, stored in the database, and appear on a dedicated layer (toggleable). List with deletion in the sidebar.
 
-### Journal de bord (diff d'import)
+### Logbook (import diff)
 
-Onglet **JOURNAL** : à chaque import, le backend compare automatiquement le nouvel état au snapshot du précédent et produit un **résumé des changements** :
-- Delta du **temps de jeu**, métriques (entités, machines éteintes, sorties pleines, infections…)
-- Variations **par catégorie** d'entité
-- **Nouvelles recettes** débloquées
-- **Types d'entités** apparus ou disparus
+**LOGBOOK** tab: on each import, the backend automatically compares the new state to the previous snapshot and produces a **summary of changes**:
+- **Playtime** delta, metrics (entities, powered-off machines, full outputs, infections…)
+- Variations **by entity category**
+- **Newly unlocked recipes**
+- **Entity types** that appeared or disappeared
 
-Le diff est persisté sur la session (`import_diff`), consultable à tout moment.
+The diff is persisted on the session (`import_diff`), viewable at any time.
 
-### Tableau TODO (kanban)
+### TODO board (kanban)
 
-Onglet **TODO** : un tableau kanban **partagé** entre tous les joueurs pour organiser les chantiers de la base.
+**TODO** tab: a kanban board **shared** across all players to organize base projects.
 
-- **Colonnes personnalisables** : créer, renommer, supprimer, **réordonner par glisser-déposer** (poignée ⠿ sur l'en-tête de colonne) — À faire / En cours / Terminé par défaut
-- **Tâches** avec titre, description, **priorité** (basse/normale/haute, pastille colorée), **assigné à** (parmi les comptes existants) et **échéance** (mise en évidence si dépassée)
-- **Glisser-déposer** des cartes entre colonnes et réordonnancement (drag & drop natif HTML5, sans dépendance)
-- Chaque tâche mémorise son **auteur** (utilisateur courant)
-- Données **indépendantes des sauvegardes** : le kanban n'est jamais effacé par le wipe-and-replace de l'import
+- **Customizable columns**: create, rename, delete, **reorder by drag-and-drop** (⠿ handle on the column header) — To do / In progress / Done by default
+- **Tasks** with title, description, **priority** (low/normal/high, colored dot), **assignee** (among existing accounts) and **due date** (highlighted if overdue)
+- **Drag-and-drop** of cards between columns and reordering (native HTML5 drag & drop, no dependency)
+- Each task remembers its **author** (current user)
+- Data **independent from saves**: the kanban is never wiped by the import's wipe-and-replace
 
-### Thèmes graphiques
+### Graphic themes
 
-Sélecteur de thème dans l'en-tête : l'accent de toute l'UI s'adapte à l'**identité d'une corporation** StarRupture.
+Theme selector in the header: the accent of the whole UI adapts to the **identity of a StarRupture corporation**.
 
-- 6 thèmes sombres : **Terminal** (cyan/vert par défaut), **Selenian** (orange), **Moon Energy** (argent/cyan), **Clever Robotics** (rouge), **Future Health** (turquoise), **Griffith Blue** (bleu) — ils ne changent que l'**accent**
-- 1 thème **Clair** : fonds clairs + accent assombri pour le contraste — redéfinit en plus les neutres (fonds, bordures, textes)
-- Implémenté en **variables CSS** : accent (`--accent`, `--accent-2` + triplets `-rgb`) et neutres (`--bg*`, `--border*`, `--text*`), appliquées via `[data-theme]` sur `<html>` ; choix **persisté** dans `localStorage`
-- L'accent s'étend à la **carte** : contour de la zone de base, walkways et grille suivent le thème (le rendu canvas lit `THEME_ACCENTS`, synchronisé avec les variables CSS)
-- Les **couleurs sémantiques des catégories d'entités** (carte) restent inchangées pour la lisibilité
+- 6 dark themes: **Terminal** (cyan/green, default), **Selenian** (orange), **Moon Energy** (silver/cyan), **Clever Robotics** (red), **Future Health** (turquoise), **Griffith Blue** (blue) — they only change the **accent**
+- 1 **Light** theme: light backgrounds + darkened accent for contrast — it additionally redefines the neutrals (backgrounds, borders, text)
+- Implemented as **CSS variables**: accent (`--accent`, `--accent-2` + `-rgb` triplets) and neutrals (`--bg*`, `--border*`, `--text*`), applied via `[data-theme]` on `<html>`; choice **persisted** in `localStorage`
+- The accent extends to the **map**: base zone outline, walkways and grid follow the theme (the canvas rendering reads `THEME_ACCENTS`, synced with the CSS variables)
+- The **semantic colors of entity categories** (map) stay unchanged for readability
 
-### Interface multilingue
+### Multilingual interface
 
-Toute l'UI est traduite en **5 langues** : **anglais** (par défaut), **français**, **allemand**, **espagnol**, **polonais**.
+The entire UI is translated into **5 languages**: **English** (default), **French**, **German**, **Spanish**, **Polish**.
 
-- Sélecteur de langue (🌐) dans l'en-tête et sur la page de connexion
-- Implémenté avec **react-i18next** ; fichiers de traduction par langue dans `frontend/src/i18n/locales/`
-- La langue choisie est **enregistrée dans le profil de l'utilisateur** (côté serveur) et réappliquée à chaque connexion, en plus d'être mémorisée dans `localStorage`
-- Les **données de jeu** (noms d'entités, recettes) et les **noms propres** (corporations) ne sont pas traduits
+- Language selector (🌐) in the header and on the login page
+- Implemented with **react-i18next**; per-language translation files in `frontend/src/i18n/locales/`
+- The chosen language is **saved in the user's profile** (server-side) and reapplied on each login, in addition to being remembered in `localStorage`
+- **Game data** (entity names, recipes) and **proper nouns** (corporations) are not translated
 
-### API REST
+### REST API
 
-> Toutes les routes `/api/**` (sauf `/api/auth/login`) exigent l'en-tête `Authorization: Bearer <jeton>`.
+> All `/api/**` routes (except `/api/auth/login`) require the `Authorization: Bearer <token>` header.
 
-| Méthode | Point d'entrée | Description |
+| Method | Endpoint | Description |
 |---------|----------------|-------------|
-| POST | `/api/auth/login` | Connexion → jeton signé (public) |
-| GET | `/api/auth/me` | Utilisateur courant (nom, rôle, langue) |
-| PUT | `/api/auth/me/language` | Changer la langue de l'utilisateur courant |
-| GET / POST | `/api/admin/users` | Liste / création d'utilisateurs (ADMIN) |
-| PUT | `/api/admin/users/{id}/password` | Définir le mot de passe (ADMIN) |
-| DELETE | `/api/admin/users/{id}` | Suppression d'un utilisateur (ADMIN) |
+| POST | `/api/auth/login` | Login → signed token (public) |
+| GET | `/api/auth/me` | Current user (name, role, language) |
+| PUT | `/api/auth/me/language` | Change the current user's language |
+| GET / POST | `/api/admin/users` | List / create users (ADMIN) |
+| PUT | `/api/admin/users/{id}/password` | Set the password (ADMIN) |
+| DELETE | `/api/admin/users/{id}` | Delete a user (ADMIN) |
 
-| Méthode | Point d'entrée | Description |
+| Method | Endpoint | Description |
 |---------|----------------|-------------|
-| POST | `/api/saves` | Upload et analyse d'un fichier `.sav` |
-| GET | `/api/saves` | Liste des sessions |
-| DELETE | `/api/saves/{id}` | Suppression d'une session |
-| GET | `/api/saves/{id}/entities` | Entités (filtrable par `?cat=`) |
-| GET | `/api/saves/{id}/links` | Flux de drones |
-| GET | `/api/saves/{id}/splines` | Rails et splines |
-| GET | `/api/saves/{id}/zones` | Zones de base (bounding boxes) |
-| GET | `/api/saves/{id}/summary` | Statistiques agrégées |
-| GET | `/api/saves/{id}/progression` | Corporations, plans débloqués/verrouillés + items collectés |
-| GET / PUT | `/api/admin/config` | Lecture / écriture de la configuration d'import FTP |
-| POST | `/api/admin/test` | Test de connexion (passerelle HTTP ou FTP) |
-| POST | `/api/admin/import` | Import immédiat du `.sav` depuis le FTP/passerelle |
+| POST | `/api/saves` | Upload and parse a `.sav` file |
+| GET | `/api/saves` | List sessions |
+| DELETE | `/api/saves/{id}` | Delete a session |
+| GET | `/api/saves/{id}/entities` | Entities (filterable by `?cat=`) |
+| GET | `/api/saves/{id}/links` | Drone flows |
+| GET | `/api/saves/{id}/splines` | Rails and splines |
+| GET | `/api/saves/{id}/zones` | Base zones (bounding boxes) |
+| GET | `/api/saves/{id}/summary` | Aggregated statistics |
+| GET | `/api/saves/{id}/progression` | Corporations, unlocked/locked blueprints + collected items |
+| GET / PUT | `/api/admin/config` | Read / write the FTP import configuration |
+| POST | `/api/admin/test` | Connection test (HTTP gateway or FTP) |
+| POST | `/api/admin/import` | Immediate import of the `.sav` from FTP/gateway |
 
-| Méthode | Point d'entrée | Description |
+| Method | Endpoint | Description |
 |---------|----------------|-------------|
-| GET | `/api/kanban/board` | Tableau kanban complet (colonnes + tâches) |
-| GET | `/api/kanban/users` | Liste des utilisateurs (pour l'assignation) |
-| POST / PUT / DELETE | `/api/kanban/columns[/{id}]` | Créer / renommer / supprimer une colonne |
-| POST / PUT / DELETE | `/api/kanban/tasks[/{id}]` | Créer / modifier / supprimer une tâche |
-| PUT | `/api/kanban/tasks/{id}/move` | Déplacer une tâche (colonne + position) |
+| GET | `/api/kanban/board` | Full kanban board (columns + tasks) |
+| GET | `/api/kanban/users` | User list (for assignment) |
+| POST / PUT / DELETE | `/api/kanban/columns[/{id}]` | Create / rename / delete a column |
+| POST / PUT / DELETE | `/api/kanban/tasks[/{id}]` | Create / edit / delete a task |
+| PUT | `/api/kanban/tasks/{id}/move` | Move a task (column + position) |
 
-## Pipeline CI/CD
+## CI/CD pipeline
 
 ```
-build (JAR backend + dist frontend)
-  → package (images Docker → GitLab Container Registry)
-    → deploy (scp compose/nginx + docker compose pull/up sur le serveur)
+build (backend JAR + frontend dist)
+  → package (Docker images → GitLab Container Registry)
+    → deploy (scp compose/nginx + docker compose pull/up on the server)
 ```
 
-- **main** → déploiement **production automatique** (livraison directe, sans approval)
-- Flux unique `main → prod` : pas de branche `develop`/staging
+- **main** → **automatic production** deployment (direct delivery, no approval)
+- Single `main → prod` flow: no `develop`/staging branch
 
-## Avancement
+## Progress
 
-| Sprint | Points | Statut |
+| Sprint | Points | Status |
 |--------|--------|--------|
-| S1 — Fondations (upload, parseur, carte, zoom) | 26 | Terminé |
-| S2 — Visualisation avancée (drones, rails, tableau, minimap, alertes) | 24 | Terminé |
-| S3 — Filtres et CI/CD | 11 | Terminé |
-| **Total** | **61** | Terminé |
+| S1 — Foundations (upload, parser, map, zoom) | 26 | Done |
+| S2 — Advanced visualization (drones, rails, table, minimap, alerts) | 24 | Done |
+| S3 — Filters and CI/CD | 11 | Done |
+| **Total** | **61** | Done |
 
-## Licence
+## License
 
-Distribué sous licence **MIT** — voir le fichier [LICENSE](LICENSE). Vous êtes libre
-d'utiliser, modifier et redistribuer ce code, y compris à des fins commerciales,
-sous réserve de conserver la mention de copyright.
+Distributed under the **MIT** license — see the [LICENSE](LICENSE) file. You are free
+to use, modify and redistribute this code, including for commercial purposes,
+provided you keep the copyright notice.
