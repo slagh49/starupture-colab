@@ -1,5 +1,6 @@
 package com.starrupture.scanner.service;
 
+import com.starrupture.scanner.security.SsrfGuard;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -22,6 +23,7 @@ public class FtpService {
      * Returns a ready FTPClient (passive, binary) or throws with the cause.
      */
     private FTPClient connectAndLogin(String host, int port, String user, String password) throws IOException {
+        SsrfGuard.checkHost(host); // refuse loopback / IP privées (anti-SSRF)
         int p = port > 0 ? port : 21;
         IOException last = null;
         // Plain FTP first (most game-server hosts), FTPS as fallback.

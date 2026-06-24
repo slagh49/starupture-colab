@@ -2,6 +2,7 @@ package com.starrupture.scanner.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.starrupture.scanner.security.SsrfGuard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +29,11 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class HttpBridgeService {
 
+    // Pas de suivi de redirection : une redirection vers une adresse interne
+    // contournerait la garde anti-SSRF appliquée à l'URL passerelle d'origine.
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(15))
-            .followRedirects(HttpClient.Redirect.NORMAL)
+            .followRedirects(HttpClient.Redirect.NEVER)
             .build();
 
     private String buildUrl(String bridgeUrl, String host, String user, String password, String path) {
@@ -47,6 +50,7 @@ public class HttpBridgeService {
 
     /** Download the full .sav file via the bridge. */
     public byte[] download(String bridgeUrl, String host, String user, String password, String path) throws IOException {
+        SsrfGuard.checkUrl(bridgeUrl);
         HttpRequest req = HttpRequest.newBuilder(URI.create(buildUrl(bridgeUrl, host, user, password, path)))
                 .timeout(Duration.ofMinutes(4))
                 .GET().build();
@@ -79,6 +83,7 @@ public class HttpBridgeService {
      * récent, et le télécharge. Résout la rotation des slots AutoSave0/1/2.
      */
     public NamedDownload downloadMostRecent(String bridgeUrl, String host, String user, String password, String directory) throws IOException {
+        SsrfGuard.checkUrl(bridgeUrl);
         // Lister le dossier
         String listUrl = bridgeUrl + "?action=list"
                 + "&h=" + enc(host)
@@ -129,6 +134,11 @@ public class HttpBridgeService {
 
     /** Lightweight test: fetch only the first bytes, validate it's a binary file. */
     public String test(String bridgeUrl, String host, String user, String password, String path) {
+        try {
+            SsrfGuard.checkUrl(bridgeUrl);
+        } catch (IOException e) {
+            return e.getMessage();
+        }
         HttpRequest req = HttpRequest.newBuilder(URI.create(buildUrl(bridgeUrl, host, user, password, path)))
                 .timeout(Duration.ofSeconds(25))
                 .header("Range", "bytes=0-2047")

@@ -30,6 +30,7 @@ public class AppConfig {
     private String ftpUser;
 
     @Column(name = "ftp_password")
+    @Convert(converter = com.starrupture.scanner.security.EncryptedStringConverter.class)
     private String ftpPassword;
 
     @Column(name = "ftp_path")
